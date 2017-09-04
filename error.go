@@ -1,4 +1,4 @@
-package myrpc
+package restpc
 
 func NewError(code Code, publicMsg string, privateErr error, detailsKVPairs ...interface{}) RPCError {
 	return &rpcErrorImp{

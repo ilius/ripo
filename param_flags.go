@@ -1,4 +1,4 @@
-package myrpc
+package restpc
 
 type ParamFlag uint16
 

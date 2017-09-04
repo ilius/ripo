@@ -1,4 +1,4 @@
-package myrpc
+package restpc
 
 import (
 	"fmt"
