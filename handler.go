@@ -24,19 +24,21 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 		res, err := handler(&requestImp{r: r})
 		if err != nil {
 			code := Unknown
+			msg := "Unknown" // FIXME: "unknown"
 			var privateErr error
 			details := map[string]interface{}{}
 			rpcErr, isRpcErr := err.(RPCError)
 			if isRpcErr {
 				code = rpcErr.Code()
+				msg = rpcErr.Error() // FIXME: use a mapping or make it space-separated
 				privateErr = rpcErr.Private()
 				details = rpcErr.Details()
 			} else {
 				log.Println("myrpc.TranslateHandler: handler returned non-rpc error:", err)
 			}
 			status := HTTPStatusFromCode(code)
-			msg := code.String()
 			jsonByte, _ := json.Marshal(map[string]string{
+				"code":  code.String(),
 				"error": msg,
 			})
 			http.Error(

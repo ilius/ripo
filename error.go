@@ -24,7 +24,10 @@ type rpcErrorImp struct {
 }
 
 func (e *rpcErrorImp) Error() string {
-	return e.publicMsg
+	if e.publicMsg != "" {
+		return e.publicMsg
+	}
+	return e.code.String()
 }
 
 func (e *rpcErrorImp) Private() error {
