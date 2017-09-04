@@ -3,6 +3,8 @@ package restpc
 import "net/http"
 
 type Response struct {
-	Data   map[string]interface{}
+	// Data: map or struct with json tags
+	Data interface{}
+
 	Header http.Header
 }
