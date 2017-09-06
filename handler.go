@@ -5,15 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"reflect"
-	"runtime"
 )
 
 type Handler func(req Request) (res *Response, err error)
-
-func getFunctionName(i interface{}) string {
-	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
-}
 
 func callHandler(handler Handler, request Request) (res *Response, err error) {
 	defer func() {

@@ -3,7 +3,12 @@ package restpc
 import (
 	"fmt"
 	"reflect"
+	"runtime"
 )
+
+func getFunctionName(i interface{}) string {
+	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+}
 
 func mapFromKeyValuePairs(kvPairs ...interface{}) map[string]interface{} {
 	if len(kvPairs)%2 != 0 {
