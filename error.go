@@ -1,6 +1,12 @@
 package restpc
 
 func NewError(code Code, publicMsg string, privateErr error, detailsKVPairs ...interface{}) RPCError {
+	if privateErr != nil {
+		rpcErr, isRpcErr := privateErr.(RPCError)
+		if isRpcErr {
+			return rpcErr
+		}
+	}
 	return &rpcErrorImp{
 		code:      code,
 		private:   privateErr,
