@@ -13,6 +13,7 @@ type RPCError interface {
 	Error() string // shown to user
 	Private() error
 	Code() Code
+	Message() string
 	Details() map[string]interface{}
 }
 
@@ -36,6 +37,10 @@ func (e *rpcErrorImp) Private() error {
 
 func (e *rpcErrorImp) Code() Code {
 	return e.code
+}
+
+func (e *rpcErrorImp) Message() string {
+	return e.publicMsg
 }
 
 func (e *rpcErrorImp) Details() map[string]interface{} {
