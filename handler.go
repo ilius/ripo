@@ -2,11 +2,37 @@ package restpc
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"reflect"
+	"runtime"
 )
 
 type Handler func(req Request) (res *Response, err error)
+
+func getFunctionName(i interface{}) string {
+	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+}
+
+func callHandler(handler Handler, request Request) (res *Response, err error) {
+	defer func() {
+		panicMsg := recover()
+		if panicMsg != nil {
+			err = NewError(
+				Internal,
+				Internal.String(),
+				fmt.Errorf(
+					"panic in handler %v: %v",
+					getFunctionName(handler),
+					panicMsg,
+				),
+			)
+		}
+	}()
+	res, err = handler(request)
+	return
+}
 
 func TranslateHandler(handler Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +47,7 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 			http.Error(w, "error in parsing form", http.StatusBadRequest)
 			return
 		}
-		res, err := handler(&requestImp{r: r})
+		res, err := callHandler(handler, &requestImp{r: r})
 		if err != nil {
 			code := Unknown
 			msg := "Unknown" // FIXME: "unknown"
