@@ -50,13 +50,13 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 		res, err := callHandler(handler, &requestImp{r: r})
 		if err != nil {
 			code := Unknown
-			msg := "Unknown" // FIXME: "unknown"
+			errorMsg := "Unknown" // FIXME: "unknown"
 			var privateErr error
 			details := map[string]interface{}{}
 			rpcErr, isRpcErr := err.(RPCError)
 			if isRpcErr {
 				code = rpcErr.Code()
-				msg = rpcErr.Error() // FIXME: use a mapping or make it space-separated
+				errorMsg = rpcErr.Error() // FIXME: use a mapping or make it space-separated
 				privateErr = rpcErr.Private()
 				details = rpcErr.Details()
 			} else {
@@ -65,7 +65,7 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 			status := HTTPStatusFromCode(code)
 			jsonByte, _ := json.Marshal(map[string]string{
 				"code":  code.String(),
-				"error": msg,
+				"error": errorMsg,
 			})
 			http.Error(
 				w,
