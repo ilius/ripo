@@ -81,15 +81,17 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 				}
 			}
 		}
-		if res.Data != nil {
-			resBodyBytes, err := json.Marshal(res.Data)
+		data := res.Data
+		if data == nil {
+			data = map[string]interface{}{}
+		}
+		resBodyBytes, err := json.Marshal(data)
+		if err != nil {
+			log.Println("error in json.Marshal(res.Data):", err)
+		} else {
+			_, err := w.Write(resBodyBytes)
 			if err != nil {
-				log.Println("error in json.Marshal(res.Data):", err)
-			} else {
-				_, err := w.Write(resBodyBytes)
-				if err != nil {
-					log.Println("error in w.Write(resBodyBytes):", err)
-				}
+				log.Println("error in w.Write(resBodyBytes):", err)
 			}
 		}
 	}
