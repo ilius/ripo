@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -20,6 +21,7 @@ type Request interface {
 	GetString(key string, flags ...ParamFlag) (*string, error)
 	GetInt(key string, flags ...ParamFlag) (*int, error)
 	GetFloat(key string, flags ...ParamFlag) (*float64, error)
+	GetBool(key string, flags ...ParamFlag) (*bool, error)
 	GetTime(key string, flags ...ParamFlag) (*time.Time, error)
 	JSONData() (map[string]interface{}, error)
 	GetHeader(string) string
@@ -208,6 +210,57 @@ func (req *requestImp) GetFloat(key string, flags ...ParamFlag) (*float64, error
 			}
 			valueF := float64(value)
 			return &valueF, nil
+		}
+	}
+	if flag.Mandatory() {
+		return nil, NewError(
+			InvalidArgument,
+			fmt.Sprintf("missing '%v'", key),
+			nil,
+		)
+	}
+	return nil, nil
+}
+
+func (req *requestImp) GetBool(key string, flags ...ParamFlag) (*bool, error) {
+	flag := mergeParamFlags(flags...)
+	if flag.FromJSON() {
+		data, err := req.JSONData()
+		if err != nil {
+			return nil, err
+		}
+		valueIn := data[key]
+		if valueIn != nil {
+			switch value := valueIn.(type) {
+			case bool:
+				valueBool := value // to copy
+				return &valueBool, nil
+			default:
+				return nil, NewError(
+					InvalidArgument,
+					fmt.Sprintf("invalid '%v', must be true or false", key),
+					nil,
+				)
+			}
+		}
+	}
+	if flag.FromForm() {
+		valueStr := req.r.FormValue(key)
+		if valueStr != "" {
+			valueStr = strings.ToLower(valueStr)
+			switch valueStr {
+			case "true":
+				valueBool := true
+				return &valueBool, nil
+			case "false":
+				valueBool := false
+				return &valueBool, nil
+			}
+			return nil, NewError(
+				InvalidArgument,
+				fmt.Sprintf("invalid '%v', must be true or false", key),
+				nil,
+			)
 		}
 	}
 	if flag.Mandatory() {
