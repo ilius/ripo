@@ -19,6 +19,7 @@ type Request interface {
 	Host() string
 	Body() ([]byte, error)
 	GetString(key string, flags ...ParamFlag) (*string, error)
+	GetStringList(key string, flags ...ParamFlag) ([]string, error)
 	GetInt(key string, flags ...ParamFlag) (*int, error)
 	GetFloat(key string, flags ...ParamFlag) (*float64, error)
 	GetBool(key string, flags ...ParamFlag) (*bool, error)
@@ -98,6 +99,45 @@ func (req *requestImp) GetString(key string, flags ...ParamFlag) (*string, error
 		value := req.r.FormValue(key)
 		if value != "" {
 			return &value, nil
+		}
+	}
+	if flag.Mandatory() {
+		return nil, NewError(
+			InvalidArgument,
+			fmt.Sprintf("missing '%v'", key),
+			nil,
+		)
+	}
+	return nil, nil
+}
+
+func (req *requestImp) GetStringList(key string, flags ...ParamFlag) ([]string, error) {
+	flag := mergeParamFlags(flags...)
+	if flag.FromJSON() {
+		data, err := req.JSONData()
+		if err != nil {
+			return nil, err
+		}
+		valueIn := data[key]
+		if valueIn != nil {
+			switch value := valueIn.(type) {
+			case []string:
+				valueSlice := append([]string(nil), value...) // to copy
+				return valueSlice, nil
+			default:
+				return nil, NewError(
+					InvalidArgument,
+					fmt.Sprintf("invalid '%v', must be array of strings", key),
+					nil,
+				)
+			}
+		}
+	}
+	if flag.FromForm() {
+		valueStr := req.r.FormValue(key)
+		if valueStr != "" {
+			valueSlice := strings.Split(valueStr, ",")
+			return valueSlice, nil
 		}
 	}
 	if flag.Mandatory() {
