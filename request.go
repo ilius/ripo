@@ -17,15 +17,18 @@ type Request interface {
 	RemoteIP() (string, error)
 	URL() *url.URL
 	Host() string
+
 	Body() ([]byte, error)
+	BodyMap() (map[string]interface{}, error)
+
+	GetHeader(string) string
+
 	GetString(key string, flags ...ParamFlag) (*string, error)
 	GetStringList(key string, flags ...ParamFlag) ([]string, error)
 	GetInt(key string, flags ...ParamFlag) (*int, error)
 	GetFloat(key string, flags ...ParamFlag) (*float64, error)
 	GetBool(key string, flags ...ParamFlag) (*bool, error)
 	GetTime(key string, flags ...ParamFlag) (*time.Time, error)
-	BodyMap() (map[string]interface{}, error)
-	GetHeader(string) string
 }
 
 type requestImp struct {
@@ -68,6 +71,26 @@ func (req *requestImp) Body() ([]byte, error) {
 	req.r.Body.Close()
 	req.r.Body = nil
 	return body, nil
+}
+
+func (req *requestImp) BodyMap() (map[string]interface{}, error) {
+	if req.bodyMap != nil {
+		return req.bodyMap, nil
+	}
+	data := map[string]interface{}{}
+	body, err := req.Body()
+	if err != nil {
+		return nil, err
+	}
+	if len(body) > 0 {
+		json.Unmarshal(body, &data)
+	}
+	req.bodyMap = data
+	return data, nil
+}
+
+func (req *requestImp) GetHeader(key string) string {
+	return req.r.Header.Get(key)
 }
 
 func (req *requestImp) GetString(key string, flags ...ParamFlag) (*string, error) {
@@ -367,24 +390,4 @@ func (req *requestImp) GetTime(key string, flags ...ParamFlag) (*time.Time, erro
 		)
 	}
 	return nil, nil
-}
-
-func (req *requestImp) BodyMap() (map[string]interface{}, error) {
-	if req.bodyMap != nil {
-		return req.bodyMap, nil
-	}
-	data := map[string]interface{}{}
-	body, err := req.Body()
-	if err != nil {
-		return nil, err
-	}
-	if len(body) > 0 {
-		json.Unmarshal(body, &data)
-	}
-	req.bodyMap = data
-	return data, nil
-}
-
-func (req *requestImp) GetHeader(key string) string {
-	return req.r.Header.Get(key)
 }
