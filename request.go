@@ -24,14 +24,14 @@ type Request interface {
 	GetFloat(key string, flags ...ParamFlag) (*float64, error)
 	GetBool(key string, flags ...ParamFlag) (*bool, error)
 	GetTime(key string, flags ...ParamFlag) (*time.Time, error)
-	JSONData() (map[string]interface{}, error)
+	BodyMap() (map[string]interface{}, error)
 	GetHeader(string) string
 }
 
 type requestImp struct {
-	r        *http.Request
-	body     []byte
-	jsonData map[string]interface{}
+	r       *http.Request
+	body    []byte
+	bodyMap map[string]interface{}
 }
 
 func (req *requestImp) RemoteIP() (string, error) {
@@ -73,7 +73,7 @@ func (req *requestImp) Body() ([]byte, error) {
 func (req *requestImp) GetString(key string, flags ...ParamFlag) (*string, error) {
 	flag := mergeParamFlags(flags...)
 	if flag.FromJSON() {
-		data, err := req.JSONData()
+		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
 		}
@@ -114,7 +114,7 @@ func (req *requestImp) GetString(key string, flags ...ParamFlag) (*string, error
 func (req *requestImp) GetStringList(key string, flags ...ParamFlag) ([]string, error) {
 	flag := mergeParamFlags(flags...)
 	if flag.FromJSON() {
-		data, err := req.JSONData()
+		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
 		}
@@ -153,7 +153,7 @@ func (req *requestImp) GetStringList(key string, flags ...ParamFlag) ([]string, 
 func (req *requestImp) GetInt(key string, flags ...ParamFlag) (*int, error) {
 	flag := mergeParamFlags(flags...)
 	if flag.FromJSON() {
-		data, err := req.JSONData()
+		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
 		}
@@ -206,7 +206,7 @@ func (req *requestImp) GetInt(key string, flags ...ParamFlag) (*int, error) {
 func (req *requestImp) GetFloat(key string, flags ...ParamFlag) (*float64, error) {
 	flag := mergeParamFlags(flags...)
 	if flag.FromJSON() {
-		data, err := req.JSONData()
+		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
 		}
@@ -265,7 +265,7 @@ func (req *requestImp) GetFloat(key string, flags ...ParamFlag) (*float64, error
 func (req *requestImp) GetBool(key string, flags ...ParamFlag) (*bool, error) {
 	flag := mergeParamFlags(flags...)
 	if flag.FromJSON() {
-		data, err := req.JSONData()
+		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
 		}
@@ -316,7 +316,7 @@ func (req *requestImp) GetBool(key string, flags ...ParamFlag) (*bool, error) {
 func (req *requestImp) GetTime(key string, flags ...ParamFlag) (*time.Time, error) {
 	flag := mergeParamFlags(flags...)
 	if flag.FromJSON() {
-		data, err := req.JSONData()
+		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
 		}
@@ -366,9 +366,9 @@ func (req *requestImp) GetTime(key string, flags ...ParamFlag) (*time.Time, erro
 	return nil, nil
 }
 
-func (req *requestImp) JSONData() (map[string]interface{}, error) {
-	if req.jsonData != nil {
-		return req.jsonData, nil
+func (req *requestImp) BodyMap() (map[string]interface{}, error) {
+	if req.bodyMap != nil {
+		return req.bodyMap, nil
 	}
 	data := map[string]interface{}{}
 	body, err := req.Body()
@@ -378,7 +378,7 @@ func (req *requestImp) JSONData() (map[string]interface{}, error) {
 	if len(body) > 0 {
 		json.Unmarshal(body, &data)
 	}
-	req.jsonData = data
+	req.bodyMap = data
 	return data, nil
 }
 
