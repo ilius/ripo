@@ -160,6 +160,9 @@ func (req *requestImp) GetInt(key string, flags ...ParamFlag) (*int, error) {
 		valueIn := data[key]
 		if valueIn != nil {
 			switch value := valueIn.(type) {
+			case float64:
+				valueInt := int(value)
+				return &valueInt, nil
 			case int:
 				valueInt := value // to copy
 				return &valueInt, nil
