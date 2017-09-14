@@ -20,6 +20,7 @@ type Request interface {
 
 	Body() ([]byte, error)
 	BodyMap() (map[string]interface{}, error)
+	BodyTo(model interface{}) error
 
 	GetHeader(string) string
 
@@ -87,6 +88,18 @@ func (req *requestImp) BodyMap() (map[string]interface{}, error) {
 	}
 	req.bodyMap = data
 	return data, nil
+}
+
+func (req *requestImp) BodyTo(model interface{}) error {
+	body, err := req.Body()
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(body, model)
+	if err != nil {
+		return NewError(InvalidArgument, "request body is not a valid json", err)
+	}
+	return nil
 }
 
 func (req *requestImp) GetHeader(key string) string {
