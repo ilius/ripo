@@ -35,6 +35,7 @@ type Request interface {
 type requestImp struct {
 	r       *http.Request
 	body    []byte
+	bodyErr error
 	bodyMap map[string]interface{}
 }
 
@@ -61,11 +62,15 @@ func (req *requestImp) Body() ([]byte, error) {
 	if req.body != nil {
 		return req.body, nil
 	}
+	if req.bodyErr != nil {
+		return nil, req.bodyErr
+	}
 	if req.r.Body == nil {
 		return nil, nil
 	}
 	body, err := ioutil.ReadAll(req.r.Body)
 	if err != nil {
+		req.bodyErr = err
 		log.Println(err)
 	}
 	req.body = body
