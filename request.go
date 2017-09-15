@@ -33,10 +33,11 @@ type Request interface {
 }
 
 type requestImp struct {
-	r       *http.Request
-	body    []byte
-	bodyErr error
-	bodyMap map[string]interface{}
+	r          *http.Request
+	body       []byte
+	bodyErr    error
+	bodyMap    map[string]interface{}
+	bodyMapErr error
 }
 
 func (req *requestImp) RemoteIP() (string, error) {
@@ -83,13 +84,20 @@ func (req *requestImp) BodyMap() (map[string]interface{}, error) {
 	if req.bodyMap != nil {
 		return req.bodyMap, nil
 	}
+	if req.bodyMapErr != nil {
+		return nil, req.bodyMapErr
+	}
 	data := map[string]interface{}{}
 	body, err := req.Body()
 	if err != nil {
+		req.bodyMapErr = err
 		return nil, err
 	}
 	if len(body) > 0 {
-		json.Unmarshal(body, &data)
+		err = json.Unmarshal(body, &data)
+		req.bodyMapErr = err
+		log.Println(err)
+		// return nil, err // FIXME
 	}
 	req.bodyMap = data
 	return data, nil
