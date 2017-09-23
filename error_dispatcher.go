@@ -22,8 +22,9 @@ var errorDispatcher = func(rpcErr RPCError) {
 	}
 	for _, record := range rpcErr.Traceback() {
 		tbLines = append(tbLines, fmt.Sprintf(
-			"\tFile %v, Line %v",
+			"\tFile %v, Func %v, Line %v",
 			record.File(),
+			record.FunctionLocal(),
 			record.Line(),
 		))
 	}

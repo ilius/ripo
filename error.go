@@ -2,6 +2,7 @@ package restpc
 
 import (
 	"runtime"
+	"strings"
 )
 
 func NewError(code Code, publicMsg string, privateErr error, detailsKVPairs ...interface{}) RPCError {
@@ -26,6 +27,7 @@ func NewError(code Code, publicMsg string, privateErr error, detailsKVPairs ...i
 type TracebackRecord interface {
 	File() string
 	Function() string
+	FunctionLocal() string
 	Line() int
 }
 
@@ -49,6 +51,14 @@ func (tr *tracebackRecordImp) File() string {
 }
 func (tr *tracebackRecordImp) Function() string {
 	return tr.function
+}
+func (tr *tracebackRecordImp) FunctionLocal() string {
+	full := tr.function
+	if full == "" {
+		return ""
+	}
+	parts := strings.Split(full, ".")
+	return parts[len(parts)-1]
 }
 func (tr *tracebackRecordImp) Line() int {
 	return tr.line
