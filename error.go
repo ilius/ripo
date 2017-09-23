@@ -1,5 +1,9 @@
 package restpc
 
+import (
+	"runtime"
+)
+
 func NewError(code Code, publicMsg string, privateErr error, detailsKVPairs ...interface{}) RPCError {
 	if privateErr != nil {
 		rpcErr, isRpcErr := privateErr.(RPCError)
@@ -7,11 +11,34 @@ func NewError(code Code, publicMsg string, privateErr error, detailsKVPairs ...i
 			return rpcErr
 		}
 	}
+	details := mapFromKeyValuePairs(detailsKVPairs...)
+	pc := make([]uintptr, 10)
+	n := runtime.Callers(2, pc)
+	frames := runtime.CallersFrames(pc[:n])
+	traceback := []map[string]interface{}{}
+	processFrame := func(frame runtime.Frame) bool {
+		if frame.Func == nil {
+			return true
+		}
+		traceback = append(traceback, map[string]interface{}{
+			"file":     frame.File,
+			"function": frame.Function,
+			"line":     frame.Line,
+		})
+		return true
+	}
+	for {
+		frame, more := frames.Next()
+		if !processFrame(frame) || !more {
+			break
+		}
+	}
+	details["traceback"] = traceback
 	return &rpcErrorImp{
 		code:      code,
 		private:   privateErr,
 		publicMsg: publicMsg,
-		details:   mapFromKeyValuePairs(detailsKVPairs...),
+		details:   details,
 	}
 }
 
