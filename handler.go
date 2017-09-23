@@ -5,9 +5,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"reflect"
+	"runtime"
 )
 
 type Handler func(req Request) (res *Response, err error)
+
+var handlers = map[string]uintptr{}
 
 func callHandler(handler Handler, request Request) (res *Response, err error) {
 	defer func() {
@@ -29,6 +33,9 @@ func callHandler(handler Handler, request Request) (res *Response, err error) {
 }
 
 func TranslateHandler(handler Handler) http.HandlerFunc {
+	handlerFuncObj := runtime.FuncForPC(reflect.ValueOf(handler).Pointer())
+	handlerName := handlerFuncObj.Name()
+	handlers[handlerName] = handlerFuncObj.Entry()
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if r != nil && r.Body != nil {
@@ -52,7 +59,7 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 			} else {
 				log.Printf(
 					"myrpc.TranslateHandler: handler '%v' returned non-rpc error: %#v\n",
-					getFunctionName(handler),
+					handlerName,
 					err,
 				)
 				rpcErr = NewError(Unknown, "", err)

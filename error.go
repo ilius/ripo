@@ -25,6 +25,10 @@ func NewError(code Code, publicMsg string, privateErr error, detailsKVPairs ...i
 			"function": frame.Function,
 			"line":     frame.Line,
 		})
+		_, isHandler := handlers[frame.Function]
+		if isHandler {
+			return false
+		}
 		return true
 	}
 	for {
