@@ -17,7 +17,19 @@ var errorDispatcher = func(rpcErr RPCError) {
 	if len(rpcErr.Details()) > 0 {
 		parts = append(parts, fmt.Sprintf("Details=%#v", rpcErr.Details()))
 	}
-	log.Printf("RPCError: %v", strings.Join(parts, ", "))
+	tbLines := []string{
+		"Traceback:",
+	}
+	for _, record := range rpcErr.Traceback() {
+		tbLines = append(tbLines, fmt.Sprintf(
+			"\tFile %v, Line %v",
+			record.File(),
+			record.Line(),
+		))
+	}
+	parts = append(parts, strings.Join(tbLines, "\n"))
+	log.Printf("RPCError: %v, \n", strings.Join(parts, ", "))
+
 }
 
 func SetErrorDispatcher(dispatcher func(rpcErr RPCError)) {
