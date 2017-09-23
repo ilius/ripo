@@ -13,36 +13,13 @@ func NewError(code Code, publicMsg string, privateErr error, detailsKVPairs ...i
 	}
 	pc := make([]uintptr, 10)
 	n := runtime.Callers(2, pc)
-	frames := runtime.CallersFrames(pc[:n])
-	traceback := []TracebackRecord{}
-	processFrame := func(frame runtime.Frame) bool {
-		if frame.Func == nil {
-			return true
-		}
-		traceback = append(traceback, &tracebackRecordImp{
-			file:     frame.File,
-			function: frame.Function,
-			line:     frame.Line,
-		})
-		_, isHandler := handlers[frame.Function]
-		if isHandler {
-			return false
-		}
-		return true
-	}
-	for {
-		frame, more := frames.Next()
-		if !processFrame(frame) || !more {
-			break
-		}
-	}
 	details := mapFromKeyValuePairs(detailsKVPairs...)
 	return &rpcErrorImp{
-		code:      code,
-		private:   privateErr,
-		publicMsg: publicMsg,
-		traceback: traceback,
-		details:   details,
+		code:             code,
+		private:          privateErr,
+		publicMsg:        publicMsg,
+		tracebackCallers: pc[:n],
+		details:          details,
 	}
 }
 
@@ -78,11 +55,12 @@ func (tr *tracebackRecordImp) Line() int {
 }
 
 type rpcErrorImp struct {
-	publicMsg string // shown to user
-	private   error
-	code      Code
-	traceback []TracebackRecord
-	details   map[string]interface{}
+	publicMsg        string // shown to user
+	private          error
+	code             Code
+	tracebackCallers []uintptr
+	traceback        []TracebackRecord
+	details          map[string]interface{}
 }
 
 func (e *rpcErrorImp) Error() string {
@@ -105,7 +83,34 @@ func (e *rpcErrorImp) Message() string {
 }
 
 func (e *rpcErrorImp) Traceback() []TracebackRecord {
-	return e.traceback
+	if e.traceback != nil {
+		return e.traceback
+	}
+	frames := runtime.CallersFrames(e.tracebackCallers)
+	traceback := []TracebackRecord{}
+	processFrame := func(frame runtime.Frame) bool {
+		if frame.Func == nil {
+			return true
+		}
+		traceback = append(traceback, &tracebackRecordImp{
+			file:     frame.File,
+			function: frame.Function,
+			line:     frame.Line,
+		})
+		_, isHandler := handlers[frame.Function]
+		if isHandler {
+			return false
+		}
+		return true
+	}
+	for {
+		frame, more := frames.Next()
+		if !processFrame(frame) || !more {
+			break
+		}
+	}
+	e.traceback = traceback
+	return traceback
 }
 
 func (e *rpcErrorImp) Details() map[string]interface{} {
