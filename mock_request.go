@@ -228,3 +228,15 @@ func (mr *MockRequestMockRecorder) GetTime(key interface{}, flags ...interface{}
 	varargs := append([]interface{}{key}, flags...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTime", reflect.TypeOf((*MockRequest)(nil).GetTime), varargs...)
 }
+
+// FullMap mocks base method
+func (m *MockRequest) FullMap() map[string]interface{} {
+	ret := m.ctrl.Call(m, "FullMap")
+	ret0, _ := ret[0].(map[string]interface{})
+	return ret0
+}
+
+// FullMap indicates an expected call of FullMap
+func (mr *MockRequestMockRecorder) FullMap() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FullMap", reflect.TypeOf((*MockRequest)(nil).FullMap))
+}
