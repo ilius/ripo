@@ -97,9 +97,11 @@ func (req *requestImp) BodyMap() (map[string]interface{}, error) {
 	}
 	if len(body) > 0 {
 		err = json.Unmarshal(body, &data)
-		req.bodyMapErr = err
-		log.Println(err)
-		// return nil, err // FIXME
+		if err != nil {
+			req.bodyMapErr = err
+			log.Println(err)
+			// return nil, err // FIXME
+		}
 	}
 	req.bodyMap = data
 	return data, nil
