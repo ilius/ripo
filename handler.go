@@ -50,6 +50,9 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 		}
 		request := &requestImp{r: r}
 		res, err := callHandler(handler, request)
+		if res == nil && err == nil {
+			err = NewError(Internal, "", fmt.Errorf("handler %v returned nil response with nil error", handlerName))
+		}
 		if err != nil {
 			code := Unknown
 			errorMsg := "Unknown" // FIXME: "unknown"
@@ -79,9 +82,6 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 			)
 			errorDispatcher(request, rpcErr)
 			return
-		}
-		if res == nil {
-			panic("TranslateHandler: func: err == nil && res == nil ")
 		}
 		wh := w.Header()
 		if res.Header != nil {
