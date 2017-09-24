@@ -140,6 +140,7 @@ func (req *requestImp) GetString(key string, flags ...ParamFlag) (*string, error
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be string", key),
 					nil,
+					"value", value,
 				)
 			}
 		}
@@ -178,6 +179,7 @@ func (req *requestImp) GetStringList(key string, flags ...ParamFlag) ([]string, 
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be array of strings", key),
 					nil,
+					"value", value,
 				)
 			}
 		}
@@ -226,6 +228,7 @@ func (req *requestImp) GetInt(key string, flags ...ParamFlag) (*int, error) {
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be integer", key),
 					nil,
+					"value", value,
 				)
 			}
 		}
@@ -239,6 +242,7 @@ func (req *requestImp) GetInt(key string, flags ...ParamFlag) (*int, error) {
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be integer", key),
 					err,
+					"valueStr", valueStr,
 				)
 			}
 			valueInt := int(value)
@@ -285,6 +289,7 @@ func (req *requestImp) GetFloat(key string, flags ...ParamFlag) (*float64, error
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be float", key),
 					nil,
+					"value", value,
 				)
 			}
 		}
@@ -298,6 +303,7 @@ func (req *requestImp) GetFloat(key string, flags ...ParamFlag) (*float64, error
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be float", key),
 					err,
+					"valueStr", valueStr,
 				)
 			}
 			valueF := float64(value)
@@ -332,6 +338,7 @@ func (req *requestImp) GetBool(key string, flags ...ParamFlag) (*bool, error) {
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be true or false", key),
 					nil,
+					"value", value,
 				)
 			}
 		}
@@ -352,6 +359,7 @@ func (req *requestImp) GetBool(key string, flags ...ParamFlag) (*bool, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be true or false", key),
 				nil,
+				"valueStr", valueStr,
 			)
 		}
 	}
@@ -382,6 +390,7 @@ func (req *requestImp) GetTime(key string, flags ...ParamFlag) (*time.Time, erro
 						InvalidArgument,
 						fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
 						err,
+						"value", value,
 					)
 				}
 				return &valueTm, nil
@@ -390,6 +399,7 @@ func (req *requestImp) GetTime(key string, flags ...ParamFlag) (*time.Time, erro
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
 					nil,
+					"value", value,
 				)
 			}
 		}
@@ -403,6 +413,7 @@ func (req *requestImp) GetTime(key string, flags ...ParamFlag) (*time.Time, erro
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
 					err,
+					"valueStr", valueStr,
 				)
 			}
 			return &valueTm, nil
