@@ -25,7 +25,6 @@ func callHandler(handler Handler, request Request) (res *Response, err error) {
 					getFunctionName(handler),
 					panicMsg,
 				),
-				"request", request.FullMap(),
 			)
 		}
 	}()
@@ -66,7 +65,6 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 				)
 				rpcErr = NewError(
 					Unknown, "", err,
-					"request", request.FullMap(),
 				)
 			}
 			status := HTTPStatusFromCode(code)
@@ -79,7 +77,7 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 				string(jsonByte),
 				status,
 			)
-			errorDispatcher(rpcErr)
+			errorDispatcher(request, rpcErr)
 			return
 		}
 		if res == nil {

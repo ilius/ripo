@@ -1,5 +1,5 @@
 package restpc
 
 func init() {
-	errorDispatcher = func(rpcErr RPCError) {}
+	errorDispatcher = func(request Request, rpcErr RPCError) {}
 }

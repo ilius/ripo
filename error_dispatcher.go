@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var errorDispatcher = func(rpcErr RPCError) {
+var errorDispatcher = func(request Request, rpcErr RPCError) {
 	parts := []string{
 		fmt.Sprintf("Code=%v", rpcErr.Code()),
 		fmt.Sprintf("Message=%#v", rpcErr.Message()),
@@ -33,6 +33,6 @@ var errorDispatcher = func(rpcErr RPCError) {
 
 }
 
-func SetErrorDispatcher(dispatcher func(rpcErr RPCError)) {
+func SetErrorDispatcher(dispatcher func(request Request, rpcErr RPCError)) {
 	errorDispatcher = dispatcher
 }
