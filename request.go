@@ -30,6 +30,8 @@ type Request interface {
 	GetFloat(key string, flags ...ParamFlag) (*float64, error)
 	GetBool(key string, flags ...ParamFlag) (*bool, error)
 	GetTime(key string, flags ...ParamFlag) (*time.Time, error)
+
+	FullMap() map[string]interface{}
 }
 
 type requestImp struct {
@@ -427,4 +429,17 @@ func (req *requestImp) GetTime(key string, flags ...ParamFlag) (*time.Time, erro
 		)
 	}
 	return nil, nil
+}
+
+func (req *requestImp) FullMap() map[string]interface{} {
+	bodyMap, _ := req.BodyMap()
+	urlStr := req.URL().String()
+	remoteIP, _ := req.RemoteIP()
+	return map[string]interface{}{
+		"bodyMap":  bodyMap,
+		"url":      urlStr,
+		"form":     req.r.Form,
+		"header":   req.r.Header,
+		"remoteIP": remoteIP,
+	}
 }

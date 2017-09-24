@@ -25,6 +25,7 @@ func callHandler(handler Handler, request Request) (res *Response, err error) {
 					getFunctionName(handler),
 					panicMsg,
 				),
+				"request", request.FullMap(),
 			)
 		}
 	}()
@@ -48,7 +49,8 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 			http.Error(w, "error in parsing form", http.StatusBadRequest)
 			return
 		}
-		res, err := callHandler(handler, &requestImp{r: r})
+		request := &requestImp{r: r}
+		res, err := callHandler(handler, request)
 		if err != nil {
 			code := Unknown
 			errorMsg := "Unknown" // FIXME: "unknown"
@@ -62,7 +64,10 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 					handlerName,
 					err,
 				)
-				rpcErr = NewError(Unknown, "", err)
+				rpcErr = NewError(
+					Unknown, "", err,
+					"request", request.FullMap(),
+				)
 			}
 			status := HTTPStatusFromCode(code)
 			jsonByte, _ := json.Marshal(map[string]string{
