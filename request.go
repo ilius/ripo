@@ -431,6 +431,27 @@ func (req *requestImp) GetTime(key string, flags ...ParamFlag) (*time.Time, erro
 	return nil, nil
 }
 
+func (req *requestImp) HeaderCopy() http.Header {
+	header := http.Header{}
+	for key, values := range req.r.Header {
+		header[key] = values
+	}
+	return header
+}
+
+func (req *requestImp) HeaderStrippedAuth() http.Header {
+	header := req.HeaderCopy()
+	authHader, ok := header["Authorization"]
+	if ok {
+		authHaderNew := make([]string, len(authHader))
+		for i := 0; i < len(authHader); i++ {
+			authHaderNew[i] = "[REMOVED]"
+		}
+		header["Authorization"] = authHaderNew
+	}
+	return header
+}
+
 func (req *requestImp) FullMap() map[string]interface{} {
 	bodyMap, _ := req.BodyMap()
 	urlStr := req.URL().String()
@@ -439,7 +460,7 @@ func (req *requestImp) FullMap() map[string]interface{} {
 		"bodyMap":  bodyMap,
 		"url":      urlStr,
 		"form":     req.r.Form,
-		"header":   req.r.Header,
+		"header":   req.HeaderStrippedAuth(),
 		"remoteIP": remoteIP,
 	}
 }
