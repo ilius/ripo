@@ -80,7 +80,7 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 				string(jsonByte),
 				status,
 			)
-			errorDispatcher(request, rpcErr)
+			go errorDispatcher(request, rpcErr)
 			return
 		}
 		wh := w.Header()
