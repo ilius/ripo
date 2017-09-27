@@ -125,7 +125,7 @@ func (req *requestImp) GetHeader(key string) string {
 
 func (req *requestImp) GetString(key string, flags ...ParamFlag) (*string, error) {
 	flag := mergeParamFlags(flags...)
-	if flag.FromJSON() {
+	if flag.FromBody() {
 		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
@@ -167,7 +167,7 @@ func (req *requestImp) GetString(key string, flags ...ParamFlag) (*string, error
 
 func (req *requestImp) GetStringList(key string, flags ...ParamFlag) ([]string, error) {
 	flag := mergeParamFlags(flags...)
-	if flag.FromJSON() {
+	if flag.FromBody() {
 		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
@@ -207,7 +207,7 @@ func (req *requestImp) GetStringList(key string, flags ...ParamFlag) ([]string, 
 
 func (req *requestImp) GetInt(key string, flags ...ParamFlag) (*int, error) {
 	flag := mergeParamFlags(flags...)
-	if flag.FromJSON() {
+	if flag.FromBody() {
 		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
@@ -265,7 +265,7 @@ func (req *requestImp) GetInt(key string, flags ...ParamFlag) (*int, error) {
 
 func (req *requestImp) GetFloat(key string, flags ...ParamFlag) (*float64, error) {
 	flag := mergeParamFlags(flags...)
-	if flag.FromJSON() {
+	if flag.FromBody() {
 		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
@@ -326,7 +326,7 @@ func (req *requestImp) GetFloat(key string, flags ...ParamFlag) (*float64, error
 
 func (req *requestImp) GetBool(key string, flags ...ParamFlag) (*bool, error) {
 	flag := mergeParamFlags(flags...)
-	if flag.FromJSON() {
+	if flag.FromBody() {
 		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err
@@ -379,7 +379,7 @@ func (req *requestImp) GetBool(key string, flags ...ParamFlag) (*bool, error) {
 
 func (req *requestImp) GetTime(key string, flags ...ParamFlag) (*time.Time, error) {
 	flag := mergeParamFlags(flags...)
-	if flag.FromJSON() {
+	if flag.FromBody() {
 		data, err := req.BodyMap()
 		if err != nil {
 			return nil, err

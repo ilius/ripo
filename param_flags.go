@@ -6,8 +6,8 @@ func (f ParamFlag) Mandatory() bool {
 	return f&Optional == 0
 }
 
-func (f ParamFlag) FromJSON() bool {
-	return f&NotFromJSON == 0
+func (f ParamFlag) FromBody() bool {
+	return f&NotFromBody == 0
 }
 
 func (f ParamFlag) FromForm() bool {
@@ -16,7 +16,7 @@ func (f ParamFlag) FromForm() bool {
 
 const (
 	Optional ParamFlag = 1 << iota
-	NotFromJSON
+	NotFromBody
 	NotFromForm
 )
 
