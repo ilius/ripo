@@ -464,5 +464,6 @@ func (req *requestImp) FullMap() map[string]interface{} {
 		"form":     req.r.Form,
 		"header":   req.HeaderStrippedAuth(),
 		"remoteIP": remoteIP,
+		"context":  req.r.Context(),
 	}
 }
