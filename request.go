@@ -8,12 +8,11 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"strconv"
-	"strings"
 	"time"
 )
 
 type Request interface {
+	HTTP() *http.Request
 	RemoteIP() (string, error)
 	URL() *url.URL
 	Host() string
@@ -24,14 +23,29 @@ type Request interface {
 
 	GetHeader(string) string
 
-	GetString(key string, flags ...ParamFlag) (*string, error)
-	GetStringList(key string, flags ...ParamFlag) ([]string, error)
-	GetInt(key string, flags ...ParamFlag) (*int, error)
-	GetFloat(key string, flags ...ParamFlag) (*float64, error)
-	GetBool(key string, flags ...ParamFlag) (*bool, error)
-	GetTime(key string, flags ...ParamFlag) (*time.Time, error)
+	GetString(key string, sources ...FromX) (*string, error)
+	GetStringList(key string, sources ...FromX) ([]string, error)
+	GetInt(key string, sources ...FromX) (*int, error)
+	GetFloat(key string, sources ...FromX) (*float64, error)
+	GetBool(key string, sources ...FromX) (*bool, error)
+	GetTime(key string, sources ...FromX) (*time.Time, error)
 
 	FullMap() map[string]interface{}
+}
+
+type FromX interface {
+	GetString(req Request, key string) (*string, error)
+	GetStringList(req Request, key string) ([]string, error)
+	GetInt(req Request, key string) (*int, error)
+	GetFloat(req Request, key string) (*float64, error)
+	GetBool(req Request, key string) (*bool, error)
+	GetTime(req Request, key string) (*time.Time, error)
+}
+
+var DefaultParamSources = []FromX{
+	FromBody,
+	FromForm,
+	FromEmpty,
 }
 
 type requestImp struct {
@@ -40,6 +54,10 @@ type requestImp struct {
 	bodyErr    error
 	bodyMap    map[string]interface{}
 	bodyMapErr error
+}
+
+func (req *requestImp) HTTP() *http.Request {
+	return req.r
 }
 
 func (req *requestImp) RemoteIP() (string, error) {
@@ -123,314 +141,124 @@ func (req *requestImp) GetHeader(key string) string {
 	return req.r.Header.Get(key)
 }
 
-func (req *requestImp) GetString(key string, flags ...ParamFlag) (*string, error) {
-	flag := mergeParamFlags(flags...)
-	if flag.FromBody() {
-		data, err := req.BodyMap()
+func (req *requestImp) GetString(key string, sources ...FromX) (*string, error) {
+	if len(sources) == 0 {
+		sources = DefaultParamSources
+	}
+	for _, source := range sources {
+		value, err := source.GetString(req, key)
 		if err != nil {
 			return nil, err
 		}
-		valueIn := data[key]
-		if valueIn != nil {
-			switch value := valueIn.(type) {
-			case string:
-				valueStr := value // to copy
-				return &valueStr, nil
-			case []byte:
-				valueStr := string(value)
-				return &valueStr, nil
-			default:
-				return nil, NewError(
-					InvalidArgument,
-					fmt.Sprintf("invalid '%v', must be string", key),
-					nil,
-					"value", value,
-				)
-			}
+		if value != nil {
+			return value, nil
 		}
 	}
-	if flag.FromForm() {
-		value := req.r.FormValue(key)
-		if value != "" {
-			return &value, nil
-		}
-	}
-	if flag.Mandatory() {
-		return nil, NewError(
-			InvalidArgument,
-			fmt.Sprintf("missing '%v'", key),
-			nil,
-		)
-	}
-	return nil, nil
+	return nil, NewError(
+		InvalidArgument,
+		fmt.Sprintf("missing '%v'", key),
+		nil,
+	)
 }
 
-func (req *requestImp) GetStringList(key string, flags ...ParamFlag) ([]string, error) {
-	flag := mergeParamFlags(flags...)
-	if flag.FromBody() {
-		data, err := req.BodyMap()
+func (req *requestImp) GetStringList(key string, sources ...FromX) ([]string, error) {
+	if len(sources) == 0 {
+		sources = DefaultParamSources
+	}
+	for _, source := range sources {
+		value, err := source.GetStringList(req, key)
 		if err != nil {
 			return nil, err
 		}
-		valueIn := data[key]
-		if valueIn != nil {
-			switch value := valueIn.(type) {
-			case []string:
-				valueSlice := append([]string(nil), value...) // to copy
-				return valueSlice, nil
-			default:
-				return nil, NewError(
-					InvalidArgument,
-					fmt.Sprintf("invalid '%v', must be array of strings", key),
-					nil,
-					"value", value,
-				)
-			}
+		if value != nil {
+			return value, nil
 		}
 	}
-	if flag.FromForm() {
-		valueStr := req.r.FormValue(key)
-		if valueStr != "" {
-			valueSlice := strings.Split(valueStr, ",")
-			return valueSlice, nil
-		}
-	}
-	if flag.Mandatory() {
-		return nil, NewError(
-			InvalidArgument,
-			fmt.Sprintf("missing '%v'", key),
-			nil,
-		)
-	}
-	return nil, nil
+	return nil, NewError(
+		InvalidArgument,
+		fmt.Sprintf("missing '%v'", key),
+		nil,
+	)
 }
 
-func (req *requestImp) GetInt(key string, flags ...ParamFlag) (*int, error) {
-	flag := mergeParamFlags(flags...)
-	if flag.FromBody() {
-		data, err := req.BodyMap()
+func (req *requestImp) GetInt(key string, sources ...FromX) (*int, error) {
+	if len(sources) == 0 {
+		sources = DefaultParamSources
+	}
+	for _, source := range sources {
+		value, err := source.GetInt(req, key)
 		if err != nil {
 			return nil, err
 		}
-		valueIn := data[key]
-		if valueIn != nil {
-			switch value := valueIn.(type) {
-			case float64:
-				valueInt := int(value)
-				return &valueInt, nil
-			case int:
-				valueInt := value // to copy
-				return &valueInt, nil
-			case int32:
-				valueInt := int(value)
-				return &valueInt, nil
-			case int64:
-				valueInt := int(value)
-				return &valueInt, nil
-			default:
-				return nil, NewError(
-					InvalidArgument,
-					fmt.Sprintf("invalid '%v', must be integer", key),
-					nil,
-					"value", value,
-				)
-			}
+		if value != nil {
+			return value, nil
 		}
 	}
-	if flag.FromForm() {
-		valueStr := req.r.FormValue(key)
-		if valueStr != "" {
-			value, err := strconv.ParseInt(valueStr, 10, 64)
-			if err != nil {
-				return nil, NewError(
-					InvalidArgument,
-					fmt.Sprintf("invalid '%v', must be integer", key),
-					err,
-					"valueStr", valueStr,
-				)
-			}
-			valueInt := int(value)
-			return &valueInt, nil
-		}
-	}
-	if flag.Mandatory() {
-		return nil, NewError(
-			InvalidArgument,
-			fmt.Sprintf("missing '%v'", key),
-			nil,
-		)
-	}
-	return nil, nil
+	return nil, NewError(
+		InvalidArgument,
+		fmt.Sprintf("missing '%v'", key),
+		nil,
+	)
 }
 
-func (req *requestImp) GetFloat(key string, flags ...ParamFlag) (*float64, error) {
-	flag := mergeParamFlags(flags...)
-	if flag.FromBody() {
-		data, err := req.BodyMap()
+func (req *requestImp) GetFloat(key string, sources ...FromX) (*float64, error) {
+	if len(sources) == 0 {
+		sources = DefaultParamSources
+	}
+	for _, source := range sources {
+		value, err := source.GetFloat(req, key)
 		if err != nil {
 			return nil, err
 		}
-		valueIn := data[key]
-		if valueIn != nil {
-			switch value := valueIn.(type) {
-			case float64:
-				valueF := value // to copy
-				return &valueF, nil
-			case float32:
-				valueF := float64(value)
-				return &valueF, nil
-			case int:
-				valueF := float64(value)
-				return &valueF, nil
-			case int64:
-				valueF := float64(value)
-				return &valueF, nil
-			case int32:
-				valueF := float64(value)
-				return &valueF, nil
-			default:
-				return nil, NewError(
-					InvalidArgument,
-					fmt.Sprintf("invalid '%v', must be float", key),
-					nil,
-					"value", value,
-				)
-			}
+		if value != nil {
+			return value, nil
 		}
 	}
-	if flag.FromForm() {
-		valueStr := req.r.FormValue(key)
-		if valueStr != "" {
-			value, err := strconv.ParseFloat(valueStr, 64)
-			if err != nil {
-				return nil, NewError(
-					InvalidArgument,
-					fmt.Sprintf("invalid '%v', must be float", key),
-					err,
-					"valueStr", valueStr,
-				)
-			}
-			valueF := float64(value)
-			return &valueF, nil
-		}
-	}
-	if flag.Mandatory() {
-		return nil, NewError(
-			InvalidArgument,
-			fmt.Sprintf("missing '%v'", key),
-			nil,
-		)
-	}
-	return nil, nil
+	return nil, NewError(
+		InvalidArgument,
+		fmt.Sprintf("missing '%v'", key),
+		nil,
+	)
 }
 
-func (req *requestImp) GetBool(key string, flags ...ParamFlag) (*bool, error) {
-	flag := mergeParamFlags(flags...)
-	if flag.FromBody() {
-		data, err := req.BodyMap()
+func (req *requestImp) GetBool(key string, sources ...FromX) (*bool, error) {
+	if len(sources) == 0 {
+		sources = DefaultParamSources
+	}
+	for _, source := range sources {
+		value, err := source.GetBool(req, key)
 		if err != nil {
 			return nil, err
 		}
-		valueIn := data[key]
-		if valueIn != nil {
-			switch value := valueIn.(type) {
-			case bool:
-				valueBool := value // to copy
-				return &valueBool, nil
-			default:
-				return nil, NewError(
-					InvalidArgument,
-					fmt.Sprintf("invalid '%v', must be true or false", key),
-					nil,
-					"value", value,
-				)
-			}
+		if value != nil {
+			return value, nil
 		}
 	}
-	if flag.FromForm() {
-		valueStr := req.r.FormValue(key)
-		if valueStr != "" {
-			valueStr = strings.ToLower(valueStr)
-			switch valueStr {
-			case "true":
-				valueBool := true
-				return &valueBool, nil
-			case "false":
-				valueBool := false
-				return &valueBool, nil
-			}
-			return nil, NewError(
-				InvalidArgument,
-				fmt.Sprintf("invalid '%v', must be true or false", key),
-				nil,
-				"valueStr", valueStr,
-			)
-		}
-	}
-	if flag.Mandatory() {
-		return nil, NewError(
-			InvalidArgument,
-			fmt.Sprintf("missing '%v'", key),
-			nil,
-		)
-	}
-	return nil, nil
+	return nil, NewError(
+		InvalidArgument,
+		fmt.Sprintf("missing '%v'", key),
+		nil,
+	)
 }
 
-func (req *requestImp) GetTime(key string, flags ...ParamFlag) (*time.Time, error) {
-	flag := mergeParamFlags(flags...)
-	if flag.FromBody() {
-		data, err := req.BodyMap()
+func (req *requestImp) GetTime(key string, sources ...FromX) (*time.Time, error) {
+	if len(sources) == 0 {
+		sources = DefaultParamSources
+	}
+	for _, source := range sources {
+		value, err := source.GetTime(req, key)
 		if err != nil {
 			return nil, err
 		}
-		valueIn := data[key]
-		if valueIn != nil {
-			switch value := valueIn.(type) {
-			case string:
-				valueTm, err := time.Parse(time.RFC3339, value)
-				if err != nil {
-					return nil, NewError(
-						InvalidArgument,
-						fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
-						err,
-						"value", value,
-					)
-				}
-				return &valueTm, nil
-			default:
-				return nil, NewError(
-					InvalidArgument,
-					fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
-					nil,
-					"value", value,
-				)
-			}
+		if value != nil {
+			return value, nil
 		}
 	}
-	if flag.FromForm() {
-		valueStr := req.r.FormValue(key)
-		if valueStr != "" {
-			valueTm, err := time.Parse(time.RFC3339, valueStr)
-			if err != nil {
-				return nil, NewError(
-					InvalidArgument,
-					fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
-					err,
-					"valueStr", valueStr,
-				)
-			}
-			return &valueTm, nil
-		}
-	}
-	if flag.Mandatory() {
-		return nil, NewError(
-			InvalidArgument,
-			fmt.Sprintf("missing '%v'", key),
-			nil,
-		)
-	}
-	return nil, nil
+	return nil, NewError(
+		InvalidArgument,
+		fmt.Sprintf("missing '%v'", key),
+		nil,
+	)
 }
 
 func (req *requestImp) HeaderCopy() http.Header {

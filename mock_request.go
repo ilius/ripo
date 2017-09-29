@@ -6,6 +6,7 @@ package restpc
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	http "net/http"
 	url "net/url"
 	reflect "reflect"
 	time "time"
@@ -32,6 +33,18 @@ func NewMockRequest(ctrl *gomock.Controller) *MockRequest {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockRequest) EXPECT() *MockRequestMockRecorder {
 	return m.recorder
+}
+
+// HTTP mocks base method
+func (m *MockRequest) HTTP() *http.Request {
+	ret := m.ctrl.Call(m, "HTTP")
+	ret0, _ := ret[0].(*http.Request)
+	return ret0
+}
+
+// HTTP indicates an expected call of HTTP
+func (mr *MockRequestMockRecorder) HTTP() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HTTP", reflect.TypeOf((*MockRequest)(nil).HTTP))
 }
 
 // RemoteIP mocks base method
@@ -122,9 +135,9 @@ func (mr *MockRequestMockRecorder) GetHeader(arg0 interface{}) *gomock.Call {
 }
 
 // GetString mocks base method
-func (m *MockRequest) GetString(key string, flags ...ParamFlag) (*string, error) {
+func (m *MockRequest) GetString(key string, sources ...FromX) (*string, error) {
 	varargs := []interface{}{key}
-	for _, a := range flags {
+	for _, a := range sources {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetString", varargs...)
@@ -134,15 +147,15 @@ func (m *MockRequest) GetString(key string, flags ...ParamFlag) (*string, error)
 }
 
 // GetString indicates an expected call of GetString
-func (mr *MockRequestMockRecorder) GetString(key interface{}, flags ...interface{}) *gomock.Call {
-	varargs := append([]interface{}{key}, flags...)
+func (mr *MockRequestMockRecorder) GetString(key interface{}, sources ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{key}, sources...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetString", reflect.TypeOf((*MockRequest)(nil).GetString), varargs...)
 }
 
 // GetStringList mocks base method
-func (m *MockRequest) GetStringList(key string, flags ...ParamFlag) ([]string, error) {
+func (m *MockRequest) GetStringList(key string, sources ...FromX) ([]string, error) {
 	varargs := []interface{}{key}
-	for _, a := range flags {
+	for _, a := range sources {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetStringList", varargs...)
@@ -152,15 +165,15 @@ func (m *MockRequest) GetStringList(key string, flags ...ParamFlag) ([]string, e
 }
 
 // GetStringList indicates an expected call of GetStringList
-func (mr *MockRequestMockRecorder) GetStringList(key interface{}, flags ...interface{}) *gomock.Call {
-	varargs := append([]interface{}{key}, flags...)
+func (mr *MockRequestMockRecorder) GetStringList(key interface{}, sources ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{key}, sources...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStringList", reflect.TypeOf((*MockRequest)(nil).GetStringList), varargs...)
 }
 
 // GetInt mocks base method
-func (m *MockRequest) GetInt(key string, flags ...ParamFlag) (*int, error) {
+func (m *MockRequest) GetInt(key string, sources ...FromX) (*int, error) {
 	varargs := []interface{}{key}
-	for _, a := range flags {
+	for _, a := range sources {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetInt", varargs...)
@@ -170,15 +183,15 @@ func (m *MockRequest) GetInt(key string, flags ...ParamFlag) (*int, error) {
 }
 
 // GetInt indicates an expected call of GetInt
-func (mr *MockRequestMockRecorder) GetInt(key interface{}, flags ...interface{}) *gomock.Call {
-	varargs := append([]interface{}{key}, flags...)
+func (mr *MockRequestMockRecorder) GetInt(key interface{}, sources ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{key}, sources...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInt", reflect.TypeOf((*MockRequest)(nil).GetInt), varargs...)
 }
 
 // GetFloat mocks base method
-func (m *MockRequest) GetFloat(key string, flags ...ParamFlag) (*float64, error) {
+func (m *MockRequest) GetFloat(key string, sources ...FromX) (*float64, error) {
 	varargs := []interface{}{key}
-	for _, a := range flags {
+	for _, a := range sources {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetFloat", varargs...)
@@ -188,15 +201,15 @@ func (m *MockRequest) GetFloat(key string, flags ...ParamFlag) (*float64, error)
 }
 
 // GetFloat indicates an expected call of GetFloat
-func (mr *MockRequestMockRecorder) GetFloat(key interface{}, flags ...interface{}) *gomock.Call {
-	varargs := append([]interface{}{key}, flags...)
+func (mr *MockRequestMockRecorder) GetFloat(key interface{}, sources ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{key}, sources...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFloat", reflect.TypeOf((*MockRequest)(nil).GetFloat), varargs...)
 }
 
 // GetBool mocks base method
-func (m *MockRequest) GetBool(key string, flags ...ParamFlag) (*bool, error) {
+func (m *MockRequest) GetBool(key string, sources ...FromX) (*bool, error) {
 	varargs := []interface{}{key}
-	for _, a := range flags {
+	for _, a := range sources {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetBool", varargs...)
@@ -206,15 +219,15 @@ func (m *MockRequest) GetBool(key string, flags ...ParamFlag) (*bool, error) {
 }
 
 // GetBool indicates an expected call of GetBool
-func (mr *MockRequestMockRecorder) GetBool(key interface{}, flags ...interface{}) *gomock.Call {
-	varargs := append([]interface{}{key}, flags...)
+func (mr *MockRequestMockRecorder) GetBool(key interface{}, sources ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{key}, sources...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBool", reflect.TypeOf((*MockRequest)(nil).GetBool), varargs...)
 }
 
 // GetTime mocks base method
-func (m *MockRequest) GetTime(key string, flags ...ParamFlag) (*time.Time, error) {
+func (m *MockRequest) GetTime(key string, sources ...FromX) (*time.Time, error) {
 	varargs := []interface{}{key}
-	for _, a := range flags {
+	for _, a := range sources {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetTime", varargs...)
@@ -224,8 +237,8 @@ func (m *MockRequest) GetTime(key string, flags ...ParamFlag) (*time.Time, error
 }
 
 // GetTime indicates an expected call of GetTime
-func (mr *MockRequestMockRecorder) GetTime(key interface{}, flags ...interface{}) *gomock.Call {
-	varargs := append([]interface{}{key}, flags...)
+func (mr *MockRequestMockRecorder) GetTime(key interface{}, sources ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{key}, sources...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTime", reflect.TypeOf((*MockRequest)(nil).GetTime), varargs...)
 }
 
@@ -239,4 +252,105 @@ func (m *MockRequest) FullMap() map[string]interface{} {
 // FullMap indicates an expected call of FullMap
 func (mr *MockRequestMockRecorder) FullMap() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FullMap", reflect.TypeOf((*MockRequest)(nil).FullMap))
+}
+
+// MockFromX is a mock of FromX interface
+type MockFromX struct {
+	ctrl     *gomock.Controller
+	recorder *MockFromXMockRecorder
+}
+
+// MockFromXMockRecorder is the mock recorder for MockFromX
+type MockFromXMockRecorder struct {
+	mock *MockFromX
+}
+
+// NewMockFromX creates a new mock instance
+func NewMockFromX(ctrl *gomock.Controller) *MockFromX {
+	mock := &MockFromX{ctrl: ctrl}
+	mock.recorder = &MockFromXMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockFromX) EXPECT() *MockFromXMockRecorder {
+	return m.recorder
+}
+
+// GetString mocks base method
+func (m *MockFromX) GetString(req Request, key string) (*string, error) {
+	ret := m.ctrl.Call(m, "GetString", req, key)
+	ret0, _ := ret[0].(*string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetString indicates an expected call of GetString
+func (mr *MockFromXMockRecorder) GetString(req, key interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetString", reflect.TypeOf((*MockFromX)(nil).GetString), req, key)
+}
+
+// GetStringList mocks base method
+func (m *MockFromX) GetStringList(req Request, key string) ([]string, error) {
+	ret := m.ctrl.Call(m, "GetStringList", req, key)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStringList indicates an expected call of GetStringList
+func (mr *MockFromXMockRecorder) GetStringList(req, key interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStringList", reflect.TypeOf((*MockFromX)(nil).GetStringList), req, key)
+}
+
+// GetInt mocks base method
+func (m *MockFromX) GetInt(req Request, key string) (*int, error) {
+	ret := m.ctrl.Call(m, "GetInt", req, key)
+	ret0, _ := ret[0].(*int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetInt indicates an expected call of GetInt
+func (mr *MockFromXMockRecorder) GetInt(req, key interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInt", reflect.TypeOf((*MockFromX)(nil).GetInt), req, key)
+}
+
+// GetFloat mocks base method
+func (m *MockFromX) GetFloat(req Request, key string) (*float64, error) {
+	ret := m.ctrl.Call(m, "GetFloat", req, key)
+	ret0, _ := ret[0].(*float64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFloat indicates an expected call of GetFloat
+func (mr *MockFromXMockRecorder) GetFloat(req, key interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFloat", reflect.TypeOf((*MockFromX)(nil).GetFloat), req, key)
+}
+
+// GetBool mocks base method
+func (m *MockFromX) GetBool(req Request, key string) (*bool, error) {
+	ret := m.ctrl.Call(m, "GetBool", req, key)
+	ret0, _ := ret[0].(*bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBool indicates an expected call of GetBool
+func (mr *MockFromXMockRecorder) GetBool(req, key interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBool", reflect.TypeOf((*MockFromX)(nil).GetBool), req, key)
+}
+
+// GetTime mocks base method
+func (m *MockFromX) GetTime(req Request, key string) (*time.Time, error) {
+	ret := m.ctrl.Call(m, "GetTime", req, key)
+	ret0, _ := ret[0].(*time.Time)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTime indicates an expected call of GetTime
+func (mr *MockFromXMockRecorder) GetTime(req, key interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTime", reflect.TypeOf((*MockFromX)(nil).GetTime), req, key)
 }
