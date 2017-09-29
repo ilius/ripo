@@ -45,6 +45,7 @@ type FromX interface {
 var DefaultParamSources = []FromX{
 	FromBody,
 	FromForm,
+	FromContext,
 	FromEmpty,
 }
 
