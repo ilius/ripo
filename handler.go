@@ -48,7 +48,10 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 			http.Error(w, "error in parsing form", http.StatusBadRequest)
 			return
 		}
-		request := &requestImp{r: r}
+		request := &requestImp{
+			r:           r,
+			handlerName: handlerName,
+		}
 		res, err := callHandler(handler, request)
 		if res == nil && err == nil {
 			err = NewError(Internal, "", fmt.Errorf("handler %v returned nil response with nil error", handlerName))

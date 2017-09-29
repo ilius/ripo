@@ -84,6 +84,18 @@ func (mr *MockRequestMockRecorder) Host() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Host", reflect.TypeOf((*MockRequest)(nil).Host))
 }
 
+// HandlerName mocks base method
+func (m *MockRequest) HandlerName() string {
+	ret := m.ctrl.Call(m, "HandlerName")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// HandlerName indicates an expected call of HandlerName
+func (mr *MockRequestMockRecorder) HandlerName() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandlerName", reflect.TypeOf((*MockRequest)(nil).HandlerName))
+}
+
 // Body mocks base method
 func (m *MockRequest) Body() ([]byte, error) {
 	ret := m.ctrl.Call(m, "Body")

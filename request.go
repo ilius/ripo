@@ -16,6 +16,7 @@ type Request interface {
 	RemoteIP() (string, error)
 	URL() *url.URL
 	Host() string
+	HandlerName() string
 
 	Body() ([]byte, error)
 	BodyMap() (map[string]interface{}, error)
@@ -50,11 +51,12 @@ var DefaultParamSources = []FromX{
 }
 
 type requestImp struct {
-	r          *http.Request
-	body       []byte
-	bodyErr    error
-	bodyMap    map[string]interface{}
-	bodyMapErr error
+	r           *http.Request // must be set initially
+	handlerName string        // must be set initially
+	body        []byte
+	bodyErr     error
+	bodyMap     map[string]interface{}
+	bodyMapErr  error
 }
 
 func (req *requestImp) HTTP() *http.Request {
@@ -78,6 +80,10 @@ func (req *requestImp) URL() *url.URL {
 
 func (req *requestImp) Host() string {
 	return req.r.Host
+}
+
+func (req *requestImp) HandlerName() string {
+	return req.handlerName
 }
 
 func (req *requestImp) Body() ([]byte, error) {
