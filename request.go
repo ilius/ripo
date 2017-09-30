@@ -162,7 +162,7 @@ func (req *requestImp) GetString(key string, sources ...FromX) (*string, error) 
 		}
 	}
 	return nil, NewError(
-		InvalidArgument,
+		MissingArgument,
 		fmt.Sprintf("missing '%v'", key),
 		nil,
 	)
@@ -182,7 +182,7 @@ func (req *requestImp) GetStringList(key string, sources ...FromX) ([]string, er
 		}
 	}
 	return nil, NewError(
-		InvalidArgument,
+		MissingArgument,
 		fmt.Sprintf("missing '%v'", key),
 		nil,
 	)
@@ -202,7 +202,7 @@ func (req *requestImp) GetInt(key string, sources ...FromX) (*int, error) {
 		}
 	}
 	return nil, NewError(
-		InvalidArgument,
+		MissingArgument,
 		fmt.Sprintf("missing '%v'", key),
 		nil,
 	)
@@ -222,7 +222,7 @@ func (req *requestImp) GetFloat(key string, sources ...FromX) (*float64, error) 
 		}
 	}
 	return nil, NewError(
-		InvalidArgument,
+		MissingArgument,
 		fmt.Sprintf("missing '%v'", key),
 		nil,
 	)
@@ -242,7 +242,7 @@ func (req *requestImp) GetBool(key string, sources ...FromX) (*bool, error) {
 		}
 	}
 	return nil, NewError(
-		InvalidArgument,
+		MissingArgument,
 		fmt.Sprintf("missing '%v'", key),
 		nil,
 	)
@@ -262,7 +262,7 @@ func (req *requestImp) GetTime(key string, sources ...FromX) (*time.Time, error)
 		}
 	}
 	return nil, NewError(
-		InvalidArgument,
+		MissingArgument,
 		fmt.Sprintf("missing '%v'", key),
 		nil,
 	)
