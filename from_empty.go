@@ -4,11 +4,7 @@ import (
 	"time"
 )
 
-var FromEmpty FromX
-
-func init() {
-	FromEmpty = &fromEmpty{}
-}
+var FromEmpty = &fromEmpty{}
 
 type fromEmpty struct{}
 

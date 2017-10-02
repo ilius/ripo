@@ -5,11 +5,7 @@ import (
 	"time"
 )
 
-var FromContext FromX
-
-func init() {
-	FromContext = &fromContext{}
-}
+var FromContext = &fromContext{}
 
 type fromContext struct{}
 

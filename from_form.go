@@ -7,11 +7,7 @@ import (
 	"time"
 )
 
-var FromForm FromX
-
-func init() {
-	FromForm = &fromForm{}
-}
+var FromForm = &fromForm{}
 
 type fromForm struct{}
 

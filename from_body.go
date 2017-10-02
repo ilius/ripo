@@ -5,11 +5,7 @@ import (
 	"time"
 )
 
-var FromBody FromX
-
-func init() {
-	FromBody = &fromBody{}
-}
+var FromBody = &fromBody{}
 
 type fromBody struct{}
 
