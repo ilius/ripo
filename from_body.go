@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var FromBody = &fromBody{}
+var FromBody FromX = &fromBody{}
 
 type fromBody struct{}
 

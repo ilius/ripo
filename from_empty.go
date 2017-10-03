@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-var FromEmpty = &fromEmpty{}
+var FromEmpty FromX = &fromEmpty{}
 
 type fromEmpty struct{}
 

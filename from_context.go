@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var FromContext = &fromContext{}
+var FromContext FromX = &fromContext{}
 
 type fromContext struct{}
 
