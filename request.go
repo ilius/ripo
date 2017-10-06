@@ -75,7 +75,8 @@ func (req *requestImp) RemoteIP() (string, error) {
 }
 
 func (req *requestImp) URL() *url.URL {
-	return req.r.URL
+	u := *req.r.URL
+	return &u
 }
 
 func (req *requestImp) Host() string {
