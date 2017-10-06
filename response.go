@@ -7,4 +7,7 @@ type Response struct {
 	Data interface{}
 
 	Header http.Header
+
+	RedirectPath       string
+	RedirectStatusCode int
 }

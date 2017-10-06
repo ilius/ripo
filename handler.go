@@ -91,6 +91,14 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 				}
 			}
 		}
+		if res.RedirectPath != "" {
+			code := res.RedirectStatusCode
+			if code == 0 {
+				code = http.StatusSeeOther
+			}
+			http.Redirect(w, r, res.RedirectPath, code)
+			return
+		}
 		data := res.Data
 		if data == nil {
 			data = map[string]interface{}{}
