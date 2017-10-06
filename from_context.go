@@ -45,7 +45,7 @@ func (f *fromContext) GetStringList(req Request, key string) ([]string, error) {
 	default:
 		return nil, NewError(
 			InvalidArgument,
-			fmt.Sprintf("invalid '%v', must be string", key),
+			fmt.Sprintf("invalid '%v', must be array of strings", key),
 			fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
 			"ctx", ctx,
 		)
