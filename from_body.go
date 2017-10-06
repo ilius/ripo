@@ -42,6 +42,21 @@ func (f *fromBody) GetStringList(req Request, key string) ([]string, error) {
 	valueIn := data[key]
 	if valueIn != nil {
 		switch value := valueIn.(type) {
+		case []interface{}:
+			valueSlice := make([]string, len(value))
+			for index, item := range value {
+				itemStr, ok := item.(string)
+				if !ok {
+					return nil, NewError(
+						InvalidArgument,
+						fmt.Sprintf("invalid '%v', must be array of strings", key),
+						nil,
+						"value", value,
+					)
+				}
+				valueSlice[index] = itemStr
+			}
+			return valueSlice, nil
 		case []string:
 			valueSlice := append([]string(nil), value...) // to copy
 			return valueSlice, nil
