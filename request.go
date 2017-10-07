@@ -46,8 +46,8 @@ type FromX interface {
 var DefaultParamSources = []FromX{
 	FromBody,
 	FromForm,
-	// FromContext,
-	FromEmpty,
+	// FromContext, // I don't have any use case for it, enable if you want
+	// FromEmpty, // makes every param optional, enable if you want
 }
 
 type requestImp struct {
