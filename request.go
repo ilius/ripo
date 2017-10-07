@@ -27,6 +27,7 @@ type Request interface {
 	GetString(key string, sources ...FromX) (*string, error)
 	GetStringList(key string, sources ...FromX) ([]string, error)
 	GetInt(key string, sources ...FromX) (*int, error)
+	GetIntDefault(key string, defaultValue int, sources ...FromX) (int, error)
 	GetFloat(key string, sources ...FromX) (*float64, error)
 	GetBool(key string, sources ...FromX) (*bool, error)
 	GetTime(key string, sources ...FromX) (*time.Time, error)
@@ -207,6 +208,25 @@ func (req *requestImp) GetInt(key string, sources ...FromX) (*int, error) {
 		fmt.Sprintf("missing '%v'", key),
 		nil,
 	)
+}
+
+func (req *requestImp) GetIntDefault(key string, defaultValue int, sources ...FromX) (int, error) {
+	if len(sources) == 0 {
+		sources = []FromX{
+			FromBody,
+			FromForm,
+		}
+	}
+	for _, source := range sources {
+		value, err := source.GetInt(req, key)
+		if err != nil {
+			return defaultValue, err
+		}
+		if value != nil {
+			return *value, nil
+		}
+	}
+	return defaultValue, nil
 }
 
 func (req *requestImp) GetFloat(key string, sources ...FromX) (*float64, error) {
