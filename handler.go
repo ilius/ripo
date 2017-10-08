@@ -39,7 +39,6 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 				r.Body.Close()
 			}
 		}()
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, "error in parsing form", http.StatusBadRequest)
@@ -99,18 +98,28 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 			http.Redirect(w, r, res.RedirectPath, code)
 			return
 		}
+		var resBodyBytes []byte
 		data := res.Data
-		if data == nil {
-			data = map[string]interface{}{}
-		}
-		resBodyBytes, err := json.Marshal(data)
-		if err != nil {
-			log.Println("error in json.Marshal(res.Data):", err)
-		} else {
-			_, err := w.Write(resBodyBytes)
-			if err != nil {
-				log.Println("error in w.Write(resBodyBytes):", err)
+		switch dataTyped := data.(type) {
+		case []byte:
+			resBodyBytes = dataTyped
+		case string:
+			resBodyBytes = []byte(dataTyped)
+		default:
+			if data == nil {
+				data = map[string]interface{}{}
 			}
+			jsonBytes, err := json.Marshal(data)
+			if err != nil {
+				log.Println("error in json.Marshal(res.Data):", err)
+			} else {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				resBodyBytes = jsonBytes
+			}
+		}
+		_, err = w.Write(resBodyBytes)
+		if err != nil {
+			log.Println("error in w.Write(resBodyBytes):", err)
 		}
 	}
 }
