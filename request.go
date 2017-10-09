@@ -44,11 +44,23 @@ type FromX interface {
 	GetTime(req Request, key string) (*time.Time, error)
 }
 
-var DefaultParamSources = []FromX{
+var defaultParamSources = []FromX{
 	FromBody,
 	FromForm,
 	// FromContext, // I don't have any use case for it, enable if you want
 	// FromEmpty, // makes every param optional, enable if you want
+}
+
+// SetDefaultParamSources: set default parameter sources for req.Get* methods
+// Typical arguments (that are implemented by the library): FromBody, FromForm, FromContext, FromEmpty
+// Adding `FromEmpty` at the end, makes the parameter optional, meaning Get* methods return empty value
+// with no error if the parameter is missing (or empty) in all these parameter sources
+// You can also write your own implementation of `FromX` interface, and pass it here
+func SetDefaultParamSources(sources ...FromX) {
+	if len(sources) == 0 {
+		panic("SetDefaultParamSources: no arguments given")
+	}
+	defaultParamSources = sources
 }
 
 type requestImp struct {
@@ -152,7 +164,7 @@ func (req *requestImp) GetHeader(key string) string {
 
 func (req *requestImp) GetString(key string, sources ...FromX) (*string, error) {
 	if len(sources) == 0 {
-		sources = DefaultParamSources
+		sources = defaultParamSources
 	}
 	for _, source := range sources {
 		value, err := source.GetString(req, key)
@@ -172,7 +184,7 @@ func (req *requestImp) GetString(key string, sources ...FromX) (*string, error) 
 
 func (req *requestImp) GetStringList(key string, sources ...FromX) ([]string, error) {
 	if len(sources) == 0 {
-		sources = DefaultParamSources
+		sources = defaultParamSources
 	}
 	for _, source := range sources {
 		value, err := source.GetStringList(req, key)
@@ -192,7 +204,7 @@ func (req *requestImp) GetStringList(key string, sources ...FromX) ([]string, er
 
 func (req *requestImp) GetInt(key string, sources ...FromX) (*int, error) {
 	if len(sources) == 0 {
-		sources = DefaultParamSources
+		sources = defaultParamSources
 	}
 	for _, source := range sources {
 		value, err := source.GetInt(req, key)
@@ -231,7 +243,7 @@ func (req *requestImp) GetIntDefault(key string, defaultValue int, sources ...Fr
 
 func (req *requestImp) GetFloat(key string, sources ...FromX) (*float64, error) {
 	if len(sources) == 0 {
-		sources = DefaultParamSources
+		sources = defaultParamSources
 	}
 	for _, source := range sources {
 		value, err := source.GetFloat(req, key)
@@ -251,7 +263,7 @@ func (req *requestImp) GetFloat(key string, sources ...FromX) (*float64, error) 
 
 func (req *requestImp) GetBool(key string, sources ...FromX) (*bool, error) {
 	if len(sources) == 0 {
-		sources = DefaultParamSources
+		sources = defaultParamSources
 	}
 	for _, source := range sources {
 		value, err := source.GetBool(req, key)
@@ -271,7 +283,7 @@ func (req *requestImp) GetBool(key string, sources ...FromX) (*bool, error) {
 
 func (req *requestImp) GetTime(key string, sources ...FromX) (*time.Time, error) {
 	if len(sources) == 0 {
-		sources = DefaultParamSources
+		sources = defaultParamSources
 	}
 	for _, source := range sources {
 		value, err := source.GetTime(req, key)
