@@ -1,6 +1,7 @@
 package restpc
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -12,7 +13,6 @@ import (
 )
 
 type Request interface {
-	HTTP() *http.Request
 	RemoteIP() (string, error)
 	URL() *url.URL
 	Host() string
@@ -23,6 +23,8 @@ type Request interface {
 	BodyTo(model interface{}) error
 
 	GetHeader(string) string
+	GetFormValue(key string) string
+	Context() context.Context
 
 	GetString(key string, sources ...FromX) (*string, error)
 	GetStringList(key string, sources ...FromX) ([]string, error)
@@ -70,10 +72,6 @@ type requestImp struct {
 	bodyErr     error
 	bodyMap     map[string]interface{}
 	bodyMapErr  error
-}
-
-func (req *requestImp) HTTP() *http.Request {
-	return req.r
 }
 
 func (req *requestImp) RemoteIP() (string, error) {
@@ -160,6 +158,14 @@ func (req *requestImp) BodyTo(model interface{}) error {
 
 func (req *requestImp) GetHeader(key string) string {
 	return req.r.Header.Get(key)
+}
+
+func (req *requestImp) GetFormValue(key string) string {
+	return req.r.FormValue(key)
+}
+
+func (req *requestImp) Context() context.Context {
+	return req.r.Context()
 }
 
 func (req *requestImp) GetString(key string, sources ...FromX) (*string, error) {

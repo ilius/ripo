@@ -5,8 +5,8 @@
 package restpc
 
 import (
+	context "context"
 	gomock "github.com/golang/mock/gomock"
-	http "net/http"
 	url "net/url"
 	reflect "reflect"
 	time "time"
@@ -33,18 +33,6 @@ func NewMockRequest(ctrl *gomock.Controller) *MockRequest {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockRequest) EXPECT() *MockRequestMockRecorder {
 	return m.recorder
-}
-
-// HTTP mocks base method
-func (m *MockRequest) HTTP() *http.Request {
-	ret := m.ctrl.Call(m, "HTTP")
-	ret0, _ := ret[0].(*http.Request)
-	return ret0
-}
-
-// HTTP indicates an expected call of HTTP
-func (mr *MockRequestMockRecorder) HTTP() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HTTP", reflect.TypeOf((*MockRequest)(nil).HTTP))
 }
 
 // RemoteIP mocks base method
@@ -146,6 +134,30 @@ func (mr *MockRequestMockRecorder) GetHeader(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHeader", reflect.TypeOf((*MockRequest)(nil).GetHeader), arg0)
 }
 
+// GetFormValue mocks base method
+func (m *MockRequest) GetFormValue(key string) string {
+	ret := m.ctrl.Call(m, "GetFormValue", key)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetFormValue indicates an expected call of GetFormValue
+func (mr *MockRequestMockRecorder) GetFormValue(key interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFormValue", reflect.TypeOf((*MockRequest)(nil).GetFormValue), key)
+}
+
+// Context mocks base method
+func (m *MockRequest) Context() context.Context {
+	ret := m.ctrl.Call(m, "Context")
+	ret0, _ := ret[0].(context.Context)
+	return ret0
+}
+
+// Context indicates an expected call of Context
+func (mr *MockRequestMockRecorder) Context() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Context", reflect.TypeOf((*MockRequest)(nil).Context))
+}
+
 // GetString mocks base method
 func (m *MockRequest) GetString(key string, sources ...FromX) (*string, error) {
 	varargs := []interface{}{key}
@@ -198,6 +210,24 @@ func (m *MockRequest) GetInt(key string, sources ...FromX) (*int, error) {
 func (mr *MockRequestMockRecorder) GetInt(key interface{}, sources ...interface{}) *gomock.Call {
 	varargs := append([]interface{}{key}, sources...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInt", reflect.TypeOf((*MockRequest)(nil).GetInt), varargs...)
+}
+
+// GetIntDefault mocks base method
+func (m *MockRequest) GetIntDefault(key string, defaultValue int, sources ...FromX) (int, error) {
+	varargs := []interface{}{key, defaultValue}
+	for _, a := range sources {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetIntDefault", varargs...)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetIntDefault indicates an expected call of GetIntDefault
+func (mr *MockRequestMockRecorder) GetIntDefault(key, defaultValue interface{}, sources ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{key, defaultValue}, sources...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIntDefault", reflect.TypeOf((*MockRequest)(nil).GetIntDefault), varargs...)
 }
 
 // GetFloat mocks base method

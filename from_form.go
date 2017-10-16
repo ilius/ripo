@@ -12,14 +12,14 @@ var FromForm FromX = &fromForm{}
 type fromForm struct{}
 
 func (f *fromForm) GetString(req Request, key string) (*string, error) {
-	value := req.HTTP().FormValue(key)
+	value := req.GetFormValue(key)
 	if value != "" {
 		return &value, nil
 	}
 	return nil, nil
 }
 func (f *fromForm) GetStringList(req Request, key string) ([]string, error) {
-	valueStr := req.HTTP().FormValue(key)
+	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
 		valueSlice := strings.Split(valueStr, ",")
 		return valueSlice, nil
@@ -27,7 +27,7 @@ func (f *fromForm) GetStringList(req Request, key string) ([]string, error) {
 	return nil, nil
 }
 func (f *fromForm) GetInt(req Request, key string) (*int, error) {
-	valueStr := req.HTTP().FormValue(key)
+	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
 		value, err := strconv.ParseInt(valueStr, 10, 64)
 		if err != nil {
@@ -44,7 +44,7 @@ func (f *fromForm) GetInt(req Request, key string) (*int, error) {
 	return nil, nil
 }
 func (f *fromForm) GetFloat(req Request, key string) (*float64, error) {
-	valueStr := req.HTTP().FormValue(key)
+	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
 		value, err := strconv.ParseFloat(valueStr, 64)
 		if err != nil {
@@ -61,7 +61,7 @@ func (f *fromForm) GetFloat(req Request, key string) (*float64, error) {
 	return nil, nil
 }
 func (f *fromForm) GetBool(req Request, key string) (*bool, error) {
-	valueStr := req.HTTP().FormValue(key)
+	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
 		valueStr = strings.ToLower(valueStr)
 		switch valueStr {
@@ -82,7 +82,7 @@ func (f *fromForm) GetBool(req Request, key string) (*bool, error) {
 	return nil, nil
 }
 func (f *fromForm) GetTime(req Request, key string) (*time.Time, error) {
-	valueStr := req.HTTP().FormValue(key)
+	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
 		valueTm, err := time.Parse(time.RFC3339, valueStr)
 		if err != nil {

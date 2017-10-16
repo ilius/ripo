@@ -10,7 +10,7 @@ var FromContext FromX = &fromContext{}
 type fromContext struct{}
 
 func (f *fromContext) GetString(req Request, key string) (*string, error) {
-	ctx := req.HTTP().Context()
+	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn == nil {
 		return nil, nil
@@ -33,7 +33,7 @@ func (f *fromContext) GetString(req Request, key string) (*string, error) {
 	return nil, nil
 }
 func (f *fromContext) GetStringList(req Request, key string) ([]string, error) {
-	ctx := req.HTTP().Context()
+	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn == nil {
 		return nil, nil
@@ -53,7 +53,7 @@ func (f *fromContext) GetStringList(req Request, key string) ([]string, error) {
 	return nil, nil
 }
 func (f *fromContext) GetInt(req Request, key string) (*int, error) {
-	ctx := req.HTTP().Context()
+	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn == nil {
 		return nil, nil
@@ -82,7 +82,7 @@ func (f *fromContext) GetInt(req Request, key string) (*int, error) {
 	return nil, nil
 }
 func (f *fromContext) GetFloat(req Request, key string) (*float64, error) {
-	ctx := req.HTTP().Context()
+	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn == nil {
 		return nil, nil
@@ -114,7 +114,7 @@ func (f *fromContext) GetFloat(req Request, key string) (*float64, error) {
 	return nil, nil
 }
 func (f *fromContext) GetBool(req Request, key string) (*bool, error) {
-	ctx := req.HTTP().Context()
+	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn == nil {
 		return nil, nil
@@ -134,7 +134,7 @@ func (f *fromContext) GetBool(req Request, key string) (*bool, error) {
 	return nil, nil
 }
 func (f *fromContext) GetTime(req Request, key string) (*time.Time, error) {
-	ctx := req.HTTP().Context()
+	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn == nil {
 		return nil, nil
