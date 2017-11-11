@@ -79,8 +79,7 @@ func (req *requestImp) RemoteIP() (string, error) {
 	if err != nil {
 		return "", NewError(
 			Internal, "", err,
-			"r.RemoteAddr", req.r.RemoteAddr,
-		)
+		).Add("r.RemoteAddr", req.r.RemoteAddr)
 	}
 	return remoteIp, nil
 }

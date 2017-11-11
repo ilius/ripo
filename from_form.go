@@ -35,8 +35,7 @@ func (f *fromForm) GetInt(req Request, key string) (*int, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be integer", key),
 				err,
-				"valueStr", valueStr,
-			)
+			).Add("valueStr", valueStr)
 		}
 		valueInt := int(value)
 		return &valueInt, nil
@@ -52,8 +51,7 @@ func (f *fromForm) GetFloat(req Request, key string) (*float64, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be float", key),
 				err,
-				"valueStr", valueStr,
-			)
+			).Add("valueStr", valueStr)
 		}
 		valueF := float64(value)
 		return &valueF, nil
@@ -76,8 +74,7 @@ func (f *fromForm) GetBool(req Request, key string) (*bool, error) {
 			InvalidArgument,
 			fmt.Sprintf("invalid '%v', must be true or false", key),
 			nil,
-			"valueStr", valueStr,
-		)
+		).Add("valueStr", valueStr)
 	}
 	return nil, nil
 }
@@ -90,8 +87,7 @@ func (f *fromForm) GetTime(req Request, key string) (*time.Time, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
 				err,
-				"valueStr", valueStr,
-			)
+			).Add("valueStr", valueStr)
 		}
 		return &valueTm, nil
 	}

@@ -27,8 +27,7 @@ func (f *fromContext) GetString(req Request, key string) (*string, error) {
 			InvalidArgument,
 			fmt.Sprintf("invalid '%v', must be string", key),
 			fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
-			"ctx", ctx,
-		)
+		).Add("ctx", ctx)
 	}
 	return nil, nil
 }
@@ -47,8 +46,7 @@ func (f *fromContext) GetStringList(req Request, key string) ([]string, error) {
 			InvalidArgument,
 			fmt.Sprintf("invalid '%v', must be array of strings", key),
 			fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
-			"ctx", ctx,
-		)
+		).Add("ctx", ctx)
 	}
 	return nil, nil
 }
@@ -76,8 +74,7 @@ func (f *fromContext) GetInt(req Request, key string) (*int, error) {
 			InvalidArgument,
 			fmt.Sprintf("invalid '%v', must be string", key),
 			fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
-			"ctx", ctx,
-		)
+		).Add("ctx", ctx)
 	}
 	return nil, nil
 }
@@ -108,8 +105,7 @@ func (f *fromContext) GetFloat(req Request, key string) (*float64, error) {
 			InvalidArgument,
 			fmt.Sprintf("invalid '%v', must be string", key),
 			fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
-			"ctx", ctx,
-		)
+		).Add("ctx", ctx)
 	}
 	return nil, nil
 }
@@ -128,8 +124,7 @@ func (f *fromContext) GetBool(req Request, key string) (*bool, error) {
 			InvalidArgument,
 			fmt.Sprintf("invalid '%v', must be string", key),
 			fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
-			"ctx", ctx,
-		)
+		).Add("ctx", ctx)
 	}
 	return nil, nil
 }
@@ -150,8 +145,7 @@ func (f *fromContext) GetTime(req Request, key string) (*time.Time, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
 				err,
-				"value", value,
-			)
+			).Add("value", value)
 		}
 		return &valueTm, nil
 	default:
@@ -159,8 +153,7 @@ func (f *fromContext) GetTime(req Request, key string) (*time.Time, error) {
 			InvalidArgument,
 			fmt.Sprintf("invalid '%v', must be string", key),
 			fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
-			"ctx", ctx,
-		)
+		).Add("ctx", ctx)
 	}
 	return nil, nil
 }

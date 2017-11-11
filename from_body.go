@@ -28,8 +28,7 @@ func (f *fromBody) GetString(req Request, key string) (*string, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be string", key),
 				nil,
-				"value", value,
-			)
+			).Add("value", value)
 		}
 	}
 	return nil, nil
@@ -51,8 +50,7 @@ func (f *fromBody) GetStringList(req Request, key string) ([]string, error) {
 						InvalidArgument,
 						fmt.Sprintf("invalid '%v', must be array of strings", key),
 						nil,
-						"value", value,
-					)
+					).Add("value", value)
 				}
 				valueSlice[index] = itemStr
 			}
@@ -65,8 +63,7 @@ func (f *fromBody) GetStringList(req Request, key string) ([]string, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be array of strings", key),
 				nil,
-				"value", value,
-			)
+			).Add("value", value)
 		}
 	}
 	return nil, nil
@@ -96,8 +93,7 @@ func (f *fromBody) GetInt(req Request, key string) (*int, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be integer", key),
 				nil,
-				"value", value,
-			)
+			).Add("value", value)
 		}
 	}
 	return nil, nil
@@ -130,8 +126,7 @@ func (f *fromBody) GetFloat(req Request, key string) (*float64, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be float", key),
 				nil,
-				"value", value,
-			)
+			).Add("value", value)
 		}
 	}
 	return nil, nil
@@ -152,8 +147,7 @@ func (f *fromBody) GetBool(req Request, key string) (*bool, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be true or false", key),
 				nil,
-				"value", value,
-			)
+			).Add("value", value)
 		}
 	}
 	return nil, nil
@@ -173,8 +167,7 @@ func (f *fromBody) GetTime(req Request, key string) (*time.Time, error) {
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
 					err,
-					"value", value,
-				)
+				).Add("value", value)
 			}
 			return &valueTm, nil
 		default:
@@ -182,8 +175,7 @@ func (f *fromBody) GetTime(req Request, key string) (*time.Time, error) {
 				InvalidArgument,
 				fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
 				nil,
-				"value", value,
-			)
+			).Add("value", value)
 		}
 	}
 	return nil, nil
