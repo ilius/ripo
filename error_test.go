@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -32,14 +32,7 @@ func unimplementedHandler(req Request) (*Response, error) {
 }
 
 func TestErrorFull(t *testing.T) {
-	pkgPath := "github.com/ilius/restpc"
-	goPath := os.Getenv("GOPATH")
-	expectedHandlerName := pkgPath + ".unimplementedHandler"
-	expectedTracebackRecord := &tracebackRecordImp{
-		file:     goPath + "/src/" + pkgPath + "/error_test.go",
-		function: expectedHandlerName,
-		line:     31,
-	}
+	handlerName := "unimplementedHandler"
 
 	origErrorDispatcher := errorDispatcher
 	defer func() {
@@ -60,7 +53,11 @@ func TestErrorFull(t *testing.T) {
 	if rpcErr == nil {
 		panic("rpcErr == nil")
 	}
-	assert.Equal(t, expectedHandlerName, request.HandlerName())
+	if !strings.HasSuffix(request.HandlerName(), "."+handlerName) {
+		t.Errorf("request.HandlerName()=%v", request.HandlerName())
+		return
+	}
+	handlerNameFull := request.HandlerName()
 	assert.Equal(t, Unimplemented, rpcErr.Code())
 	assert.Equal(t, "we didn't implement this", rpcErr.Error())
 	assert.Equal(t, "we didn't implement this", rpcErr.Message())
@@ -68,24 +65,30 @@ func TestErrorFull(t *testing.T) {
 	assert.Equal(t, "June The Girl", rpcErr.Details()["name"])
 	{
 		tb := rpcErr.Traceback()
-		records := tb.Records(expectedHandlerName)
+		records := tb.Records(handlerNameFull)
 		if len(records) != 1 {
-			panic(fmt.Errorf("len(records) = %v", len(records)))
+			for _, record := range records {
+				t.Log(record)
+			}
+			t.Errorf("len(records) = %v", len(records))
+			return
 		}
 		record := records[0]
-		assert.Equal(t, expectedTracebackRecord, record)
-		assert.Equal(t, expectedTracebackRecord.File(), record.File())
-		assert.Equal(t, expectedTracebackRecord.Function(), record.Function())
-		assert.Equal(t, expectedTracebackRecord.FunctionLocal(), record.FunctionLocal())
-		assert.Equal(t, expectedTracebackRecord.Line(), record.Line())
-		mapRecords := tb.MapRecords(expectedHandlerName)
+		if !strings.HasSuffix(record.File(), "/error_test.go") {
+			t.Errorf("record.File()=%v", record.File())
+		}
+		assert.Equal(t, handlerNameFull, record.Function())
+		assert.Equal(t, handlerName, record.FunctionLocal())
+		assert.Equal(t, 31, record.Line())
+		mapRecords := tb.MapRecords(handlerNameFull)
 		if len(mapRecords) != 1 {
-			panic(fmt.Errorf("len(mapRecords) = %v", len(mapRecords)))
+			t.Errorf("len(mapRecords) = %v", len(mapRecords))
+			return
 		}
 		mapRecord := mapRecords[0]
-		assert.Equal(t, expectedTracebackRecord.File(), mapRecord["file"])
-		assert.Equal(t, expectedTracebackRecord.Function(), mapRecord["function"])
-		assert.Equal(t, expectedTracebackRecord.FunctionLocal(), mapRecord["functionLocal"])
-		assert.Equal(t, expectedTracebackRecord.Line(), mapRecord["line"])
+		assert.Equal(t, record.File(), mapRecord["file"])
+		assert.Equal(t, record.Function(), mapRecord["function"])
+		assert.Equal(t, record.FunctionLocal(), mapRecord["functionLocal"])
+		assert.Equal(t, record.Line(), mapRecord["line"])
 	}
 }
