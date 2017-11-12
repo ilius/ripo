@@ -110,3 +110,71 @@ func TestFromBody_GetStringList(t *testing.T) {
 	}
 
 }
+
+func TestFromBody_GetInt(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockReq := NewMockRequest(ctrl)
+	var req Request = mockReq
+	{
+		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
+		value, err := FromBody.GetInt(req, "count")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "unknown error")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(nil, nil)
+		value, err := FromBody.GetInt(req, "count")
+		assert.Nil(t, value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"count": "abc",
+		}, nil)
+		value, err := FromBody.GetInt(req, "count")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'count', must be integer")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"count": "345",
+		}, nil)
+		value, err := FromBody.GetInt(req, "count")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'count', must be integer")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"count": 5001,
+		}, nil)
+		value, err := FromBody.GetInt(req, "count")
+		assert.Equal(t, 5001, *value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"count": int32(5003),
+		}, nil)
+		value, err := FromBody.GetInt(req, "count")
+		assert.Equal(t, 5003, *value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"count": int64(6123),
+		}, nil)
+		value, err := FromBody.GetInt(req, "count")
+		assert.Equal(t, 6123, *value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"count": 14.15,
+		}, nil)
+		value, err := FromBody.GetInt(req, "count")
+		assert.Equal(t, 14, *value)
+		assert.Nil(t, err)
+	}
+
+}
