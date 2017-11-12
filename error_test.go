@@ -64,8 +64,14 @@ func TestErrorFull(t *testing.T) {
 	assert.Equal(t, "just an unexposed message", rpcErr.Private().Error())
 	assert.Equal(t, "June The Girl", rpcErr.Details()["name"])
 	{
-		tb := rpcErr.Traceback()
-		records := tb.Records(handlerNameFull)
+		tb := rpcErr.Traceback("")
+		assert.Equal(t, 6, len(tb.Callers()))
+		assert.Equal(t, 6, len(tb.Records()))
+	}
+	{
+		tb := rpcErr.Traceback(handlerNameFull)
+		assert.Equal(t, 6, len(tb.Callers()))
+		records := tb.Records()
 		if len(records) != 1 {
 			for _, record := range records {
 				t.Log(record)
@@ -80,7 +86,7 @@ func TestErrorFull(t *testing.T) {
 		assert.Equal(t, handlerNameFull, record.Function())
 		assert.Equal(t, handlerName, record.FunctionLocal())
 		assert.Equal(t, 31, record.Line())
-		mapRecords := tb.MapRecords(handlerNameFull)
+		mapRecords := tb.MapRecords()
 		if len(mapRecords) != 1 {
 			t.Errorf("len(mapRecords) = %v", len(mapRecords))
 			return

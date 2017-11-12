@@ -27,7 +27,7 @@ type RPCError interface {
 	Private() error
 	Code() Code
 	Message() string
-	Traceback() Traceback
+	Traceback(handlerName string) Traceback
 	Details() map[string]interface{}
 	Add(key string, value interface{}) RPCError
 }
@@ -59,8 +59,8 @@ func (e *rpcErrorImp) Message() string {
 	return e.publicMsg
 }
 
-func (e *rpcErrorImp) Traceback() Traceback {
-	return e.traceback
+func (e *rpcErrorImp) Traceback(handlerName string) Traceback {
+	return e.traceback.SetHandlerName(handlerName)
 }
 
 func (e *rpcErrorImp) Details() map[string]interface{} {
