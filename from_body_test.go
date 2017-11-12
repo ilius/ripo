@@ -176,5 +176,80 @@ func TestFromBody_GetInt(t *testing.T) {
 		assert.Equal(t, 14, *value)
 		assert.Nil(t, err)
 	}
+}
 
+func TestFromBody_GetFloat(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockReq := NewMockRequest(ctrl)
+	var req Request = mockReq
+	{
+		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
+		value, err := FromBody.GetFloat(req, "weight")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "unknown error")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(nil, nil)
+		value, err := FromBody.GetFloat(req, "weight")
+		assert.Nil(t, value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"weight": "abc",
+		}, nil)
+		value, err := FromBody.GetFloat(req, "weight")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'weight', must be float")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"weight": "345",
+		}, nil)
+		value, err := FromBody.GetFloat(req, "weight")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'weight', must be float")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"weight": 1231,
+		}, nil)
+		value, err := FromBody.GetFloat(req, "weight")
+		assert.Equal(t, 1231.0, *value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"weight": int32(2345),
+		}, nil)
+		value, err := FromBody.GetFloat(req, "weight")
+		assert.Equal(t, 2345.0, *value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"weight": int64(7123),
+		}, nil)
+		value, err := FromBody.GetFloat(req, "weight")
+		assert.Equal(t, 7123.0, *value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"weight": 104.15,
+		}, nil)
+		value, err := FromBody.GetFloat(req, "weight")
+		assert.Equal(t, 104.15, *value)
+		assert.Nil(t, err)
+	}
+	{
+		weight := float32(104.15)
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"weight": weight,
+		}, nil)
+		value, err := FromBody.GetFloat(req, "weight")
+		assert.Equal(t, float64(weight), *value)
+		assert.Nil(t, err)
+	}
 }
