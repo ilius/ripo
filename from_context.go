@@ -68,7 +68,7 @@ func (f *fromContext) GetInt(req Request, key string) (*int, error) {
 		default:
 			return nil, NewError(
 				InvalidArgument,
-				fmt.Sprintf("invalid '%v', must be string", key),
+				fmt.Sprintf("invalid '%v', must be integer", key),
 				fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
 			).Add("ctx", ctx)
 		}
