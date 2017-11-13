@@ -253,3 +253,62 @@ func TestFromBody_GetFloat(t *testing.T) {
 		assert.Nil(t, err)
 	}
 }
+
+func TestFromBody_GetBool(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockReq := NewMockRequest(ctrl)
+	var req Request = mockReq
+	{
+		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
+		value, err := FromBody.GetBool(req, "agree")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "unknown error")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(nil, nil)
+		value, err := FromBody.GetBool(req, "agree")
+		assert.Nil(t, value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"agree": "abcd",
+		}, nil)
+		value, err := FromBody.GetBool(req, "agree")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'agree', must be true or false")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"agree": "3465",
+		}, nil)
+		value, err := FromBody.GetBool(req, "agree")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'agree', must be true or false")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"agree": 1231,
+		}, nil)
+		value, err := FromBody.GetBool(req, "agree")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'agree', must be true or false")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"agree": true,
+		}, nil)
+		value, err := FromBody.GetBool(req, "agree")
+		assert.Equal(t, true, *value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"agree": false,
+		}, nil)
+		value, err := FromBody.GetBool(req, "agree")
+		assert.Equal(t, false, *value)
+		assert.Nil(t, err)
+	}
+}
