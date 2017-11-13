@@ -98,7 +98,7 @@ func (f *fromContext) GetFloat(req Request, key string) (*float64, error) {
 		default:
 			return nil, NewError(
 				InvalidArgument,
-				fmt.Sprintf("invalid '%v', must be string", key),
+				fmt.Sprintf("invalid '%v', must be float", key),
 				fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
 			).Add("ctx", ctx)
 		}
