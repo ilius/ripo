@@ -3,6 +3,7 @@ package restpc
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -310,5 +311,48 @@ func TestFromBody_GetBool(t *testing.T) {
 		value, err := FromBody.GetBool(req, "agree")
 		assert.Equal(t, false, *value)
 		assert.Nil(t, err)
+	}
+}
+
+func TestFromBody_GetTime(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockReq := NewMockRequest(ctrl)
+	var req Request = mockReq
+	{
+		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
+		value, err := FromBody.GetTime(req, "since")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "unknown error")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(nil, nil)
+		value, err := FromBody.GetTime(req, "since")
+		assert.Nil(t, value)
+		assert.Nil(t, err)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"since": "abcd",
+		}, nil)
+		value, err := FromBody.GetTime(req, "since")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'since', must be RFC3339 time string")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"since": 3465,
+		}, nil)
+		value, err := FromBody.GetTime(req, "since")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'since', must be RFC3339 time string")
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"since": "2017-12-20T17:30:00Z",
+		}, nil)
+		value, err := FromBody.GetTime(req, "since")
+		assert.Nil(t, err)
+		assert.Equal(t, time.Date(2017, time.Month(12), 20, 17, 30, 0, 0, time.UTC), *value)
 	}
 }
