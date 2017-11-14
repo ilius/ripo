@@ -24,7 +24,7 @@ func TestFromBody_GetString(t *testing.T) {
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, nil)
 		value, err := FromBody.GetString(req, "name")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Nil(t, value)
 	}
 	{
@@ -40,7 +40,7 @@ func TestFromBody_GetString(t *testing.T) {
 			"name": "John Smith",
 		}, nil)
 		value, err := FromBody.GetString(req, "name")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, "John Smith", *value)
 	}
 	{
@@ -48,7 +48,7 @@ func TestFromBody_GetString(t *testing.T) {
 			"name": []byte("John Smith"),
 		}, nil)
 		value, err := FromBody.GetString(req, "name")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, "John Smith", *value)
 	}
 }
@@ -66,7 +66,7 @@ func TestFromBody_GetStringList(t *testing.T) {
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, nil)
 		value, err := FromBody.GetStringList(req, "names")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Nil(t, value)
 	}
 	{
@@ -98,7 +98,7 @@ func TestFromBody_GetStringList(t *testing.T) {
 			"names": []string{"John Smith", "John Doe"},
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, []string{"John Smith", "John Doe"}, value)
 	}
 	{
@@ -106,7 +106,7 @@ func TestFromBody_GetStringList(t *testing.T) {
 			"names": []interface{}{"John Smith", "John Doe"},
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, []string{"John Smith", "John Doe"}, value)
 	}
 
@@ -126,7 +126,7 @@ func TestFromBody_GetInt(t *testing.T) {
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Nil(t, value)
 	}
 	{
@@ -150,7 +150,7 @@ func TestFromBody_GetInt(t *testing.T) {
 			"count": 5001,
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, 5001, *value)
 	}
 	{
@@ -158,7 +158,7 @@ func TestFromBody_GetInt(t *testing.T) {
 			"count": int32(5003),
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, 5003, *value)
 	}
 	{
@@ -166,7 +166,7 @@ func TestFromBody_GetInt(t *testing.T) {
 			"count": int64(6123),
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, 6123, *value)
 	}
 	{
@@ -174,7 +174,7 @@ func TestFromBody_GetInt(t *testing.T) {
 			"count": 14.15,
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, 14, *value)
 	}
 }
@@ -194,7 +194,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		mockReq.EXPECT().BodyMap().Return(nil, nil)
 		value, err := FromBody.GetFloat(req, "weight")
 		assert.Nil(t, value)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
@@ -218,7 +218,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
 		assert.Equal(t, 1231.0, *value)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
@@ -226,7 +226,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
 		assert.Equal(t, 2345.0, *value)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
@@ -234,7 +234,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
 		assert.Equal(t, 7123.0, *value)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
@@ -242,7 +242,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
 		assert.Equal(t, 104.15, *value)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	}
 	{
 		weight := float32(104.15)
@@ -251,7 +251,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
 		assert.Equal(t, float64(weight), *value)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	}
 }
 
@@ -270,7 +270,7 @@ func TestFromBody_GetBool(t *testing.T) {
 		mockReq.EXPECT().BodyMap().Return(nil, nil)
 		value, err := FromBody.GetBool(req, "agree")
 		assert.Nil(t, value)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
@@ -302,7 +302,7 @@ func TestFromBody_GetBool(t *testing.T) {
 		}, nil)
 		value, err := FromBody.GetBool(req, "agree")
 		assert.Equal(t, true, *value)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
@@ -310,7 +310,7 @@ func TestFromBody_GetBool(t *testing.T) {
 		}, nil)
 		value, err := FromBody.GetBool(req, "agree")
 		assert.Equal(t, false, *value)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	}
 }
 
@@ -329,7 +329,7 @@ func TestFromBody_GetTime(t *testing.T) {
 		mockReq.EXPECT().BodyMap().Return(nil, nil)
 		value, err := FromBody.GetTime(req, "since")
 		assert.Nil(t, value)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
@@ -352,7 +352,7 @@ func TestFromBody_GetTime(t *testing.T) {
 			"since": "2017-12-20T17:30:00Z",
 		}, nil)
 		value, err := FromBody.GetTime(req, "since")
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, time.Date(2017, time.Month(12), 20, 17, 30, 0, 0, time.UTC), *value)
 	}
 }
