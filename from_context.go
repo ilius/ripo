@@ -116,7 +116,7 @@ func (f *fromContext) GetBool(req Request, key string) (*bool, error) {
 		default:
 			return nil, NewError(
 				InvalidArgument,
-				fmt.Sprintf("invalid '%v', must be string", key),
+				fmt.Sprintf("invalid '%v', must be bool", key),
 				fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
 			).Add("ctx", ctx)
 		}

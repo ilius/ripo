@@ -162,3 +162,35 @@ func TestFromContext_GetFloat(t *testing.T) {
 		assert.NoError(t, err)
 	}
 }
+
+func TestFromContext_GetBool(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockReq := NewMockRequest(ctrl)
+	var req Request = mockReq
+	{
+		mockReq.EXPECT().Context().Return(context.Background())
+		value, err := FromContext.GetBool(req, "agree")
+		assert.Nil(t, value)
+		assert.NoError(t, err)
+	}
+	{
+		mockReq.EXPECT().Context().Return(context.WithValue(context.Background(), "agree", "yes"))
+		value, err := FromContext.GetBool(req, "agree")
+		assert.EqualError(t, err, "invalid 'agree', must be bool")
+		assert.Nil(t, value)
+	}
+	{
+		mockReq.EXPECT().Context().Return(context.WithValue(context.Background(), "agree", true))
+		value, err := FromContext.GetBool(req, "agree")
+		assert.NoError(t, err)
+		assert.Equal(t, true, *value)
+	}
+	{
+		mockReq.EXPECT().Context().Return(context.WithValue(context.Background(), "agree", false))
+		value, err := FromContext.GetBool(req, "agree")
+		assert.NoError(t, err)
+		assert.Equal(t, false, *value)
+	}
+
+}
