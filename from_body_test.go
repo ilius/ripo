@@ -18,38 +18,38 @@ func TestFromBody_GetString(t *testing.T) {
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
 		value, err := FromBody.GetString(req, "name")
-		assert.Nil(t, value)
 		assert.EqualError(t, err, "unknown error")
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, nil)
 		value, err := FromBody.GetString(req, "name")
-		assert.Nil(t, value)
 		assert.Nil(t, err)
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"name": 123,
 		}, nil)
 		value, err := FromBody.GetString(req, "name")
-		assert.Nil(t, value)
 		assert.EqualError(t, err, "invalid 'name', must be string")
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"name": "John Smith",
 		}, nil)
 		value, err := FromBody.GetString(req, "name")
-		assert.Equal(t, "John Smith", *value)
 		assert.Nil(t, err)
+		assert.Equal(t, "John Smith", *value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"name": []byte("John Smith"),
 		}, nil)
 		value, err := FromBody.GetString(req, "name")
-		assert.Equal(t, "John Smith", *value)
 		assert.Nil(t, err)
+		assert.Equal(t, "John Smith", *value)
 	}
 }
 func TestFromBody_GetStringList(t *testing.T) {
@@ -60,54 +60,54 @@ func TestFromBody_GetStringList(t *testing.T) {
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
 		value, err := FromBody.GetStringList(req, "names")
-		assert.Nil(t, value)
 		assert.EqualError(t, err, "unknown error")
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, nil)
 		value, err := FromBody.GetStringList(req, "names")
-		assert.Nil(t, value)
 		assert.Nil(t, err)
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"names": 123,
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
-		assert.Nil(t, value)
 		assert.EqualError(t, err, "invalid 'names', must be array of strings")
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"names": "John Smith",
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
-		assert.Nil(t, value)
 		assert.EqualError(t, err, "invalid 'names', must be array of strings")
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"names": []interface{}{"John Smith", 1234},
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
-		assert.Nil(t, value)
 		assert.EqualError(t, err, "invalid 'names', must be array of strings")
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"names": []string{"John Smith", "John Doe"},
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
-		assert.Equal(t, []string{"John Smith", "John Doe"}, value)
 		assert.Nil(t, err)
+		assert.Equal(t, []string{"John Smith", "John Doe"}, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"names": []interface{}{"John Smith", "John Doe"},
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
-		assert.Equal(t, []string{"John Smith", "John Doe"}, value)
 		assert.Nil(t, err)
+		assert.Equal(t, []string{"John Smith", "John Doe"}, value)
 	}
 
 }
@@ -120,62 +120,62 @@ func TestFromBody_GetInt(t *testing.T) {
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
 		value, err := FromBody.GetInt(req, "count")
-		assert.Nil(t, value)
 		assert.EqualError(t, err, "unknown error")
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Nil(t, value)
 		assert.Nil(t, err)
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"count": "abc",
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Nil(t, value)
 		assert.EqualError(t, err, "invalid 'count', must be integer")
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"count": "345",
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Nil(t, value)
 		assert.EqualError(t, err, "invalid 'count', must be integer")
+		assert.Nil(t, value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"count": 5001,
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Equal(t, 5001, *value)
 		assert.Nil(t, err)
+		assert.Equal(t, 5001, *value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"count": int32(5003),
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Equal(t, 5003, *value)
 		assert.Nil(t, err)
+		assert.Equal(t, 5003, *value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"count": int64(6123),
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Equal(t, 6123, *value)
 		assert.Nil(t, err)
+		assert.Equal(t, 6123, *value)
 	}
 	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"count": 14.15,
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
-		assert.Equal(t, 14, *value)
 		assert.Nil(t, err)
+		assert.Equal(t, 14, *value)
 	}
 }
 
