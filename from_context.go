@@ -144,7 +144,7 @@ func (f *fromContext) GetTime(req Request, key string) (*time.Time, error) {
 		default:
 			return nil, NewError(
 				InvalidArgument,
-				fmt.Sprintf("invalid '%v', must be string", key),
+				fmt.Sprintf("invalid '%v', must be RFC3339 time string", key),
 				fmt.Errorf("ctx.Value(%#v) = %#v", key, valueIn),
 			).Add("ctx", ctx)
 		}

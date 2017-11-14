@@ -3,6 +3,7 @@ package restpc
 import (
 	"context"
 	"testing"
+	"time"
 
 	gomock "github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -192,5 +193,42 @@ func TestFromContext_GetBool(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, false, *value)
 	}
+}
 
+func TestFromContext_GetTime(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockReq := NewMockRequest(ctrl)
+	var req Request = mockReq
+	{
+		mockReq.EXPECT().Context().Return(context.Background())
+		value, err := FromContext.GetTime(req, "since")
+		assert.Nil(t, value)
+		assert.NoError(t, err)
+	}
+	{
+		mockReq.EXPECT().Context().Return(context.WithValue(context.Background(), "since", "abcd"))
+		value, err := FromContext.GetTime(req, "since")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'since', must be RFC3339 time string")
+	}
+	{
+		mockReq.EXPECT().Context().Return(context.WithValue(context.Background(), "since", 3465))
+		value, err := FromContext.GetTime(req, "since")
+		assert.Nil(t, value)
+		assert.EqualError(t, err, "invalid 'since', must be RFC3339 time string")
+	}
+	{
+		mockReq.EXPECT().Context().Return(context.WithValue(context.Background(), "since", "2017-12-20T17:30:00Z"))
+		value, err := FromContext.GetTime(req, "since")
+		assert.NoError(t, err)
+		assert.Equal(t, time.Date(2017, time.Month(12), 20, 17, 30, 0, 0, time.UTC), *value)
+	}
+	{
+		tm := time.Date(2017, time.Month(12), 20, 17, 30, 0, 0, time.UTC)
+		mockReq.EXPECT().Context().Return(context.WithValue(context.Background(), "since", tm))
+		value, err := FromContext.GetTime(req, "since")
+		assert.NoError(t, err)
+		assert.Equal(t, tm, *value)
+	}
 }
