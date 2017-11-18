@@ -328,6 +328,7 @@ func (req *requestImp) HeaderStrippedAuth() http.Header {
 }
 
 func (req *requestImp) FullMap() map[string]interface{} {
+	req.r.ParseForm()
 	bodyMap, _ := req.BodyMap()
 	urlStr := req.URL().String()
 	remoteIP, _ := req.RemoteIP()
