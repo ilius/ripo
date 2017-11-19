@@ -133,6 +133,7 @@ func (req *requestImp) BodyMap() (map[string]interface{}, error) {
 	if len(body) > 0 {
 		err = json.Unmarshal(body, &data)
 		if err != nil {
+			err = NewError(InvalidArgument, "request body is not a valid json", err)
 			req.bodyMapErr = err
 			return nil, err
 		}

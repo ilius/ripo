@@ -120,7 +120,7 @@ func Test_requestImp_Body_NonJson(t *testing.T) {
 	}
 	{
 		bodyMap, err := req.BodyMap()
-		assert.EqualError(t, err, "invalid character 'h' looking for beginning of value")
+		assert.EqualError(t, err, "request body is not a valid json")
 		assert.Nil(t, bodyMap)
 	}
 	{
@@ -253,12 +253,12 @@ func Test_requestImp_MockBody2(t *testing.T) {
 	}
 	{
 		bodyMap, err := req.BodyMap()
-		assert.EqualError(t, err, "invalid character 'a' looking for beginning of value")
+		assert.EqualError(t, err, "request body is not a valid json")
 		assert.Nil(t, bodyMap)
 	}
 	{
 		bodyMap, err := req.BodyMap()
-		assert.EqualError(t, err, "invalid character 'a' looking for beginning of value")
+		assert.EqualError(t, err, "request body is not a valid json")
 		assert.Nil(t, bodyMap)
 	}
 	{
