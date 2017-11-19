@@ -1,6 +1,7 @@
 package restpc
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -182,4 +183,15 @@ func Test_requestImp_GetHeader(t *testing.T) {
 	}
 	assert.Equal(t, "bearer foobar", req.GetHeader("Authorization"))
 	assert.Equal(t, "", req.GetHeader("foo"))
+}
+
+func Test_requestImp_Context(t *testing.T) {
+	r, err := http.NewRequest("POST", "http://127.0.0.1/test", nil)
+	assert.NoError(t, err)
+	req := &requestImp{
+		r:           r,
+		handlerName: "Test",
+	}
+	ctx := req.Context()
+	assert.Equal(t, context.Background(), ctx)
 }
