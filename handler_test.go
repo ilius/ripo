@@ -238,6 +238,10 @@ func TestHandler_Full_Happy(t *testing.T) {
 		if err != nil {
 			return nil, err
 		}
+		unsubTime, err := req.GetTime("unsubTime", FromBody, FromEmpty)
+		if err != nil {
+			return nil, err
+		}
 		return &Response{
 			Data: map[string]interface{}{
 				"firstName":  *firstName,
@@ -248,6 +252,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 				"interests":  interests,
 				"count":      *count,
 				"maxCount":   maxCount,
+				"unsubTime":  unsubTime,
 			},
 		}, nil
 	})
@@ -400,7 +405,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 			"age": 30,
 			"subscribed": true,
 			"interests": ["Tech", "Sports"],
-			"count": 10			
+			"count": 10
 		}`))
 		if err != nil {
 			panic(err)
@@ -409,5 +414,24 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusOK, w.Code)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
+			"age": 30,
+			"subscribed": true,
+			"interests": ["Tech", "Sports"],
+			"count": 10,
+			"unsubTime": "2017-12-20T17:30:00Z"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusOK, w.Code)
+		t.Log(w.Body.String())
 	}
 }
