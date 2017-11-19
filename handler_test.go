@@ -334,6 +334,22 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
 			"firstName": "John",
 			"lastName": "Smith",
+			"age": "forty"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		resBody := w.Body.String()
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'age', must be float\"}\n", resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
 			"age": 30
 		}`))
 		if err != nil {
@@ -351,7 +367,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 			"firstName": "John",
 			"lastName": "Smith",
 			"age": 30,
-			"subscribed": true
+			"subscribed": "no"
 		}`))
 		if err != nil {
 			panic(err)
@@ -361,7 +377,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'interests'\"}\n", resBody)
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'subscribed', must be true or false\"}\n", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -379,6 +395,24 @@ func TestHandler_Full_Happy(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 		resBody := w.Body.String()
 		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'interests'\"}\n", resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
+			"age": 30,
+			"subscribed": true,
+			"interests": "Tech"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		resBody := w.Body.String()
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'interests', must be array of strings\"}\n", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -405,6 +439,25 @@ func TestHandler_Full_Happy(t *testing.T) {
 			"age": 30,
 			"subscribed": true,
 			"interests": ["Tech", "Sports"],
+			"count": "ten"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		resBody := w.Body.String()
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'count', must be integer\"}\n", resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
+			"age": 30,
+			"subscribed": true,
+			"interests": ["Tech", "Sports"],
 			"count": 10
 		}`))
 		if err != nil {
@@ -423,6 +476,111 @@ func TestHandler_Full_Happy(t *testing.T) {
 			"subscribed": true,
 			"interests": ["Tech", "Sports"],
 			"count": 10,
+			"maxCount": "123"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		resBody := w.Body.String()
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'maxCount', must be integer\"}\n", resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
+			"age": 30,
+			"subscribed": true,
+			"interests": ["Tech", "Sports"],
+			"count": 10,
+			"unsubTime": "2017-12-20T17:30:00Z"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusOK, w.Code)
+		t.Log(w.Body.String())
+	}
+}
+
+func TestHandler_2(t *testing.T) {
+	myUrlStr := "http://127.0.0.1/test/full"
+	handlerFunc := TranslateHandler(func(req Request) (*Response, error) {
+		firstName, err := req.GetString("firstName")
+		if err != nil {
+			return nil, err
+		}
+		lastName, err := req.GetString("lastName")
+		if err != nil {
+			return nil, err
+		}
+		unsubTime, err := req.GetTime("unsubTime")
+		if err != nil {
+			return nil, err
+		}
+		return &Response{
+			Data: map[string]interface{}{
+				"firstName": *firstName,
+				"lastName":  *lastName,
+				"unsubTime": unsubTime,
+			},
+		}, nil
+	})
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": 123
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		resBody := w.Body.String()
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'firstName', must be string\"}\n", resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		resBody := w.Body.String()
+		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'unsubTime'\"}\n", resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
+			"unsubTime": "bad time"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		resBody := w.Body.String()
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'unsubTime', must be RFC3339 time string\"}\n", resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
 			"unsubTime": "2017-12-20T17:30:00Z"
 		}`))
 		if err != nil {
