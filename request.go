@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -110,7 +109,7 @@ func (req *requestImp) Body() ([]byte, error) {
 	body, err := ioutil.ReadAll(req.r.Body)
 	if err != nil {
 		req.bodyErr = err
-		log.Println(err)
+		return nil, err
 	}
 	req.body = body
 	req.r.Body.Close()
@@ -135,8 +134,7 @@ func (req *requestImp) BodyMap() (map[string]interface{}, error) {
 		err = json.Unmarshal(body, &data)
 		if err != nil {
 			req.bodyMapErr = err
-			log.Println(err)
-			// return nil, err // FIXME
+			return nil, err
 		}
 	}
 	req.bodyMap = data

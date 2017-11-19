@@ -10,3 +10,7 @@ mockgen \
 	-source request.go \
 	-destination mock_request.go \
 	|| exit $?
+
+mockgen -package restpc \
+	-destination mock_readcloser.go \
+	io ReadCloser  || exit $?

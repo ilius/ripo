@@ -3,10 +3,13 @@ package restpc
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/golang/mock/gomock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -117,8 +120,8 @@ func Test_requestImp_Body_NonJson(t *testing.T) {
 	}
 	{
 		bodyMap, err := req.BodyMap()
-		assert.NoError(t, err)
-		assert.Equal(t, map[string]interface{}{}, bodyMap)
+		assert.EqualError(t, err, "invalid character 'h' looking for beginning of value")
+		assert.Nil(t, bodyMap)
 	}
 	{
 		body, err := req.Body()
@@ -194,4 +197,74 @@ func Test_requestImp_Context(t *testing.T) {
 	}
 	ctx := req.Context()
 	assert.Equal(t, context.Background(), ctx)
+}
+
+func Test_requestImp_MockBody(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mockBody := NewMockReadCloser(ctrl)
+	r, err := http.NewRequest("POST", "http://127.0.0.1/test", mockBody)
+	assert.NoError(t, err)
+	req := &requestImp{
+		r:           r,
+		handlerName: "Test",
+	}
+	{
+		mockBody.EXPECT().Read(gomock.Any()).Return(0, fmt.Errorf("no data for you"))
+		mockBody.EXPECT().Close()
+		body, err := req.Body()
+		assert.EqualError(t, err, "no data for you")
+		assert.Nil(t, body)
+	}
+	{
+		body, err := req.Body()
+		assert.EqualError(t, err, "no data for you")
+		assert.Nil(t, body)
+	}
+	{
+		bodyMap, err := req.BodyMap()
+		assert.EqualError(t, err, "no data for you")
+		assert.Nil(t, bodyMap)
+	}
+	{
+		bodyMap := map[string]string{}
+		err := req.BodyTo(&bodyMap)
+		assert.EqualError(t, err, "no data for you")
+		assert.Equal(t, 0, len(bodyMap))
+	}
+}
+
+func Test_requestImp_MockBody2(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mockBody := NewMockReadCloser(ctrl)
+	r, err := http.NewRequest("POST", "http://127.0.0.1/test", mockBody)
+	assert.NoError(t, err)
+	req := &requestImp{
+		r:           r,
+		handlerName: "Test",
+	}
+	{
+		mockBody.EXPECT().Read(gomock.Any()).Do(func(b []byte) {
+			b[0] = 'a'
+		}).Return(1, nil).Return(1, io.EOF)
+		mockBody.EXPECT().Close()
+		body, err := req.Body()
+		assert.NoError(t, err)
+		assert.Equal(t, []byte("a"), body)
+	}
+	{
+		bodyMap, err := req.BodyMap()
+		assert.EqualError(t, err, "invalid character 'a' looking for beginning of value")
+		assert.Nil(t, bodyMap)
+	}
+	{
+		bodyMap, err := req.BodyMap()
+		assert.EqualError(t, err, "invalid character 'a' looking for beginning of value")
+		assert.Nil(t, bodyMap)
+	}
+	{
+		bodyMap := map[string]string{}
+		err := req.BodyTo(&bodyMap)
+		assert.EqualError(t, err, "request body is not a valid json")
+		assert.Equal(t, 0, len(bodyMap))
+	}
 }
