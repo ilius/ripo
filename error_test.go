@@ -24,11 +24,8 @@ func Test_NewError_Twice(t *testing.T) {
 }
 
 func unimplementedHandler(req Request) (*Response, error) {
-	return nil, NewError(
-		Unimplemented,
-		"we didn't implement this",
-		fmt.Errorf("just an unexposed message"),
-	).Add("name", "June The Girl")
+	err := fmt.Errorf("just an unexposed message")
+	return nil, NewError(Unimplemented, "we didn't implement this", err).Add("name", "June The Girl")
 }
 
 func TestErrorFull(t *testing.T) {
@@ -85,7 +82,7 @@ func TestErrorFull(t *testing.T) {
 		}
 		assert.Equal(t, handlerNameFull, record.Function())
 		assert.Equal(t, handlerName, record.FunctionLocal())
-		assert.Equal(t, 31, record.Line())
+		assert.Equal(t, 28, record.Line())
 		mapRecords := tb.MapRecords()
 		if len(mapRecords) != 1 {
 			t.Errorf("len(mapRecords) = %v", len(mapRecords))
