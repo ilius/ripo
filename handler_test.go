@@ -3,6 +3,7 @@ package restpc
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -25,8 +26,8 @@ func TestHandler_Panic(t *testing.T) {
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
-	body := w.Body.String()
-	assert.Equal(t, "{\"code\":\"Internal\",\"error\":\"Internal\"}\n", body)
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "{\"code\":\"Internal\",\"error\":\"Internal\"}", body)
 }
 
 func TestHandler_1(t *testing.T) {
@@ -40,8 +41,171 @@ func TestHandler_1(t *testing.T) {
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
-	body := w.Body.String()
-	assert.Equal(t, "{\"code\":\"Unknown\",\"error\":\"Unknown\"}\n", body)
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "{\"code\":\"Unknown\",\"error\":\"Unknown\"}", body)
+}
+
+func TestHandler_ResNil(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		return nil, nil
+	})
+	r, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "{\"code\":\"Internal\",\"error\":\"Internal\"}", body)
+}
+
+func TestHandler_ResData_JsonBytes(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		return &Response{
+			Data: []byte(`{"refNo": "1234"}`),
+		}, nil
+	})
+	r, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "text/plain; charset=utf-8", w.Header().Get("Content-Type")) // not json
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "{\"refNo\": \"1234\"}", body)
+}
+
+func TestHandler_ResData_JsonString(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		return &Response{
+			Data: `{"refNo": "1234"}`,
+		}, nil
+	})
+	r, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "text/plain; charset=utf-8", w.Header().Get("Content-Type")) // not json
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "{\"refNo\": \"1234\"}", body)
+}
+
+func TestHandler_ResData_Struct(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		return &Response{
+			Data: struct {
+				RefNo string `json:"refNo"`
+			}{
+				RefNo: "1234",
+			},
+		}, nil
+	})
+	r, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "application/json; charset=UTF-8", w.Header().Get("Content-Type")) // not json
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "{\"refNo\":\"1234\"}", body)
+}
+
+func TestHandler_ResData_Nil(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		return &Response{
+			Data: nil,
+		}, nil
+	})
+	r, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "application/json; charset=UTF-8", w.Header().Get("Content-Type"))
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "{}", body)
+}
+
+func TestHandler_ResData_HugeNum(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		return &Response{
+			Data: math.Pow10(1000), // not json-marshallable
+		}, nil
+	})
+	r, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "text/plain; charset=utf-8", w.Header().Get("Content-Type")) // not json
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "", body)
+}
+
+func TestHandler_ResRedirectPath_DefaultCode(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		return &Response{
+			RedirectPath: "login",
+		}, nil
+	})
+	r, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusSeeOther, w.Code)
+	assert.Equal(t, "", w.Header().Get("Content-Type"))
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "<a href=\"/login\">See Other</a>.", body)
+}
+
+func TestHandler_ResRedirectPath_MovedPermanently(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		return &Response{
+			RedirectPath:       "login",
+			RedirectStatusCode: http.StatusMovedPermanently,
+		}, nil
+	})
+	r, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusMovedPermanently, w.Code)
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "<a href=\"/login\">Moved Permanently</a>.", body)
+}
+
+func TestHandler_ResHeader(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		return &Response{
+			Header: http.Header{
+				"Content-Language": []string{"en"},
+			},
+		}, nil
+	})
+	r, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "en", w.Header().Get("Content-Language"))
 }
 
 func TestHandler_CodeMapping(t *testing.T) {
@@ -274,7 +438,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusOK, w.Code)
-		resBody := w.Body.String()
+		resBody := strings.TrimSpace(w.Body.String())
 		resMap := map[string]interface{}{}
 		err = json.Unmarshal([]byte(resBody), &resMap)
 		if err != nil {
@@ -298,8 +462,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'firstName'\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'firstName'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -312,8 +476,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'lastName'\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'lastName'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -327,8 +491,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'age'\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'age'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -343,8 +507,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'age', must be float\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'age', must be float\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -359,8 +523,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'subscribed'\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'subscribed'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -376,8 +540,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'subscribed', must be true or false\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'subscribed', must be true or false\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -393,8 +557,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'interests'\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'interests'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -411,8 +575,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'interests', must be array of strings\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'interests', must be array of strings\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -429,8 +593,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'count'\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'count'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -448,8 +612,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'count', must be integer\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'count', must be integer\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -485,8 +649,8 @@ func TestHandler_Full_Happy(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'maxCount', must be integer\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'maxCount', must be integer\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -543,8 +707,8 @@ func TestHandler_2(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'firstName', must be string\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'firstName', must be string\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -558,8 +722,8 @@ func TestHandler_2(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'unsubTime'\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'unsubTime'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -574,8 +738,8 @@ func TestHandler_2(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		resBody := w.Body.String()
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'unsubTime', must be RFC3339 time string\"}\n", resBody)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'unsubTime', must be RFC3339 time string\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
