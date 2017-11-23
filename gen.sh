@@ -5,12 +5,12 @@ go get -u github.com/golang/mock/mockgen
 
 rm mock_request.go 2>/dev/null
 
-mockgen \
+$GOPATH/bin/mockgen \
 	-package restpc \
 	-source request.go \
 	-destination mock_request.go \
 	|| exit $?
 
-mockgen -package restpc \
+$GOPATH/bin/mockgen -package restpc \
 	-destination mock_readcloser.go \
 	io ReadCloser  || exit $?
