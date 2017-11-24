@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,6 +40,79 @@ func TestHandler_1(t *testing.T) {
 		panic(err)
 	}
 	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "{\"code\":\"Unknown\",\"error\":\"Unknown\"}", body)
+}
+
+func TestHandler_PostNilBody(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		name, err := req.GetString("name")
+		if err != nil {
+			return nil, err
+		}
+		return &Response{
+			Data: map[string]string{
+				"name": *name,
+			},
+		}, nil
+	})
+	r, err := http.NewRequest("POST", "", nil)
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "error in parsing form", body)
+}
+
+func TestHandler_PostSimple(t *testing.T) {
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		name, err := req.GetString("name")
+		if err != nil {
+			return nil, err
+		}
+		return &Response{
+			Data: map[string]string{
+				"msg": "hello " + *name,
+			},
+		}, nil
+	})
+	r, err := http.NewRequest("POST", "", strings.NewReader(`{"name": "John"}`))
+	if err != nil {
+		panic(err)
+	}
+	w := httptest.NewRecorder()
+	handlerFunc(w, r)
+	assert.Equal(t, http.StatusOK, w.Code)
+	body := strings.TrimSpace(w.Body.String())
+	assert.Equal(t, "{\"msg\":\"hello John\"}", body)
+}
+
+func TestHandler_MockBody(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mockBody := NewMockReadCloser(ctrl)
+	r, err := http.NewRequest("POST", "http://127.0.0.1/test", mockBody)
+	assert.NoError(t, err)
+	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+		name, err := req.GetString("name")
+		if err != nil {
+			return nil, err
+		}
+		return &Response{
+			Data: map[string]string{
+				"msg": "hello " + *name,
+			},
+		}, nil
+	})
+	w := httptest.NewRecorder()
+
+	mockBody.EXPECT().Read(gomock.Any()).Return(0, fmt.Errorf("no data for you"))
+	mockBody.EXPECT().Close()
+
 	handlerFunc(w, r)
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	body := strings.TrimSpace(w.Body.String())
