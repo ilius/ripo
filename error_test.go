@@ -94,4 +94,20 @@ func TestErrorFull(t *testing.T) {
 		assert.Equal(t, record.FunctionLocal(), mapRecord["functionLocal"])
 		assert.Equal(t, record.Line(), mapRecord["line"])
 	}
+	{
+		tb := rpcErr.Traceback("")
+		assert.Equal(t, 6, len(tb.Callers()))
+		assert.Equal(t, 6, len(tb.Records()))
+	}
+}
+
+func TestFunctionLocalNoPanic(t *testing.T) {
+	record := &tracebackRecordImp{}
+	assert.Equal(t, "", record.FunctionLocal())
+}
+
+func Test_tracebackImp_empty(t *testing.T) {
+	tb := &tracebackImp{}
+	assert.Equal(t, 0, len(tb.Callers()))
+	assert.Equal(t, 0, len(tb.Records()))
 }
