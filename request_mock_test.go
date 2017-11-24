@@ -45,32 +45,32 @@ func Test_RequestMock(t *testing.T) {
 		mockReq.GetHeader("test")
 	}
 	{
-		mockReq.EXPECT().GetString("test").Return(nil, nil)
-		mockReq.GetString("test")
+		mockReq.EXPECT().GetString("test", FromForm).Return(nil, nil)
+		mockReq.GetString("test", FromForm)
 	}
 	{
-		mockReq.EXPECT().GetStringList("test").Return(nil, nil)
-		mockReq.GetStringList("test")
+		mockReq.EXPECT().GetStringList("test", FromBody).Return(nil, nil)
+		mockReq.GetStringList("test", FromBody)
 	}
 	{
-		mockReq.EXPECT().GetInt("test").Return(nil, nil)
-		mockReq.GetInt("test")
+		mockReq.EXPECT().GetInt("test", FromBody).Return(nil, nil)
+		mockReq.GetInt("test", FromBody)
 	}
 	{
-		mockReq.EXPECT().GetIntDefault("test", 0).Return(0, nil)
-		mockReq.GetIntDefault("test", 0)
+		mockReq.EXPECT().GetIntDefault("test", 0, FromContext).Return(0, nil)
+		mockReq.GetIntDefault("test", 0, FromContext)
 	}
 	{
-		mockReq.EXPECT().GetFloat("test").Return(nil, nil)
-		mockReq.GetFloat("test")
+		mockReq.EXPECT().GetFloat("test", FromBody).Return(nil, nil)
+		mockReq.GetFloat("test", FromBody)
 	}
 	{
-		mockReq.EXPECT().GetBool("test").Return(nil, nil)
-		mockReq.GetBool("test")
+		mockReq.EXPECT().GetBool("test", FromForm).Return(nil, nil)
+		mockReq.GetBool("test", FromForm)
 	}
 	{
-		mockReq.EXPECT().GetTime("test").Return(nil, nil)
-		mockReq.GetTime("test")
+		mockReq.EXPECT().GetTime("test", FromBody).Return(nil, nil)
+		mockReq.GetTime("test", FromBody)
 	}
 	{
 		mockReq.EXPECT().FullMap().Return(nil)
