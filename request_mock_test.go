@@ -1,4 +1,4 @@
-package restpc
+package ripo
 
 import (
 	"io"
