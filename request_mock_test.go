@@ -3,6 +3,7 @@ package ripo
 import (
 	"io"
 	"net/url"
+	"reflect"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -76,5 +77,12 @@ func Test_RequestMock(t *testing.T) {
 		mockReq.EXPECT().FullMap().Return(nil)
 		mockReq.FullMap()
 	}
-
+	{
+		type Person struct {
+			Name string `json:"name"`
+		}
+		PersonType := reflect.TypeOf(Person{})
+		mockReq.EXPECT().GetObject("person", PersonType, FromBody).Return(nil, nil)
+		mockReq.GetObject("person", PersonType, FromBody)
+	}
 }

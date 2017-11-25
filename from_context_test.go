@@ -2,6 +2,7 @@ package ripo
 
 import (
 	"context"
+	"reflect"
 	"testing"
 	"time"
 
@@ -230,5 +231,20 @@ func TestFromContext_GetTime(t *testing.T) {
 		value, err := FromContext.GetTime(req, "since")
 		assert.NoError(t, err)
 		assert.Equal(t, tm, *value)
+	}
+}
+
+func TestFromContext_GetObject(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockReq := NewMockRequest(ctrl)
+	var req Request = mockReq
+	type Person struct {
+		Name string `json:"name"`
+	}
+	{
+		value, err := FromContext.GetObject(req, "since", reflect.TypeOf(Person{}))
+		assert.Nil(t, value)
+		assert.NoError(t, err)
 	}
 }

@@ -1,6 +1,7 @@
 package ripo
 
 import (
+	"reflect"
 	"testing"
 	"time"
 
@@ -172,5 +173,20 @@ func TestFromForm_GetTime(t *testing.T) {
 		value, err := FromForm.GetTime(req, "since")
 		assert.NoError(t, err)
 		assert.Equal(t, time.Date(2017, time.Month(12), 20, 17, 30, 0, 0, time.UTC), *value)
+	}
+}
+
+func TestFromForm_GetObject(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockReq := NewMockRequest(ctrl)
+	var req Request = mockReq
+	type Person struct {
+		Name string `json:"name"`
+	}
+	{
+		value, err := FromForm.GetObject(req, "since", reflect.TypeOf(Person{}))
+		assert.Nil(t, value)
+		assert.NoError(t, err)
 	}
 }
