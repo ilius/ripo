@@ -34,5 +34,9 @@ func (f *fromEmpty) GetTime(req Request, key string) (*time.Time, error) {
 }
 
 func (f *fromEmpty) GetObject(req Request, key string, structType reflect.Type) (interface{}, error) {
-	return nil, nil
+	if structType.Kind() == reflect.Ptr {
+		structType = structType.Elem()
+	}
+	valueIn := reflect.New(structType).Elem().Interface()
+	return valueIn, nil
 }
