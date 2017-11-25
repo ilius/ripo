@@ -1,6 +1,7 @@
 package ripo
 
 import (
+	"reflect"
 	"time"
 )
 
@@ -30,4 +31,8 @@ func (f *fromEmpty) GetBool(req Request, key string) (*bool, error) {
 func (f *fromEmpty) GetTime(req Request, key string) (*time.Time, error) {
 	var v time.Time
 	return &v, nil
+}
+
+func (f *fromEmpty) GetObject(req Request, key string, structType reflect.Type) (interface{}, error) {
+	return nil, nil
 }

@@ -2,6 +2,7 @@ package ripo
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -91,5 +92,9 @@ func (f *fromForm) GetTime(req Request, key string) (*time.Time, error) {
 		}
 		return &valueTm, nil
 	}
+	return nil, nil
+}
+
+func (f *fromForm) GetObject(req Request, key string, structType reflect.Type) (interface{}, error) {
 	return nil, nil
 }

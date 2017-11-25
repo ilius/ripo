@@ -2,6 +2,8 @@ package ripo
 
 import (
 	"fmt"
+	"log"
+	"reflect"
 	"testing"
 	"time"
 
@@ -354,5 +356,120 @@ func TestFromBody_GetTime(t *testing.T) {
 		value, err := FromBody.GetTime(req, "since")
 		assert.NoError(t, err)
 		assert.Equal(t, time.Date(2017, time.Month(12), 20, 17, 30, 0, 0, time.UTC), *value)
+	}
+}
+
+func TestFromBody_GetObject(t *testing.T) {
+	type Person struct {
+		Name      string  `json:"name"`
+		BirthDate []int   `json:"birthDate"` // mapstructure does not support [3]int
+		Age       float64 `json:"age"`
+	}
+	PersonType := reflect.TypeOf(Person{})
+	PersonTypePtr := reflect.TypeOf(&Person{})
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockReq := NewMockRequest(ctrl)
+	var req Request = mockReq
+	{
+		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
+		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
+		assert.EqualError(t, err, "unknown error")
+		assert.Nil(t, value)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(nil, nil)
+		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
+		assert.NoError(t, err)
+		assert.Nil(t, value)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"info": 123,
+		}, nil)
+		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
+		assert.EqualError(t, err, "invalid 'info', must be a compatible object")
+		assert.Nil(t, value)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"info": map[string]interface{}{},
+		}, nil)
+		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
+		assert.NoError(t, err)
+		if err != nil {
+			log.Println("Private:", err.(RPCError).Private())
+		}
+		assert.Equal(t, Person{}, value)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"info": map[string]interface{}{
+				"name": "John Smith",
+			},
+		}, nil)
+		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
+		assert.NoError(t, err)
+		if err != nil {
+			log.Println("Private:", err.(RPCError).Private())
+		}
+		assert.Equal(t, Person{
+			Name: "John Smith",
+		}, value)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"info": map[string]interface{}{
+				"name":      "John Smith",
+				"birthDate": []int{1987, 12, 30},
+			},
+		}, nil)
+		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
+		assert.NoError(t, err)
+		if err != nil {
+			log.Println("Private:", err.(RPCError).Private())
+		}
+		assert.Equal(t, Person{
+			Name:      "John Smith",
+			BirthDate: []int{1987, 12, 30},
+		}, value)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"info": map[string]interface{}{
+				"name":      "John Smith",
+				"birthDate": []int{1987, 12, 30},
+				"age":       30.8,
+			},
+		}, nil)
+		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
+		assert.NoError(t, err)
+		if err != nil {
+			log.Println("Private:", err.(RPCError).Private())
+		}
+		assert.Equal(t, Person{
+			Name:      "John Smith",
+			BirthDate: []int{1987, 12, 30},
+			Age:       30.8,
+		}, value)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"info": map[string]interface{}{
+				"name":      "John Smith",
+				"birthDate": []int{1987, 12, 30},
+				"age":       30.8,
+			},
+		}, nil)
+		value, err := FromBody.GetObject(req, "info", PersonType)
+		assert.NoError(t, err)
+		if err != nil {
+			log.Println("Private:", err.(RPCError).Private())
+		}
+		assert.Equal(t, Person{
+			Name:      "John Smith",
+			BirthDate: []int{1987, 12, 30},
+			Age:       30.8,
+		}, value)
 	}
 }

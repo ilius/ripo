@@ -2,7 +2,10 @@ package ripo
 
 import (
 	"fmt"
+	"reflect"
 	"time"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 var FromBody FromX = &fromBody{}
@@ -177,6 +180,43 @@ func (f *fromBody) GetTime(req Request, key string) (*time.Time, error) {
 				nil,
 			).Add("value", value)
 		}
+	}
+	return nil, nil
+}
+
+func (f *fromBody) GetObject(req Request, key string, structType reflect.Type) (interface{}, error) {
+	if structType.Kind() == reflect.Ptr {
+		structType = structType.Elem()
+	}
+	data, err := req.BodyMap()
+	if err != nil {
+		return nil, err
+	}
+	mValueIn := data[key]
+	if mValueIn != nil {
+		mValueType := reflect.TypeOf(mValueIn)
+		if mValueType == structType {
+			return &mValueIn, nil
+		}
+		if mValueType.Kind() == reflect.Map {
+			valuePtrValue := reflect.New(structType)
+			valuePtrIn := valuePtrValue.Interface()
+			err := mapstructure.Decode(mValueIn, valuePtrIn)
+			if err != nil {
+				return nil, NewError(
+					InvalidArgument,
+					fmt.Sprintf("invalid '%v', must be a compatible object", key),
+					err,
+				).Add("structType", structType)
+			}
+			valueIn := valuePtrValue.Elem().Interface()
+			return valueIn, nil
+		}
+		return nil, NewError(
+			InvalidArgument,
+			fmt.Sprintf("invalid '%v', must be a compatible object", key),
+			nil,
+		)
 	}
 	return nil, nil
 }
