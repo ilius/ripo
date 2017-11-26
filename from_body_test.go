@@ -483,4 +483,37 @@ func TestFromBody_GetObject(t *testing.T) {
 			Age:       30.8,
 		}, value)
 	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"guestList": []interface{}{
+				map[string]interface{}{
+					"name":      "John Smith",
+					"birthDate": []int{1987, 12, 30},
+					"age":       30.8,
+				},
+				map[string]interface{}{
+					"name":      "Jane Smith",
+					"birthDate": []int{1991, 6, 30},
+					"age":       27.3,
+				},
+			},
+		}, nil)
+		value, err := FromBody.GetObject(req, "guestList", reflect.SliceOf(PersonType))
+		assert.NoError(t, err)
+		if err != nil {
+			log.Println("Private:", err.(RPCError).Private())
+		}
+		assert.Equal(t, []Person{
+			{
+				Name:      "John Smith",
+				BirthDate: []int{1987, 12, 30},
+				Age:       30.8,
+			},
+			{
+				Name:      "Jane Smith",
+				BirthDate: []int{1991, 6, 30},
+				Age:       27.3,
+			},
+		}, value)
+	}
 }

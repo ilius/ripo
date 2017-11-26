@@ -195,7 +195,8 @@ func (f *fromBody) GetObject(req Request, key string, structType reflect.Type) (
 		if mValueType == structType {
 			return &mValueIn, nil
 		}
-		if mValueType.Kind() == reflect.Map {
+		switch mValueType.Kind() {
+		case reflect.Map, reflect.Slice:
 			valuePtrValue := reflect.New(structType)
 			valuePtrIn := valuePtrValue.Interface()
 			err := mapstructure.Decode(mValueIn, valuePtrIn)
