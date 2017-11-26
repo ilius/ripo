@@ -12,5 +12,5 @@ type FromX interface {
 	GetFloat(req Request, key string) (*float64, error)
 	GetBool(req Request, key string) (*bool, error)
 	GetTime(req Request, key string) (*time.Time, error)
-	GetObject(req Request, key string, structType reflect.Type) (interface{}, error)
+	GetObject(req Request, key string, _type reflect.Type) (interface{}, error)
 }

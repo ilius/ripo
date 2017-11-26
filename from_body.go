@@ -184,7 +184,7 @@ func (f *fromBody) GetTime(req Request, key string) (*time.Time, error) {
 	return nil, nil
 }
 
-func (f *fromBody) GetObject(req Request, key string, structType reflect.Type) (interface{}, error) {
+func (f *fromBody) GetObject(req Request, key string, _type reflect.Type) (interface{}, error) {
 	data, err := req.BodyMap()
 	if err != nil {
 		return nil, err
@@ -192,12 +192,12 @@ func (f *fromBody) GetObject(req Request, key string, structType reflect.Type) (
 	mValueIn := data[key]
 	if mValueIn != nil {
 		mValueType := reflect.TypeOf(mValueIn)
-		if mValueType == structType {
+		if mValueType == _type {
 			return &mValueIn, nil
 		}
 		switch mValueType.Kind() {
 		case reflect.Map, reflect.Slice:
-			valuePtrValue := reflect.New(structType)
+			valuePtrValue := reflect.New(_type)
 			valuePtrIn := valuePtrValue.Interface()
 			err := mapstructure.Decode(mValueIn, valuePtrIn)
 			if err != nil {
@@ -205,7 +205,7 @@ func (f *fromBody) GetObject(req Request, key string, structType reflect.Type) (
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be a compatible object", key),
 					err,
-				).Add("structType", structType)
+				).Add("_type", _type)
 			}
 			valueIn := valuePtrValue.Elem().Interface()
 			return valueIn, nil

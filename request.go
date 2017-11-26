@@ -33,7 +33,7 @@ type Request interface {
 	GetFloat(key string, sources ...FromX) (*float64, error)
 	GetBool(key string, sources ...FromX) (*bool, error)
 	GetTime(key string, sources ...FromX) (*time.Time, error)
-	GetObject(key string, structType reflect.Type, sources ...FromX) (interface{}, error)
+	GetObject(key string, _type reflect.Type, sources ...FromX) (interface{}, error)
 
 	FullMap() map[string]interface{}
 }
@@ -298,12 +298,12 @@ func (req *requestImp) GetTime(key string, sources ...FromX) (*time.Time, error)
 	)
 }
 
-func (req *requestImp) GetObject(key string, structType reflect.Type, sources ...FromX) (interface{}, error) {
+func (req *requestImp) GetObject(key string, _type reflect.Type, sources ...FromX) (interface{}, error) {
 	if len(sources) == 0 {
 		sources = defaultParamSources
 	}
 	for _, source := range sources {
-		value, err := source.GetObject(req, key, structType)
+		value, err := source.GetObject(req, key, _type)
 		if err != nil {
 			return nil, err
 		}

@@ -33,13 +33,13 @@ func (f *fromEmpty) GetTime(req Request, key string) (*time.Time, error) {
 	return &v, nil
 }
 
-func (f *fromEmpty) GetObject(req Request, key string, structType reflect.Type) (interface{}, error) {
+func (f *fromEmpty) GetObject(req Request, key string, _type reflect.Type) (interface{}, error) {
 	givePointer := false
-	if structType.Kind() == reflect.Ptr {
-		structType = structType.Elem()
+	if _type.Kind() == reflect.Ptr {
+		_type = _type.Elem()
 		givePointer = true
 	}
-	valueValue := reflect.New(structType)
+	valueValue := reflect.New(_type)
 	if !givePointer {
 		valueValue = valueValue.Elem()
 	}

@@ -95,6 +95,6 @@ func (f *fromForm) GetTime(req Request, key string) (*time.Time, error) {
 	return nil, nil
 }
 
-func (f *fromForm) GetObject(req Request, key string, structType reflect.Type) (interface{}, error) {
+func (f *fromForm) GetObject(req Request, key string, _type reflect.Type) (interface{}, error) {
 	return nil, nil
 }

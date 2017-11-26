@@ -153,7 +153,7 @@ func (f *fromContext) GetTime(req Request, key string) (*time.Time, error) {
 	return nil, nil
 }
 
-func (f *fromContext) GetObject(req Request, key string, structType reflect.Type) (interface{}, error) {
+func (f *fromContext) GetObject(req Request, key string, _type reflect.Type) (interface{}, error) {
 	// TODO
 	return nil, nil
 }

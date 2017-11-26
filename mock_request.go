@@ -285,8 +285,8 @@ func (mr *MockRequestMockRecorder) GetTime(key interface{}, sources ...interface
 }
 
 // GetObject mocks base method
-func (m *MockRequest) GetObject(key string, structType reflect.Type, sources ...FromX) (interface{}, error) {
-	varargs := []interface{}{key, structType}
+func (m *MockRequest) GetObject(key string, _type reflect.Type, sources ...FromX) (interface{}, error) {
+	varargs := []interface{}{key, _type}
 	for _, a := range sources {
 		varargs = append(varargs, a)
 	}
@@ -297,8 +297,8 @@ func (m *MockRequest) GetObject(key string, structType reflect.Type, sources ...
 }
 
 // GetObject indicates an expected call of GetObject
-func (mr *MockRequestMockRecorder) GetObject(key, structType interface{}, sources ...interface{}) *gomock.Call {
-	varargs := append([]interface{}{key, structType}, sources...)
+func (mr *MockRequestMockRecorder) GetObject(key, _type interface{}, sources ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{key, _type}, sources...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObject", reflect.TypeOf((*MockRequest)(nil).GetObject), varargs...)
 }
 
