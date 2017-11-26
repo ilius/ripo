@@ -43,6 +43,16 @@ func TestFromEmpty(t *testing.T) {
 		}
 		value, err := FromEmpty.GetObject(nil, "person", reflect.TypeOf(&Person{}))
 		assert.NoError(t, err)
+		assert.Equal(t, &Person{}, value)
+	}
+	{
+		type Person struct {
+			Name      string  `json:"name"`
+			BirthDate []int   `json:"birthDate"` // mapstructure does not support [3]int
+			Age       float64 `json:"age"`
+		}
+		value, err := FromEmpty.GetObject(nil, "person", reflect.TypeOf(Person{}))
+		assert.NoError(t, err)
 		assert.Equal(t, Person{}, value)
 	}
 }
