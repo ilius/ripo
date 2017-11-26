@@ -400,6 +400,17 @@ func TestFromBody_GetObject(t *testing.T) {
 		if err != nil {
 			log.Println("Private:", err.(RPCError).Private())
 		}
+		assert.Equal(t, &Person{}, value)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"info": map[string]interface{}{},
+		}, nil)
+		value, err := FromBody.GetObject(req, "info", PersonType)
+		assert.NoError(t, err)
+		if err != nil {
+			log.Println("Private:", err.(RPCError).Private())
+		}
 		assert.Equal(t, Person{}, value)
 	}
 	{
@@ -413,7 +424,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		if err != nil {
 			log.Println("Private:", err.(RPCError).Private())
 		}
-		assert.Equal(t, Person{
+		assert.Equal(t, &Person{
 			Name: "John Smith",
 		}, value)
 	}
@@ -429,7 +440,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		if err != nil {
 			log.Println("Private:", err.(RPCError).Private())
 		}
-		assert.Equal(t, Person{
+		assert.Equal(t, &Person{
 			Name:      "John Smith",
 			BirthDate: []int{1987, 12, 30},
 		}, value)
@@ -447,7 +458,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		if err != nil {
 			log.Println("Private:", err.(RPCError).Private())
 		}
-		assert.Equal(t, Person{
+		assert.Equal(t, &Person{
 			Name:      "John Smith",
 			BirthDate: []int{1987, 12, 30},
 			Age:       30.8,

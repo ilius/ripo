@@ -185,9 +185,6 @@ func (f *fromBody) GetTime(req Request, key string) (*time.Time, error) {
 }
 
 func (f *fromBody) GetObject(req Request, key string, structType reflect.Type) (interface{}, error) {
-	if structType.Kind() == reflect.Ptr {
-		structType = structType.Elem()
-	}
 	data, err := req.BodyMap()
 	if err != nil {
 		return nil, err
