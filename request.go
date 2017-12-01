@@ -23,6 +23,7 @@ type Request interface {
 	BodyTo(model interface{}) error
 
 	GetHeader(string) string
+	HeaderKeys() []string
 	GetFormValue(key string) string
 	Context() context.Context
 
@@ -149,6 +150,15 @@ func (req *requestImp) BodyTo(model interface{}) error {
 
 func (req *requestImp) GetHeader(key string) string {
 	return req.r.Header.Get(key)
+}
+
+func (req *requestImp) HeaderKeys() []string {
+	header := req.r.Header
+	keys := make([]string, 0, len(header))
+	for key, _ := range header {
+		keys = append(keys, key)
+	}
+	return keys
 }
 
 func (req *requestImp) GetFormValue(key string) string {

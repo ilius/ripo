@@ -134,6 +134,18 @@ func (mr *MockRequestMockRecorder) GetHeader(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHeader", reflect.TypeOf((*MockRequest)(nil).GetHeader), arg0)
 }
 
+// HeaderKeys mocks base method
+func (m *MockRequest) HeaderKeys() []string {
+	ret := m.ctrl.Call(m, "HeaderKeys")
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// HeaderKeys indicates an expected call of HeaderKeys
+func (mr *MockRequestMockRecorder) HeaderKeys() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeaderKeys", reflect.TypeOf((*MockRequest)(nil).HeaderKeys))
+}
+
 // GetFormValue mocks base method
 func (m *MockRequest) GetFormValue(key string) string {
 	ret := m.ctrl.Call(m, "GetFormValue", key)
