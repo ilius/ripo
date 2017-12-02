@@ -37,7 +37,7 @@ func TestErrorFull(t *testing.T) {
 	}()
 	var rpcErr RPCError
 	var request Request
-	errorDispatcher = func(requestArg Request, rpcErrArg RPCError) {
+	errorDispatcher = func(requestArg ExtendedRequest, rpcErrArg RPCError) {
 		rpcErr = rpcErrArg
 		request = requestArg
 	}

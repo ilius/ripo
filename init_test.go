@@ -13,5 +13,5 @@ func init() {
 	}
 	rpcErr := NewError(Unavailable, "", fmt.Errorf("boo")).Add("foo", "bar")
 	errorDispatcher(request, rpcErr)
-	SetErrorDispatcher(func(request Request, rpcErr RPCError) {})
+	SetErrorDispatcher(func(request ExtendedRequest, rpcErr RPCError) {})
 }
