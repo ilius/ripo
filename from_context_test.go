@@ -13,8 +13,8 @@ import (
 func TestFromContext_GetString(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().Context().Return(context.Background())
 		value, err := FromContext.GetString(req, "name")
@@ -44,8 +44,8 @@ func TestFromContext_GetString(t *testing.T) {
 func TestFromContext_GetStringList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().Context().Return(context.Background())
 		value, err := FromContext.GetStringList(req, "names")
@@ -75,8 +75,8 @@ func TestFromContext_GetStringList(t *testing.T) {
 func TestFromContext_GetInt(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().Context().Return(context.Background())
 		value, err := FromContext.GetInt(req, "count")
@@ -118,8 +118,8 @@ func TestFromContext_GetInt(t *testing.T) {
 func TestFromContext_GetFloat(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().Context().Return(context.Background())
 		value, err := FromContext.GetFloat(req, "height")
@@ -168,8 +168,8 @@ func TestFromContext_GetFloat(t *testing.T) {
 func TestFromContext_GetBool(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().Context().Return(context.Background())
 		value, err := FromContext.GetBool(req, "agree")
@@ -199,8 +199,8 @@ func TestFromContext_GetBool(t *testing.T) {
 func TestFromContext_GetTime(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().Context().Return(context.Background())
 		value, err := FromContext.GetTime(req, "since")
@@ -237,8 +237,8 @@ func TestFromContext_GetTime(t *testing.T) {
 func TestFromContext_GetObject(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	type Person struct {
 		Name string `json:"name"`
 	}

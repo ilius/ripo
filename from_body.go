@@ -12,7 +12,7 @@ var FromBody FromX = &fromBody{}
 
 type fromBody struct{}
 
-func (f *fromBody) GetString(req Request, key string) (*string, error) {
+func (f *fromBody) GetString(req ExtendedRequest, key string) (*string, error) {
 	data, err := req.BodyMap()
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (f *fromBody) GetString(req Request, key string) (*string, error) {
 	}
 	return nil, nil
 }
-func (f *fromBody) GetStringList(req Request, key string) ([]string, error) {
+func (f *fromBody) GetStringList(req ExtendedRequest, key string) ([]string, error) {
 	data, err := req.BodyMap()
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (f *fromBody) GetStringList(req Request, key string) ([]string, error) {
 	}
 	return nil, nil
 }
-func (f *fromBody) GetInt(req Request, key string) (*int, error) {
+func (f *fromBody) GetInt(req ExtendedRequest, key string) (*int, error) {
 	data, err := req.BodyMap()
 	if err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ func (f *fromBody) GetInt(req Request, key string) (*int, error) {
 	}
 	return nil, nil
 }
-func (f *fromBody) GetFloat(req Request, key string) (*float64, error) {
+func (f *fromBody) GetFloat(req ExtendedRequest, key string) (*float64, error) {
 	data, err := req.BodyMap()
 	if err != nil {
 		return nil, err
@@ -134,7 +134,7 @@ func (f *fromBody) GetFloat(req Request, key string) (*float64, error) {
 	}
 	return nil, nil
 }
-func (f *fromBody) GetBool(req Request, key string) (*bool, error) {
+func (f *fromBody) GetBool(req ExtendedRequest, key string) (*bool, error) {
 	data, err := req.BodyMap()
 	if err != nil {
 		return nil, err
@@ -155,7 +155,7 @@ func (f *fromBody) GetBool(req Request, key string) (*bool, error) {
 	}
 	return nil, nil
 }
-func (f *fromBody) GetTime(req Request, key string) (*time.Time, error) {
+func (f *fromBody) GetTime(req ExtendedRequest, key string) (*time.Time, error) {
 	data, err := req.BodyMap()
 	if err != nil {
 		return nil, err
@@ -184,7 +184,7 @@ func (f *fromBody) GetTime(req Request, key string) (*time.Time, error) {
 	return nil, nil
 }
 
-func (f *fromBody) GetObject(req Request, key string, _type reflect.Type) (interface{}, error) {
+func (f *fromBody) GetObject(req ExtendedRequest, key string, _type reflect.Type) (interface{}, error) {
 	data, err := req.BodyMap()
 	if err != nil {
 		return nil, err

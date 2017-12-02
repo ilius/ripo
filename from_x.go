@@ -6,11 +6,11 @@ import (
 )
 
 type FromX interface {
-	GetString(req Request, key string) (*string, error)
-	GetStringList(req Request, key string) ([]string, error)
-	GetInt(req Request, key string) (*int, error)
-	GetFloat(req Request, key string) (*float64, error)
-	GetBool(req Request, key string) (*bool, error)
-	GetTime(req Request, key string) (*time.Time, error)
-	GetObject(req Request, key string, _type reflect.Type) (interface{}, error)
+	GetString(req ExtendedRequest, key string) (*string, error)
+	GetStringList(req ExtendedRequest, key string) ([]string, error)
+	GetInt(req ExtendedRequest, key string) (*int, error)
+	GetFloat(req ExtendedRequest, key string) (*float64, error)
+	GetBool(req ExtendedRequest, key string) (*bool, error)
+	GetTime(req ExtendedRequest, key string) (*time.Time, error)
+	GetObject(req ExtendedRequest, key string, _type reflect.Type) (interface{}, error)
 }

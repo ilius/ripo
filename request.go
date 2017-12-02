@@ -19,14 +19,12 @@ type Request interface {
 	HandlerName() string
 
 	Body() ([]byte, error)
-	BodyMap() (map[string]interface{}, error)
 	BodyTo(model interface{}) error
 
 	Header(string) string
 	HeaderKeys() []string
 	Cookie(name string) (*http.Cookie, error)
 	CookieNames() []string
-	GetFormValue(key string) string
 	Context() context.Context
 
 	GetString(key string, sources ...FromX) (*string, error)
@@ -39,6 +37,12 @@ type Request interface {
 	GetObject(key string, _type reflect.Type, sources ...FromX) (interface{}, error)
 
 	FullMap() map[string]interface{}
+}
+
+type ExtendedRequest interface {
+	Request
+	BodyMap() (map[string]interface{}, error)
+	GetFormValue(key string) string
 }
 
 var defaultParamSources = []FromX{

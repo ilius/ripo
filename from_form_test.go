@@ -12,8 +12,8 @@ import (
 func TestFromForm_GetString(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().GetFormValue("name").Return("")
 		value, err := FromForm.GetString(req, "name")
@@ -30,8 +30,8 @@ func TestFromForm_GetString(t *testing.T) {
 func TestFromForm_GetStringList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().GetFormValue("names").Return("")
 		value, err := FromForm.GetStringList(req, "names")
@@ -49,8 +49,8 @@ func TestFromForm_GetStringList(t *testing.T) {
 func TestFromForm_GetInt(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().GetFormValue("count").Return("")
 		value, err := FromForm.GetInt(req, "count")
@@ -80,8 +80,8 @@ func TestFromForm_GetInt(t *testing.T) {
 func TestFromForm_GetFloat(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().GetFormValue("weight").Return("")
 		value, err := FromForm.GetFloat(req, "weight")
@@ -111,8 +111,8 @@ func TestFromForm_GetFloat(t *testing.T) {
 func TestFromForm_GetBool(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().GetFormValue("agree").Return("")
 		value, err := FromForm.GetBool(req, "agree")
@@ -148,8 +148,8 @@ func TestFromForm_GetBool(t *testing.T) {
 func TestFromForm_GetTime(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().GetFormValue("since").Return("")
 		value, err := FromForm.GetTime(req, "since")
@@ -179,8 +179,8 @@ func TestFromForm_GetTime(t *testing.T) {
 func TestFromForm_GetObject(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	type Person struct {
 		Name string `json:"name"`
 	}

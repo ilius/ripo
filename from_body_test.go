@@ -15,8 +15,8 @@ import (
 func TestFromBody_GetString(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
 		value, err := FromBody.GetString(req, "name")
@@ -57,8 +57,8 @@ func TestFromBody_GetString(t *testing.T) {
 func TestFromBody_GetStringList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
 		value, err := FromBody.GetStringList(req, "names")
@@ -117,8 +117,8 @@ func TestFromBody_GetStringList(t *testing.T) {
 func TestFromBody_GetInt(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
 		value, err := FromBody.GetInt(req, "count")
@@ -184,8 +184,8 @@ func TestFromBody_GetInt(t *testing.T) {
 func TestFromBody_GetFloat(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
 		value, err := FromBody.GetFloat(req, "weight")
@@ -260,8 +260,8 @@ func TestFromBody_GetFloat(t *testing.T) {
 func TestFromBody_GetBool(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
 		value, err := FromBody.GetBool(req, "agree")
@@ -319,8 +319,8 @@ func TestFromBody_GetBool(t *testing.T) {
 func TestFromBody_GetTime(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
 		value, err := FromBody.GetTime(req, "since")
@@ -369,8 +369,8 @@ func TestFromBody_GetObject(t *testing.T) {
 	PersonTypePtr := reflect.TypeOf(&Person{})
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockReq := NewMockRequest(ctrl)
-	var req Request = mockReq
+	mockReq := NewMockExtendedRequest(ctrl)
+	var req ExtendedRequest = mockReq
 	{
 		mockReq.EXPECT().BodyMap().Return(nil, fmt.Errorf("unknown error"))
 		value, err := FromBody.GetObject(req, "info", PersonTypePtr)

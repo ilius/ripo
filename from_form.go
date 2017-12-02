@@ -12,14 +12,14 @@ var FromForm FromX = &fromForm{}
 
 type fromForm struct{}
 
-func (f *fromForm) GetString(req Request, key string) (*string, error) {
+func (f *fromForm) GetString(req ExtendedRequest, key string) (*string, error) {
 	value := req.GetFormValue(key)
 	if value != "" {
 		return &value, nil
 	}
 	return nil, nil
 }
-func (f *fromForm) GetStringList(req Request, key string) ([]string, error) {
+func (f *fromForm) GetStringList(req ExtendedRequest, key string) ([]string, error) {
 	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
 		valueSlice := strings.Split(valueStr, ",")
@@ -27,7 +27,7 @@ func (f *fromForm) GetStringList(req Request, key string) ([]string, error) {
 	}
 	return nil, nil
 }
-func (f *fromForm) GetInt(req Request, key string) (*int, error) {
+func (f *fromForm) GetInt(req ExtendedRequest, key string) (*int, error) {
 	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
 		value, err := strconv.ParseInt(valueStr, 10, 64)
@@ -43,7 +43,7 @@ func (f *fromForm) GetInt(req Request, key string) (*int, error) {
 	}
 	return nil, nil
 }
-func (f *fromForm) GetFloat(req Request, key string) (*float64, error) {
+func (f *fromForm) GetFloat(req ExtendedRequest, key string) (*float64, error) {
 	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
 		value, err := strconv.ParseFloat(valueStr, 64)
@@ -59,7 +59,7 @@ func (f *fromForm) GetFloat(req Request, key string) (*float64, error) {
 	}
 	return nil, nil
 }
-func (f *fromForm) GetBool(req Request, key string) (*bool, error) {
+func (f *fromForm) GetBool(req ExtendedRequest, key string) (*bool, error) {
 	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
 		valueStr = strings.ToLower(valueStr)
@@ -79,7 +79,7 @@ func (f *fromForm) GetBool(req Request, key string) (*bool, error) {
 	}
 	return nil, nil
 }
-func (f *fromForm) GetTime(req Request, key string) (*time.Time, error) {
+func (f *fromForm) GetTime(req ExtendedRequest, key string) (*time.Time, error) {
 	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
 		valueTm, err := time.Parse(time.RFC3339, valueStr)
@@ -95,6 +95,6 @@ func (f *fromForm) GetTime(req Request, key string) (*time.Time, error) {
 	return nil, nil
 }
 
-func (f *fromForm) GetObject(req Request, key string, _type reflect.Type) (interface{}, error) {
+func (f *fromForm) GetObject(req ExtendedRequest, key string, _type reflect.Type) (interface{}, error) {
 	return nil, nil
 }

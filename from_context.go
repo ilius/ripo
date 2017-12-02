@@ -10,7 +10,7 @@ var FromContext FromX = &fromContext{}
 
 type fromContext struct{}
 
-func (f *fromContext) GetString(req Request, key string) (*string, error) {
+func (f *fromContext) GetString(req ExtendedRequest, key string) (*string, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn != nil {
@@ -31,7 +31,7 @@ func (f *fromContext) GetString(req Request, key string) (*string, error) {
 	}
 	return nil, nil
 }
-func (f *fromContext) GetStringList(req Request, key string) ([]string, error) {
+func (f *fromContext) GetStringList(req ExtendedRequest, key string) ([]string, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn != nil {
@@ -49,7 +49,7 @@ func (f *fromContext) GetStringList(req Request, key string) ([]string, error) {
 	}
 	return nil, nil
 }
-func (f *fromContext) GetInt(req Request, key string) (*int, error) {
+func (f *fromContext) GetInt(req ExtendedRequest, key string) (*int, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn != nil {
@@ -76,7 +76,7 @@ func (f *fromContext) GetInt(req Request, key string) (*int, error) {
 	}
 	return nil, nil
 }
-func (f *fromContext) GetFloat(req Request, key string) (*float64, error) {
+func (f *fromContext) GetFloat(req ExtendedRequest, key string) (*float64, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn != nil {
@@ -106,7 +106,7 @@ func (f *fromContext) GetFloat(req Request, key string) (*float64, error) {
 	}
 	return nil, nil
 }
-func (f *fromContext) GetBool(req Request, key string) (*bool, error) {
+func (f *fromContext) GetBool(req ExtendedRequest, key string) (*bool, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn != nil {
@@ -124,7 +124,7 @@ func (f *fromContext) GetBool(req Request, key string) (*bool, error) {
 	}
 	return nil, nil
 }
-func (f *fromContext) GetTime(req Request, key string) (*time.Time, error) {
+func (f *fromContext) GetTime(req ExtendedRequest, key string) (*time.Time, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)
 	if valueIn != nil {
@@ -153,7 +153,7 @@ func (f *fromContext) GetTime(req Request, key string) (*time.Time, error) {
 	return nil, nil
 }
 
-func (f *fromContext) GetObject(req Request, key string, _type reflect.Type) (interface{}, error) {
+func (f *fromContext) GetObject(req ExtendedRequest, key string, _type reflect.Type) (interface{}, error) {
 	// TODO
 	return nil, nil
 }
