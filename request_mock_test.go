@@ -42,8 +42,8 @@ func Test_RequestMock(t *testing.T) {
 		mockReq.BodyTo(&m)
 	}
 	{
-		mockReq.EXPECT().GetHeader("test").Return("bar")
-		mockReq.GetHeader("test")
+		mockReq.EXPECT().Header("test").Return("bar")
+		mockReq.Header("test")
 	}
 	{
 		mockReq.EXPECT().GetString("test", FromForm).Return(nil, nil)

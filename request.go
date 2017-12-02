@@ -22,7 +22,7 @@ type Request interface {
 	BodyMap() (map[string]interface{}, error)
 	BodyTo(model interface{}) error
 
-	GetHeader(string) string
+	Header(string) string
 	HeaderKeys() []string
 	Cookie(name string) (*http.Cookie, error)
 	CookieNames() []string
@@ -150,7 +150,7 @@ func (req *requestImp) BodyTo(model interface{}) error {
 	return nil
 }
 
-func (req *requestImp) GetHeader(key string) string {
+func (req *requestImp) Header(key string) string {
 	return req.r.Header.Get(key)
 }
 

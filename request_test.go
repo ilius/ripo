@@ -176,7 +176,7 @@ func Test_requestImp_BodyTo_Bad(t *testing.T) {
 	}
 }
 
-func Test_requestImp_GetHeader(t *testing.T) {
+func Test_requestImp_Header(t *testing.T) {
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", nil)
 	assert.NoError(t, err)
 	r.Header.Add("Authorization", "bearer foobar")
@@ -184,8 +184,8 @@ func Test_requestImp_GetHeader(t *testing.T) {
 		r:           r,
 		handlerName: "Test",
 	}
-	assert.Equal(t, "bearer foobar", req.GetHeader("Authorization"))
-	assert.Equal(t, "", req.GetHeader("foo"))
+	assert.Equal(t, "bearer foobar", req.Header("Authorization"))
+	assert.Equal(t, "", req.Header("foo"))
 }
 
 func Test_requestImp_Context(t *testing.T) {

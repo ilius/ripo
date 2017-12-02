@@ -123,16 +123,16 @@ func (mr *MockRequestMockRecorder) BodyTo(model interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BodyTo", reflect.TypeOf((*MockRequest)(nil).BodyTo), model)
 }
 
-// GetHeader mocks base method
-func (m *MockRequest) GetHeader(arg0 string) string {
-	ret := m.ctrl.Call(m, "GetHeader", arg0)
+// Header mocks base method
+func (m *MockRequest) Header(arg0 string) string {
+	ret := m.ctrl.Call(m, "Header", arg0)
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
-// GetHeader indicates an expected call of GetHeader
-func (mr *MockRequestMockRecorder) GetHeader(arg0 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHeader", reflect.TypeOf((*MockRequest)(nil).GetHeader), arg0)
+// Header indicates an expected call of Header
+func (mr *MockRequestMockRecorder) Header(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Header", reflect.TypeOf((*MockRequest)(nil).Header), arg0)
 }
 
 // HeaderKeys mocks base method
