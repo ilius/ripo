@@ -7,6 +7,7 @@ package ripo
 import (
 	context "context"
 	gomock "github.com/golang/mock/gomock"
+	http "net/http"
 	url "net/url"
 	reflect "reflect"
 	time "time"
@@ -144,6 +145,31 @@ func (m *MockRequest) HeaderKeys() []string {
 // HeaderKeys indicates an expected call of HeaderKeys
 func (mr *MockRequestMockRecorder) HeaderKeys() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeaderKeys", reflect.TypeOf((*MockRequest)(nil).HeaderKeys))
+}
+
+// Cookie mocks base method
+func (m *MockRequest) Cookie(name string) (*http.Cookie, error) {
+	ret := m.ctrl.Call(m, "Cookie", name)
+	ret0, _ := ret[0].(*http.Cookie)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Cookie indicates an expected call of Cookie
+func (mr *MockRequestMockRecorder) Cookie(name interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cookie", reflect.TypeOf((*MockRequest)(nil).Cookie), name)
+}
+
+// CookieNames mocks base method
+func (m *MockRequest) CookieNames() []string {
+	ret := m.ctrl.Call(m, "CookieNames")
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// CookieNames indicates an expected call of CookieNames
+func (mr *MockRequestMockRecorder) CookieNames() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CookieNames", reflect.TypeOf((*MockRequest)(nil).CookieNames))
 }
 
 // GetFormValue mocks base method

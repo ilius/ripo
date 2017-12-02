@@ -24,6 +24,8 @@ type Request interface {
 
 	GetHeader(string) string
 	HeaderKeys() []string
+	Cookie(name string) (*http.Cookie, error)
+	CookieNames() []string
 	GetFormValue(key string) string
 	Context() context.Context
 
@@ -159,6 +161,18 @@ func (req *requestImp) HeaderKeys() []string {
 		keys = append(keys, key)
 	}
 	return keys
+}
+
+func (req *requestImp) Cookie(name string) (*http.Cookie, error) {
+	return req.r.Cookie(name)
+}
+
+func (req *requestImp) CookieNames() []string {
+	names := []string{}
+	for _, c := range req.r.Cookies() {
+		names = append(names, c.Name)
+	}
+	return names
 }
 
 func (req *requestImp) GetFormValue(key string) string {
