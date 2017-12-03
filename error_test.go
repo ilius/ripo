@@ -28,6 +28,11 @@ func unimplementedHandler(req Request) (*Response, error) {
 	return nil, NewError(Unimplemented, "we didn't implement this", err).Add("name", "June The Girl")
 }
 
+func TestError_GrpcCodeExtra(t *testing.T) {
+	rpcErr := NewError(MissingArgument, "", nil)
+	assert.Equal(t, rpcErr.GrpcCode(), uint32(InvalidArgument))
+}
+
 func TestErrorFull(t *testing.T) {
 	handlerName := "unimplementedHandler"
 
@@ -56,6 +61,7 @@ func TestErrorFull(t *testing.T) {
 	}
 	handlerNameFull := request.HandlerName()
 	assert.Equal(t, Unimplemented, rpcErr.Code())
+	assert.Equal(t, uint32(Unimplemented), rpcErr.GrpcCode())
 	assert.Equal(t, "we didn't implement this", rpcErr.Error())
 	assert.Equal(t, "we didn't implement this", rpcErr.Message())
 	assert.Equal(t, "just an unexposed message", rpcErr.Private().Error())
