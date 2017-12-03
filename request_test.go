@@ -188,6 +188,36 @@ func Test_requestImp_Header(t *testing.T) {
 	assert.Equal(t, "", req.Header("foo"))
 }
 
+func Test_requestImp_HeaderKeys(t *testing.T) {
+	r, err := http.NewRequest("POST", "http://127.0.0.1/test", nil)
+	assert.NoError(t, err)
+	r.Header.Add("Authorization", "bearer foobar")
+	req := &requestImp{
+		r:           r,
+		handlerName: "Test",
+	}
+	assert.Equal(t, []string{"Authorization"}, req.HeaderKeys())
+}
+
+func Test_requestImp_Cookie(t *testing.T) {
+	r, err := http.NewRequest("POST", "http://127.0.0.1/test", nil)
+	assert.NoError(t, err)
+	expectedCookie := &http.Cookie{
+		Name: "token",
+	}
+	r.AddCookie(expectedCookie)
+	req := &requestImp{
+		r:           r,
+		handlerName: "Test",
+	}
+	actualCookie, err := req.Cookie("token")
+	if err != nil {
+		panic(err)
+	}
+	assert.Equal(t, expectedCookie, actualCookie)
+	assert.Equal(t, []string{"token"}, req.CookieNames())
+}
+
 func Test_requestImp_Context(t *testing.T) {
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", nil)
 	assert.NoError(t, err)
