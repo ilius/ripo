@@ -26,6 +26,7 @@ type RPCError interface {
 	Error() string // shown to user
 	Private() error
 	Code() Code
+	GrpcCode() uint32
 	Message() string
 	Traceback(handlerName string) Traceback
 	Details() map[string]interface{}
@@ -53,6 +54,14 @@ func (e *rpcErrorImp) Private() error {
 
 func (e *rpcErrorImp) Code() Code {
 	return e.code
+}
+
+func (e *rpcErrorImp) GrpcCode() uint32 {
+	switch e.code {
+	case MissingArgument:
+		return uint32(InvalidArgument)
+	}
+	return uint32(e.code)
 }
 
 func (e *rpcErrorImp) Message() string {
