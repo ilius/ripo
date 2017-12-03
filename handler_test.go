@@ -6,6 +6,7 @@ import (
 	"math"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -480,6 +481,11 @@ func TestHandler_Full_Happy(t *testing.T) {
 		if err != nil {
 			return nil, err
 		}
+		birthDateIn, err := req.GetObject("birthDate", reflect.TypeOf([]int{}))
+		if err != nil {
+			return nil, err
+		}
+		birthDate := birthDateIn.([]int)
 		return &Response{
 			Data: map[string]interface{}{
 				"firstName":  *firstName,
@@ -491,6 +497,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 				"count":      *count,
 				"maxCount":   maxCount,
 				"unsubTime":  unsubTime,
+				"birthDate":  birthDate,
 			},
 		}, nil
 	})
@@ -503,6 +510,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 			"subscribed": true,
 			"interests": ["Tech", "Sports"],
 			"count": 10,
+			"birthDate": [1987, 1, 1],
 			"maxCount": 20
 		}`))
 		r.RemoteAddr = "127.0.0.1:1234"
@@ -696,6 +704,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 			"age": 30,
 			"subscribed": true,
 			"interests": ["Tech", "Sports"],
+			"birthDate": [1987, 1, 1],
 			"count": 10
 		}`))
 		if err != nil {
@@ -734,6 +743,48 @@ func TestHandler_Full_Happy(t *testing.T) {
 			"subscribed": true,
 			"interests": ["Tech", "Sports"],
 			"count": 10,
+			"unsubTime": "2017-12-20T17:30:00Z"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'birthDate'\"}", resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
+			"age": 30,
+			"subscribed": true,
+			"interests": ["Tech", "Sports"],
+			"count": 10,
+			"birthDate": "[1987, 1, 1]",
+			"unsubTime": "2017-12-20T17:30:00Z"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		resBody := strings.TrimSpace(w.Body.String())
+		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'birthDate', must be a compatible object\"}", resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
+			"age": 30,
+			"subscribed": true,
+			"interests": ["Tech", "Sports"],
+			"count": 10,
+			"birthDate": [1987, 1, 1],
 			"unsubTime": "2017-12-20T17:30:00Z"
 		}`))
 		if err != nil {
