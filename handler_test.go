@@ -242,7 +242,7 @@ func TestHandler_ResRedirectPath_DefaultCode(t *testing.T) {
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
 	assert.Equal(t, http.StatusSeeOther, w.Code)
-	assert.Equal(t, "", w.Header().Get("Content-Type"))
+	assert.Equal(t, "text/html; charset=utf-8", w.Header().Get("Content-Type"))
 	body := strings.TrimSpace(w.Body.String())
 	assert.Equal(t, "<a href=\"/login\">See Other</a>.", body)
 }
