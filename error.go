@@ -60,6 +60,8 @@ func (e *rpcErrorImp) GrpcCode() uint32 {
 	switch e.code {
 	case MissingArgument:
 		return uint32(InvalidArgument)
+	case ResourceLocked:
+		return uint32(Aborted)
 	}
 	return uint32(e.code)
 }

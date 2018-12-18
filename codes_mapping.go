@@ -73,6 +73,8 @@ func HTTPStatusFromCode(code Code) int {
 		return http.StatusInternalServerError
 	case MissingArgument: // added by Saeed Rasooli
 		return http.StatusBadRequest
+	case ResourceLocked: // added by Saeed Rasooli
+		return http.StatusConflict
 	}
 
 	log.Printf("Unknown error code: %v", code)
