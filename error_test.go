@@ -8,19 +8,21 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/tylerb/is"
 )
 
 func Test_NewError_Twice(t *testing.T) {
+	is := is.New(t)
+
 	err := NewError(InvalidArgument, "something is missing", nil)
-	assert.Equal(t, "something is missing", err.Message())
-	assert.Equal(t, "something is missing", err.Error())
-	assert.Equal(t, InvalidArgument, err.Code())
+	is.Equal("something is missing", err.Message())
+	is.Equal("something is missing", err.Error())
+	is.Equal(InvalidArgument, err.Code())
 
 	err = NewError(Unavailable, "not sure what", err)
-	assert.Equal(t, "something is missing", err.Message())
-	assert.Equal(t, "something is missing", err.Error())
-	assert.Equal(t, InvalidArgument, err.Code())
+	is.Equal("something is missing", err.Message())
+	is.Equal("something is missing", err.Error())
+	is.Equal(InvalidArgument, err.Code())
 }
 
 func unimplementedHandler(req Request) (*Response, error) {
@@ -29,11 +31,14 @@ func unimplementedHandler(req Request) (*Response, error) {
 }
 
 func TestError_GrpcCodeExtra(t *testing.T) {
+	is := is.New(t)
 	rpcErr := NewError(MissingArgument, "", nil)
-	assert.Equal(t, rpcErr.GrpcCode(), uint32(InvalidArgument))
+	is.Equal(rpcErr.GrpcCode(), uint32(InvalidArgument))
 }
 
 func TestErrorFull(t *testing.T) {
+	is := is.New(t)
+
 	handlerName := "unimplementedHandler"
 
 	origErrorDispatcher := errorDispatcher
@@ -50,7 +55,7 @@ func TestErrorFull(t *testing.T) {
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest("GET", "", nil)
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusNotImplemented, w.Code)
+	is.Equal(http.StatusNotImplemented, w.Code)
 	time.Sleep(500 * time.Millisecond)
 	if rpcErr == nil {
 		panic("rpcErr == nil")
@@ -60,20 +65,20 @@ func TestErrorFull(t *testing.T) {
 		return
 	}
 	handlerNameFull := request.HandlerName()
-	assert.Equal(t, Unimplemented, rpcErr.Code())
-	assert.Equal(t, uint32(Unimplemented), rpcErr.GrpcCode())
-	assert.Equal(t, "we didn't implement this", rpcErr.Error())
-	assert.Equal(t, "we didn't implement this", rpcErr.Message())
-	assert.Equal(t, "just an unexposed message", rpcErr.Private().Error())
-	assert.Equal(t, "June The Girl", rpcErr.Details()["name"])
+	is.Equal(Unimplemented, rpcErr.Code())
+	is.Equal(uint32(Unimplemented), rpcErr.GrpcCode())
+	is.Equal("we didn't implement this", rpcErr.Error())
+	is.Equal("we didn't implement this", rpcErr.Message())
+	is.Equal("just an unexposed message", rpcErr.Private().Error())
+	is.Equal("June The Girl", rpcErr.Details()["name"])
 	{
 		tb := rpcErr.Traceback("")
-		assert.Equal(t, 6, len(tb.Callers()))
-		assert.Equal(t, 6, len(tb.Records()))
+		is.Equal(6, len(tb.Callers()))
+		is.Equal(6, len(tb.Records()))
 	}
 	{
 		tb := rpcErr.Traceback(handlerNameFull)
-		assert.Equal(t, 6, len(tb.Callers()))
+		is.Equal(6, len(tb.Callers()))
 		records := tb.Records()
 		if len(records) != 1 {
 			for _, record := range records {
@@ -86,34 +91,36 @@ func TestErrorFull(t *testing.T) {
 		if !strings.HasSuffix(record.File(), "/error_test.go") {
 			t.Errorf("record.File()=%v", record.File())
 		}
-		assert.Equal(t, handlerNameFull, record.Function())
-		assert.Equal(t, handlerName, record.FunctionLocal())
-		assert.Equal(t, 28, record.Line())
+		is.Equal(handlerNameFull, record.Function())
+		is.Equal(handlerName, record.FunctionLocal())
+		is.Equal(30, record.Line())
 		mapRecords := tb.MapRecords()
 		if len(mapRecords) != 1 {
 			t.Errorf("len(mapRecords) = %v", len(mapRecords))
 			return
 		}
 		mapRecord := mapRecords[0]
-		assert.Equal(t, record.File(), mapRecord["file"])
-		assert.Equal(t, record.Function(), mapRecord["function"])
-		assert.Equal(t, record.FunctionLocal(), mapRecord["functionLocal"])
-		assert.Equal(t, record.Line(), mapRecord["line"])
+		is.Equal(record.File(), mapRecord["file"])
+		is.Equal(record.Function(), mapRecord["function"])
+		is.Equal(record.FunctionLocal(), mapRecord["functionLocal"])
+		is.Equal(record.Line(), mapRecord["line"])
 	}
 	{
 		tb := rpcErr.Traceback("")
-		assert.Equal(t, 6, len(tb.Callers()))
-		assert.Equal(t, 6, len(tb.Records()))
+		is.Equal(6, len(tb.Callers()))
+		is.Equal(6, len(tb.Records()))
 	}
 }
 
 func TestFunctionLocalNoPanic(t *testing.T) {
+	is := is.New(t)
 	record := &tracebackRecordImp{}
-	assert.Equal(t, "", record.FunctionLocal())
+	is.Equal("", record.FunctionLocal())
 }
 
 func Test_tracebackImp_empty(t *testing.T) {
+	is := is.New(t)
 	tb := &tracebackImp{}
-	assert.Equal(t, 0, len(tb.Callers()))
-	assert.Equal(t, 0, len(tb.Records()))
+	is.Equal(0, len(tb.Callers()))
+	is.Equal(0, len(tb.Records()))
 }

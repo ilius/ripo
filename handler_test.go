@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
+	"github.com/tylerb/is"
 )
 
 func panicerHandler(req Request) (res *Response, err error) {
@@ -20,6 +20,7 @@ func panicerHandler(req Request) (res *Response, err error) {
 }
 
 func TestHandler_Panic(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(panicerHandler)
 	r, err := http.NewRequest("GET", "", nil)
 	if err != nil {
@@ -27,12 +28,13 @@ func TestHandler_Panic(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	is.Equal(http.StatusInternalServerError, w.Code)
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "{\"code\":\"Internal\",\"error\":\"Internal\"}", body)
+	is.Equal("{\"code\":\"Internal\",\"error\":\"Internal\"}", body)
 }
 
 func TestHandler_1(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		return nil, fmt.Errorf("go away")
 	})
@@ -42,12 +44,13 @@ func TestHandler_1(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	is.Equal(http.StatusInternalServerError, w.Code)
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "{\"code\":\"Unknown\",\"error\":\"Unknown\"}", body)
+	is.Equal("{\"code\":\"Unknown\",\"error\":\"Unknown\"}", body)
 }
 
 func TestHandler_PostNilBody(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		name, err := req.GetString("name")
 		if err != nil {
@@ -65,12 +68,13 @@ func TestHandler_PostNilBody(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	is.Equal(http.StatusBadRequest, w.Code)
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "error in parsing form", body)
+	is.Equal("error in parsing form", body)
 }
 
 func TestHandler_PostSimple(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		name, err := req.GetString("name")
 		if err != nil {
@@ -88,16 +92,17 @@ func TestHandler_PostSimple(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusOK, w.Code)
+	is.Equal(http.StatusOK, w.Code)
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "{\"msg\":\"hello John\"}", body)
+	is.Equal("{\"msg\":\"hello John\"}", body)
 }
 
 func TestHandler_MockBody(t *testing.T) {
+	is := is.New(t)
 	ctrl := gomock.NewController(t)
 	mockBody := NewMockReadCloser(ctrl)
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", mockBody)
-	assert.NoError(t, err)
+	is.NotErr(err)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		name, err := req.GetString("name")
 		if err != nil {
@@ -115,12 +120,13 @@ func TestHandler_MockBody(t *testing.T) {
 	mockBody.EXPECT().Close()
 
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	is.Equal(http.StatusInternalServerError, w.Code)
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "{\"code\":\"Unknown\",\"error\":\"Unknown\"}", body)
+	is.Equal("{\"code\":\"Unknown\",\"error\":\"Unknown\"}", body)
 }
 
 func TestHandler_ResNil(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		return nil, nil
 	})
@@ -130,12 +136,13 @@ func TestHandler_ResNil(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	is.Equal(http.StatusInternalServerError, w.Code)
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "{\"code\":\"Internal\",\"error\":\"Internal\"}", body)
+	is.Equal("{\"code\":\"Internal\",\"error\":\"Internal\"}", body)
 }
 
 func TestHandler_ResData_JsonBytes(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		return &Response{
 			Data: []byte(`{"refNo": "1234"}`),
@@ -147,13 +154,14 @@ func TestHandler_ResData_JsonBytes(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "text/plain; charset=utf-8", w.Header().Get("Content-Type")) // not json
+	is.Equal(http.StatusOK, w.Code)
+	is.Equal("text/plain; charset=utf-8", w.Header().Get("Content-Type")) // not json
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "{\"refNo\": \"1234\"}", body)
+	is.Equal("{\"refNo\": \"1234\"}", body)
 }
 
 func TestHandler_ResData_JsonString(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		return &Response{
 			Data: `{"refNo": "1234"}`,
@@ -165,13 +173,14 @@ func TestHandler_ResData_JsonString(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "text/plain; charset=utf-8", w.Header().Get("Content-Type")) // not json
+	is.Equal(http.StatusOK, w.Code)
+	is.Equal("text/plain; charset=utf-8", w.Header().Get("Content-Type")) // not json
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "{\"refNo\": \"1234\"}", body)
+	is.Equal("{\"refNo\": \"1234\"}", body)
 }
 
 func TestHandler_ResData_Struct(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		return &Response{
 			Data: struct {
@@ -187,13 +196,14 @@ func TestHandler_ResData_Struct(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "application/json; charset=UTF-8", w.Header().Get("Content-Type")) // not json
+	is.Equal(http.StatusOK, w.Code)
+	is.Equal("application/json; charset=UTF-8", w.Header().Get("Content-Type")) // not json
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "{\"refNo\":\"1234\"}", body)
+	is.Equal("{\"refNo\":\"1234\"}", body)
 }
 
 func TestHandler_ResData_Nil(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		return &Response{
 			Data: nil,
@@ -205,13 +215,14 @@ func TestHandler_ResData_Nil(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "application/json; charset=UTF-8", w.Header().Get("Content-Type"))
+	is.Equal(http.StatusOK, w.Code)
+	is.Equal("application/json; charset=UTF-8", w.Header().Get("Content-Type"))
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "{}", body)
+	is.Equal("{}", body)
 }
 
 func TestHandler_ResData_HugeNum(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		return &Response{
 			Data: math.Pow10(1000), // not json-marshallable
@@ -223,13 +234,14 @@ func TestHandler_ResData_HugeNum(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "text/plain; charset=utf-8", w.Header().Get("Content-Type")) // not json
+	is.Equal(http.StatusOK, w.Code)
+	is.Equal("text/plain; charset=utf-8", w.Header().Get("Content-Type")) // not json
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "", body)
+	is.Equal("", body)
 }
 
 func TestHandler_ResRedirectPath_DefaultCode(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		return &Response{
 			RedirectPath: "login",
@@ -241,13 +253,14 @@ func TestHandler_ResRedirectPath_DefaultCode(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusSeeOther, w.Code)
-	assert.Equal(t, "text/html; charset=utf-8", w.Header().Get("Content-Type"))
+	is.Equal(http.StatusSeeOther, w.Code)
+	is.Equal("text/html; charset=utf-8", w.Header().Get("Content-Type"))
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "<a href=\"/login\">See Other</a>.", body)
+	is.Equal("<a href=\"/login\">See Other</a>.", body)
 }
 
 func TestHandler_ResRedirectPath_MovedPermanently(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		return &Response{
 			RedirectPath:       "login",
@@ -260,12 +273,13 @@ func TestHandler_ResRedirectPath_MovedPermanently(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusMovedPermanently, w.Code)
+	is.Equal(http.StatusMovedPermanently, w.Code)
 	body := strings.TrimSpace(w.Body.String())
-	assert.Equal(t, "<a href=\"/login\">Moved Permanently</a>.", body)
+	is.Equal("<a href=\"/login\">Moved Permanently</a>.", body)
 }
 
 func TestHandler_ResHeader(t *testing.T) {
+	is := is.New(t)
 	handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 		return &Response{
 			Header: http.Header{
@@ -279,11 +293,12 @@ func TestHandler_ResHeader(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	handlerFunc(w, r)
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "en", w.Header().Get("Content-Language"))
+	is.Equal(http.StatusOK, w.Code)
+	is.Equal("en", w.Header().Get("Content-Language"))
 }
 
 func TestHandler_CodeMapping(t *testing.T) {
+	is := is.New(t)
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
 			return nil, NewError(Code(len(_Code_index)-1), "", nil) // added by Saeed Rasooli
@@ -291,7 +306,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusInternalServerError, w.Code)
+		is.Equal(http.StatusInternalServerError, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -300,7 +315,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusRequestTimeout, w.Code)
+		is.Equal(http.StatusRequestTimeout, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -309,7 +324,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -318,7 +333,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusRequestTimeout, w.Code)
+		is.Equal(http.StatusRequestTimeout, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -327,7 +342,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusNotFound, w.Code)
+		is.Equal(http.StatusNotFound, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -336,7 +351,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusConflict, w.Code)
+		is.Equal(http.StatusConflict, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -345,7 +360,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusForbidden, w.Code)
+		is.Equal(http.StatusForbidden, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -354,7 +369,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
+		is.Equal(http.StatusUnauthorized, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -363,7 +378,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusForbidden, w.Code)
+		is.Equal(http.StatusForbidden, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -372,7 +387,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusPreconditionFailed, w.Code)
+		is.Equal(http.StatusPreconditionFailed, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -381,7 +396,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusConflict, w.Code)
+		is.Equal(http.StatusConflict, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -390,7 +405,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -399,7 +414,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusNotImplemented, w.Code)
+		is.Equal(http.StatusNotImplemented, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -408,7 +423,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusServiceUnavailable, w.Code)
+		is.Equal(http.StatusServiceUnavailable, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -417,7 +432,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusInternalServerError, w.Code)
+		is.Equal(http.StatusInternalServerError, w.Code)
 	}
 	{
 		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
@@ -426,10 +441,11 @@ func TestHandler_CodeMapping(t *testing.T) {
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest("GET", "", nil)
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 	}
 }
 func TestHandler_Full_Happy(t *testing.T) {
+	is := is.New(t)
 	myUrlStr := "http://127.0.0.1/test/full"
 	handlerFunc := TranslateHandler(func(req Request) (*Response, error) {
 		if req.URL().String() != myUrlStr {
@@ -519,21 +535,21 @@ func TestHandler_Full_Happy(t *testing.T) {
 		}
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusOK, w.Code)
+		is.Equal(http.StatusOK, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
 		resMap := map[string]interface{}{}
 		err = json.Unmarshal([]byte(resBody), &resMap)
 		if err != nil {
 			panic(err)
 		}
-		assert.Equal(t, "John", resMap["firstName"])
-		assert.Equal(t, "Smith", resMap["lastName"])
-		assert.Equal(t, "", resMap["medianName"])
-		assert.EqualValues(t, 30, resMap["age"])
-		assert.Equal(t, true, resMap["subscribed"])
-		assert.Equal(t, []interface{}{"Tech", "Sports"}, resMap["interests"])
-		assert.EqualValues(t, 10, resMap["count"])
-		assert.EqualValues(t, 20, resMap["maxCount"])
+		is.Equal("John", resMap["firstName"])
+		is.Equal("Smith", resMap["lastName"])
+		is.Equal("", resMap["medianName"])
+		is.Equal(30, resMap["age"])
+		is.Equal(true, resMap["subscribed"])
+		is.Equal([]interface{}{"Tech", "Sports"}, resMap["interests"])
+		is.Equal(10, resMap["count"])
+		is.Equal(20, resMap["maxCount"])
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{}`))
@@ -543,9 +559,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'firstName'\"}", resBody)
+		is.Equal("{\"code\":\"MissingArgument\",\"error\":\"missing 'firstName'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -557,9 +573,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'lastName'\"}", resBody)
+		is.Equal("{\"code\":\"MissingArgument\",\"error\":\"missing 'lastName'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -572,9 +588,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'age'\"}", resBody)
+		is.Equal("{\"code\":\"MissingArgument\",\"error\":\"missing 'age'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -588,9 +604,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'age', must be float\"}", resBody)
+		is.Equal("{\"code\":\"InvalidArgument\",\"error\":\"invalid 'age', must be float\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -604,9 +620,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'subscribed'\"}", resBody)
+		is.Equal("{\"code\":\"MissingArgument\",\"error\":\"missing 'subscribed'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -621,9 +637,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'subscribed', must be true or false\"}", resBody)
+		is.Equal("{\"code\":\"InvalidArgument\",\"error\":\"invalid 'subscribed', must be true or false\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -638,9 +654,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'interests'\"}", resBody)
+		is.Equal("{\"code\":\"MissingArgument\",\"error\":\"missing 'interests'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -656,9 +672,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'interests', must be array of strings\"}", resBody)
+		is.Equal("{\"code\":\"InvalidArgument\",\"error\":\"invalid 'interests', must be array of strings\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -674,9 +690,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'count'\"}", resBody)
+		is.Equal("{\"code\":\"MissingArgument\",\"error\":\"missing 'count'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -693,9 +709,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'count', must be integer\"}", resBody)
+		is.Equal("{\"code\":\"InvalidArgument\",\"error\":\"invalid 'count', must be integer\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -713,7 +729,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusOK, w.Code)
+		is.Equal(http.StatusOK, w.Code)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -731,9 +747,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'maxCount', must be integer\"}", resBody)
+		is.Equal("{\"code\":\"InvalidArgument\",\"error\":\"invalid 'maxCount', must be integer\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -751,9 +767,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'birthDate'\"}", resBody)
+		is.Equal("{\"code\":\"MissingArgument\",\"error\":\"missing 'birthDate'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -772,9 +788,9 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'birthDate', must be a compatible object\"}", resBody)
+		is.Equal("{\"code\":\"InvalidArgument\",\"error\":\"invalid 'birthDate', must be a compatible object\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -793,12 +809,13 @@ func TestHandler_Full_Happy(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusOK, w.Code)
+		is.Equal(http.StatusOK, w.Code)
 		t.Log(w.Body.String())
 	}
 }
 
 func TestHandler_2(t *testing.T) {
+	is := is.New(t)
 	myUrlStr := "http://127.0.0.1/test/full"
 	handlerFunc := TranslateHandler(func(req Request) (*Response, error) {
 		firstName, err := req.GetString("firstName")
@@ -831,9 +848,9 @@ func TestHandler_2(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'firstName', must be string\"}", resBody)
+		is.Equal("{\"code\":\"InvalidArgument\",\"error\":\"invalid 'firstName', must be string\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -846,9 +863,9 @@ func TestHandler_2(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"MissingArgument\",\"error\":\"missing 'unsubTime'\"}", resBody)
+		is.Equal("{\"code\":\"MissingArgument\",\"error\":\"missing 'unsubTime'\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -862,9 +879,9 @@ func TestHandler_2(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusBadRequest, w.Code)
+		is.Equal(http.StatusBadRequest, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		assert.Equal(t, "{\"code\":\"InvalidArgument\",\"error\":\"invalid 'unsubTime', must be RFC3339 time string\"}", resBody)
+		is.Equal("{\"code\":\"InvalidArgument\",\"error\":\"invalid 'unsubTime', must be RFC3339 time string\"}", resBody)
 	}
 	{
 		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
@@ -878,7 +895,7 @@ func TestHandler_2(t *testing.T) {
 		r.RemoteAddr = "127.0.0.1:1234"
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
-		assert.Equal(t, http.StatusOK, w.Code)
+		is.Equal(http.StatusOK, w.Code)
 		t.Log(w.Body.String())
 	}
 }

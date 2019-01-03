@@ -10,8 +10,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-
-	"github.com/stretchr/testify/assert"
+	"github.com/tylerb/is"
 )
 
 func callSetDefaultParamSources(sources ...FromX) (err error) {
@@ -32,17 +31,19 @@ func TestSetDefaultParamSources(t *testing.T) {
 			t.Errorf("Panic: %v", r)
 		}
 	}()
+	is := is.New(t)
 	{
 		err := callSetDefaultParamSources()
-		assert.EqualError(t, err, "Panic: SetDefaultParamSources: no arguments given")
+		AssertError(t, err, Unknown, "Panic: SetDefaultParamSources: no arguments given")
 	}
-	assert.NoError(t, callSetDefaultParamSources(FromBody))
-	assert.NoError(t, callSetDefaultParamSources(FromBody, FromContext))
-	assert.NoError(t, callSetDefaultParamSources(FromBody, FromContext, FromEmpty, FromEmpty))
-	assert.NoError(t, callSetDefaultParamSources(FromEmpty))
+	is.NotErr(callSetDefaultParamSources(FromBody))
+	is.NotErr(callSetDefaultParamSources(FromBody, FromContext))
+	is.NotErr(callSetDefaultParamSources(FromBody, FromContext, FromEmpty, FromEmpty))
+	is.NotErr(callSetDefaultParamSources(FromEmpty))
 }
 
 func Test_requestImp_URL(t *testing.T) {
+	is := is.New(t)
 	r, err := http.NewRequest("GET", "http://127.0.0.1/test1", nil)
 	if err != nil {
 		panic(err)
@@ -51,14 +52,15 @@ func Test_requestImp_URL(t *testing.T) {
 		r:           r,
 		handlerName: "Test",
 	}
-	assert.Equal(t, "/test1", req.URL().Path)
+	is.Equal("/test1", req.URL().Path)
 	u := req.URL()
 	u.Path = "/test2"
-	assert.Equal(t, "/test1", req.URL().Path)
-	assert.Equal(t, "/test2", u.Path)
+	is.Equal("/test1", req.URL().Path)
+	is.Equal("/test2", u.Path)
 }
 
 func Test_requestImp_FullMap(t *testing.T) {
+	is := is.New(t)
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test1?name=John", nil)
 	if err != nil {
 		panic(err)
@@ -80,57 +82,60 @@ func Test_requestImp_FullMap(t *testing.T) {
 			"name": []string{"John"},
 		},
 	}
-	assert.Equal(t, expectedFullMap, fullMap)
+	is.Equal(expectedFullMap, fullMap)
 	t.Log(fullMap)
 }
 
 func Test_requestImp_Body_Json(t *testing.T) {
+	is := is.New(t)
 	bodyStr := `{
 		"firstName": "John",
 		"lastName": "Smith"
 	}`
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", strings.NewReader(bodyStr))
-	assert.NoError(t, err)
+	is.NotErr(err)
 	req := &requestImp{
 		r:           r,
 		handlerName: "Test",
 	}
 	{
 		bodyMap, err := req.BodyMap()
-		assert.NoError(t, err)
-		assert.Equal(t, map[string]interface{}{
+		is.NotErr(err)
+		is.Equal(map[string]interface{}{
 			"firstName": "John",
 			"lastName":  "Smith",
 		}, bodyMap)
 	}
 	{
 		body, err := req.Body()
-		assert.NoError(t, err)
-		assert.Equal(t, bodyStr, string(body))
+		is.NotErr(err)
+		is.Equal(bodyStr, string(body))
 	}
 }
 
 func Test_requestImp_Body_NonJson(t *testing.T) {
+	is := is.New(t)
 	bodyStr := `hello world`
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", strings.NewReader(bodyStr))
-	assert.NoError(t, err)
+	is.NotErr(err)
 	req := &requestImp{
 		r:           r,
 		handlerName: "Test",
 	}
 	{
 		bodyMap, err := req.BodyMap()
-		assert.EqualError(t, err, "request body is not a valid json")
-		assert.Nil(t, bodyMap)
+		AssertError(t, err, InvalidArgument, "request body is not a valid json")
+		is.Nil(bodyMap)
 	}
 	{
 		body, err := req.Body()
-		assert.NoError(t, err)
-		assert.Equal(t, bodyStr, string(body))
+		is.NotErr(err)
+		is.Equal(bodyStr, string(body))
 	}
 }
 
 func Test_requestImp_BodyTo_OK(t *testing.T) {
+	is := is.New(t)
 	bodyStr := `{
 		"firstName": "John",
 		"lastName": "Smith"
@@ -140,20 +145,21 @@ func Test_requestImp_BodyTo_OK(t *testing.T) {
 		LastName  string `json:"lastName"`
 	}{}
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", strings.NewReader(bodyStr))
-	assert.NoError(t, err)
+	is.NotErr(err)
 	req := &requestImp{
 		r:           r,
 		handlerName: "Test",
 	}
 	{
 		err := req.BodyTo(&bodyStruct)
-		assert.NoError(t, err)
-		assert.Equal(t, "John", bodyStruct.FirstName)
-		assert.Equal(t, "Smith", bodyStruct.LastName)
+		is.NotErr(err)
+		is.Equal("John", bodyStruct.FirstName)
+		is.Equal("Smith", bodyStruct.LastName)
 	}
 }
 
 func Test_requestImp_BodyTo_Bad(t *testing.T) {
+	is := is.New(t)
 	bodyStr := `{
 		"firstName": "John",
 		"lastName": "Smith",
@@ -163,45 +169,48 @@ func Test_requestImp_BodyTo_Bad(t *testing.T) {
 		LastName  string `json:"lastName"`
 	}{}
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", strings.NewReader(bodyStr))
-	assert.NoError(t, err)
+	is.NotErr(err)
 	req := &requestImp{
 		r:           r,
 		handlerName: "Test",
 	}
 	{
 		err := req.BodyTo(&bodyStruct)
-		assert.EqualError(t, err, "request body is not a valid json")
-		assert.Equal(t, "", bodyStruct.FirstName)
-		assert.Equal(t, "", bodyStruct.LastName)
+		AssertError(t, err, InvalidArgument, "request body is not a valid json")
+		is.Equal("", bodyStruct.FirstName)
+		is.Equal("", bodyStruct.LastName)
 	}
 }
 
 func Test_requestImp_Header(t *testing.T) {
+	is := is.New(t)
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", nil)
-	assert.NoError(t, err)
+	is.NotErr(err)
 	r.Header.Add("Authorization", "bearer foobar")
 	req := &requestImp{
 		r:           r,
 		handlerName: "Test",
 	}
-	assert.Equal(t, "bearer foobar", req.Header("Authorization"))
-	assert.Equal(t, "", req.Header("foo"))
+	is.Equal("bearer foobar", req.Header("Authorization"))
+	is.Equal("", req.Header("foo"))
 }
 
 func Test_requestImp_HeaderKeys(t *testing.T) {
+	is := is.New(t)
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", nil)
-	assert.NoError(t, err)
+	is.NotErr(err)
 	r.Header.Add("Authorization", "bearer foobar")
 	req := &requestImp{
 		r:           r,
 		handlerName: "Test",
 	}
-	assert.Equal(t, []string{"Authorization"}, req.HeaderKeys())
+	is.Equal([]string{"Authorization"}, req.HeaderKeys())
 }
 
 func Test_requestImp_Cookie(t *testing.T) {
+	is := is.New(t)
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", nil)
-	assert.NoError(t, err)
+	is.NotErr(err)
 	expectedCookie := &http.Cookie{
 		Name: "token",
 	}
@@ -214,26 +223,28 @@ func Test_requestImp_Cookie(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, expectedCookie, actualCookie)
-	assert.Equal(t, []string{"token"}, req.CookieNames())
+	is.Equal(expectedCookie, actualCookie)
+	is.Equal([]string{"token"}, req.CookieNames())
 }
 
 func Test_requestImp_Context(t *testing.T) {
+	is := is.New(t)
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", nil)
-	assert.NoError(t, err)
+	is.NotErr(err)
 	req := &requestImp{
 		r:           r,
 		handlerName: "Test",
 	}
 	ctx := req.Context()
-	assert.Equal(t, context.Background(), ctx)
+	is.Equal(context.Background(), ctx)
 }
 
 func Test_requestImp_MockBody(t *testing.T) {
+	is := is.New(t)
 	ctrl := gomock.NewController(t)
 	mockBody := NewMockReadCloser(ctrl)
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", mockBody)
-	assert.NoError(t, err)
+	is.NotErr(err)
 	req := &requestImp{
 		r:           r,
 		handlerName: "Test",
@@ -242,32 +253,33 @@ func Test_requestImp_MockBody(t *testing.T) {
 		mockBody.EXPECT().Read(gomock.Any()).Return(0, fmt.Errorf("no data for you"))
 		mockBody.EXPECT().Close()
 		body, err := req.Body()
-		assert.EqualError(t, err, "no data for you")
-		assert.Nil(t, body)
+		AssertError(t, err, Unknown, "no data for you")
+		is.Nil(body)
 	}
 	{
 		body, err := req.Body()
-		assert.EqualError(t, err, "no data for you")
-		assert.Nil(t, body)
+		AssertError(t, err, Unknown, "no data for you")
+		is.Nil(body)
 	}
 	{
 		bodyMap, err := req.BodyMap()
-		assert.EqualError(t, err, "no data for you")
-		assert.Nil(t, bodyMap)
+		AssertError(t, err, Unknown, "no data for you")
+		is.Nil(bodyMap)
 	}
 	{
 		bodyMap := map[string]string{}
 		err := req.BodyTo(&bodyMap)
-		assert.EqualError(t, err, "no data for you")
-		assert.Equal(t, 0, len(bodyMap))
+		AssertError(t, err, Unknown, "no data for you")
+		is.Equal(0, len(bodyMap))
 	}
 }
 
 func Test_requestImp_MockBody2(t *testing.T) {
+	is := is.New(t)
 	ctrl := gomock.NewController(t)
 	mockBody := NewMockReadCloser(ctrl)
 	r, err := http.NewRequest("POST", "http://127.0.0.1/test", mockBody)
-	assert.NoError(t, err)
+	is.NotErr(err)
 	req := &requestImp{
 		r:           r,
 		handlerName: "Test",
@@ -278,23 +290,23 @@ func Test_requestImp_MockBody2(t *testing.T) {
 		}).Return(1, nil).Return(1, io.EOF)
 		mockBody.EXPECT().Close()
 		body, err := req.Body()
-		assert.NoError(t, err)
-		assert.Equal(t, []byte("a"), body)
+		is.NotErr(err)
+		is.Equal([]byte("a"), body)
 	}
 	{
 		bodyMap, err := req.BodyMap()
-		assert.EqualError(t, err, "request body is not a valid json")
-		assert.Nil(t, bodyMap)
+		AssertError(t, err, InvalidArgument, "request body is not a valid json")
+		is.Nil(bodyMap)
 	}
 	{
 		bodyMap, err := req.BodyMap()
-		assert.EqualError(t, err, "request body is not a valid json")
-		assert.Nil(t, bodyMap)
+		AssertError(t, err, InvalidArgument, "request body is not a valid json")
+		is.Nil(bodyMap)
 	}
 	{
 		bodyMap := map[string]string{}
 		err := req.BodyTo(&bodyMap)
-		assert.EqualError(t, err, "request body is not a valid json")
-		assert.Equal(t, 0, len(bodyMap))
+		AssertError(t, err, InvalidArgument, "request body is not a valid json")
+		is.Equal(0, len(bodyMap))
 	}
 }

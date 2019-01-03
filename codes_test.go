@@ -5,17 +5,19 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/tylerb/is"
 )
 
 func TestBadCodeString(t *testing.T) {
+	is := is.New(t)
 	{
 		i := len(_Code_index) - 1
 		c := Code(i)
-		assert.Equal(t, fmt.Sprintf("Code(%d)", i), c.String())
+		is.Equal(fmt.Sprintf("Code(%d)", i), c.String())
 	}
 }
 
 func TestHTTPStatusFromCodeOK(t *testing.T) {
-	assert.Equal(t, http.StatusOK, HTTPStatusFromCode(OK))
+	is := is.New(t)
+	is.Equal(http.StatusOK, HTTPStatusFromCode(OK))
 }

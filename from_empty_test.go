@@ -1,39 +1,43 @@
 package ripo
 
-import "testing"
-import "github.com/stretchr/testify/assert"
-import "reflect"
+import (
+	"reflect"
+	"testing"
+
+	"github.com/tylerb/is"
+)
 
 func TestFromEmpty(t *testing.T) {
+	is := is.New(t)
 	{
 		value, err := FromEmpty.GetString(nil, "foo")
-		assert.NoError(t, err)
-		assert.Equal(t, "", *value)
+		is.NotErr(err)
+		is.Equal("", *value)
 	}
 	{
 		value, err := FromEmpty.GetStringList(nil, "foo")
-		assert.NoError(t, err)
-		assert.Equal(t, []string{}, value)
+		is.NotErr(err)
+		is.Equal([]string{}, value)
 	}
 	{
 		value, err := FromEmpty.GetInt(nil, "foo")
-		assert.NoError(t, err)
-		assert.Equal(t, 0, *value)
+		is.NotErr(err)
+		is.Equal(0, *value)
 	}
 	{
 		value, err := FromEmpty.GetFloat(nil, "foo")
-		assert.NoError(t, err)
-		assert.Equal(t, 0.0, *value)
+		is.NotErr(err)
+		is.Equal(0.0, *value)
 	}
 	{
 		value, err := FromEmpty.GetBool(nil, "foo")
-		assert.NoError(t, err)
-		assert.Equal(t, false, *value)
+		is.NotErr(err)
+		is.Equal(false, *value)
 	}
 	{
 		value, err := FromEmpty.GetTime(nil, "foo")
-		assert.NoError(t, err)
-		assert.Equal(t, int64(-62135596800), value.Unix())
+		is.NotErr(err)
+		is.Equal(int64(-62135596800), value.Unix())
 	}
 	{
 		type Person struct {
@@ -42,8 +46,8 @@ func TestFromEmpty(t *testing.T) {
 			Age       float64 `json:"age"`
 		}
 		value, err := FromEmpty.GetObject(nil, "person", reflect.TypeOf(&Person{}))
-		assert.NoError(t, err)
-		assert.Equal(t, &Person{}, value)
+		is.NotErr(err)
+		is.Equal(&Person{}, value)
 	}
 	type Person struct {
 		Name      string  `json:"name"`
@@ -52,12 +56,16 @@ func TestFromEmpty(t *testing.T) {
 	}
 	{
 		value, err := FromEmpty.GetObject(nil, "person", reflect.TypeOf(Person{}))
-		assert.NoError(t, err)
-		assert.Equal(t, Person{}, value)
+		is.NotErr(err)
+		is.Equal(Person{}, value)
 	}
 	{
 		value, err := FromEmpty.GetObject(nil, "list", reflect.SliceOf(reflect.TypeOf(Person{})))
-		assert.NoError(t, err)
-		assert.Equal(t, []Person(nil), value)
+		is.NotErr(err)
+		if !reflect.DeepEqual([]Person(nil), value) {
+			t.Fatalf("bad value = %#v", value)
+		}
+		// is.Equal([]Person(nil), value)
+		// above line panics: comparing uncomparable type []ripo.Person
 	}
 }
