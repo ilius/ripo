@@ -66,6 +66,10 @@ func Test_RequestMock(t *testing.T) {
 		mockReq.GetString("test", FromForm)
 	}
 	{
+		mockReq.EXPECT().GetStringDefault("test", "foo", FromForm).Return("", nil)
+		mockReq.GetStringDefault("test", "foo", FromForm)
+	}
+	{
 		mockReq.EXPECT().GetStringList("test", FromBody).Return(nil, nil)
 		mockReq.GetStringList("test", FromBody)
 	}

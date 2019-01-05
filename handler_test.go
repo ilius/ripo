@@ -830,10 +830,15 @@ func TestHandler_2(t *testing.T) {
 		if err != nil {
 			return nil, err
 		}
+		alias, err := req.GetStringDefault("alias", "")
+		if err != nil {
+			return nil, err
+		}
 		return &Response{
 			Data: map[string]interface{}{
 				"firstName": *firstName,
 				"lastName":  *lastName,
+				"alias":     alias,
 				"unsubTime": unsubTime,
 			},
 		}, nil
@@ -896,6 +901,40 @@ func TestHandler_2(t *testing.T) {
 		w := httptest.NewRecorder()
 		handlerFunc(w, r)
 		is.Equal(http.StatusOK, w.Code)
-		t.Log(w.Body.String())
+		is.Equal(w.Body.String(), `{"alias":"","firstName":"John","lastName":"Smith","unsubTime":"2017-12-20T17:30:00Z"}`)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
+			"alias": 123,
+			"unsubTime": "2017-12-20T17:30:00Z"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		is.Equal(http.StatusBadRequest, w.Code)
+		resBody := strings.TrimSpace(w.Body.String())
+		is.Equal(resBody, `{"code":"InvalidArgument","error":"invalid 'alias', must be string"}`)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"firstName": "John",
+			"lastName": "Smith",
+			"alias": "jsm",
+			"unsubTime": "2017-12-20T17:30:00Z"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		is.Equal(http.StatusOK, w.Code)
+		resBody := strings.TrimSpace(w.Body.String())
+		is.Equal(resBody, `{"alias":"jsm","firstName":"John","lastName":"Smith","unsubTime":"2017-12-20T17:30:00Z"}`)
 	}
 }

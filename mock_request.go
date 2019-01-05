@@ -242,6 +242,26 @@ func (mr *MockRequestMockRecorder) GetString(arg0 interface{}, arg1 ...interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetString", reflect.TypeOf((*MockRequest)(nil).GetString), varargs...)
 }
 
+// GetStringDefault mocks base method
+func (m *MockRequest) GetStringDefault(arg0, arg1 string, arg2 ...FromX) (string, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetStringDefault", varargs...)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStringDefault indicates an expected call of GetStringDefault
+func (mr *MockRequestMockRecorder) GetStringDefault(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStringDefault", reflect.TypeOf((*MockRequest)(nil).GetStringDefault), varargs...)
+}
+
 // GetStringList mocks base method
 func (m *MockRequest) GetStringList(arg0 string, arg1 ...FromX) ([]string, error) {
 	m.ctrl.T.Helper()
@@ -623,6 +643,26 @@ func (mr *MockExtendedRequestMockRecorder) GetString(arg0 interface{}, arg1 ...i
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetString", reflect.TypeOf((*MockExtendedRequest)(nil).GetString), varargs...)
+}
+
+// GetStringDefault mocks base method
+func (m *MockExtendedRequest) GetStringDefault(arg0, arg1 string, arg2 ...FromX) (string, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetStringDefault", varargs...)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStringDefault indicates an expected call of GetStringDefault
+func (mr *MockExtendedRequestMockRecorder) GetStringDefault(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStringDefault", reflect.TypeOf((*MockExtendedRequest)(nil).GetStringDefault), varargs...)
 }
 
 // GetStringList mocks base method

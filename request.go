@@ -28,6 +28,7 @@ type Request interface {
 	Context() context.Context
 
 	GetString(key string, sources ...FromX) (*string, error)
+	GetStringDefault(key string, defaultValue string, sources ...FromX) (string, error)
 	GetStringList(key string, sources ...FromX) ([]string, error)
 	GetInt(key string, sources ...FromX) (*int, error)
 	GetIntDefault(key string, defaultValue int, sources ...FromX) (int, error)
@@ -205,6 +206,22 @@ func (req *requestImp) GetString(key string, sources ...FromX) (*string, error) 
 		fmt.Sprintf("missing '%v'", key),
 		nil,
 	)
+}
+
+func (req *requestImp) GetStringDefault(key string, defaultValue string, sources ...FromX) (string, error) {
+	if len(sources) == 0 {
+		sources = defaultParamSources
+	}
+	for _, source := range sources {
+		value, err := source.GetString(req, key)
+		if err != nil {
+			return "", err
+		}
+		if value != nil {
+			return *value, nil
+		}
+	}
+	return defaultValue, nil
 }
 
 func (req *requestImp) GetStringList(key string, sources ...FromX) ([]string, error) {
