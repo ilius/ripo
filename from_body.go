@@ -21,11 +21,15 @@ func (f *fromBody) GetString(req ExtendedRequest, key string) (*string, error) {
 	if valueIn != nil {
 		switch value := valueIn.(type) {
 		case string:
-			valueStr := value // to copy
-			return &valueStr, nil
+			if value != "" {
+				valueStr := value // to copy
+				return &valueStr, nil
+			}
 		case []byte:
-			valueStr := string(value)
-			return &valueStr, nil
+			if len(value) > 0 {
+				valueStr := string(value)
+				return &valueStr, nil
+			}
 		default:
 			return nil, NewError(
 				InvalidArgument,

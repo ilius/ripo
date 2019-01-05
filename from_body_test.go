@@ -39,6 +39,20 @@ func TestFromBody_GetString(t *testing.T) {
 		is.Nil(value)
 	}
 	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{}, nil)
+		value, err := FromBody.GetString(req, "name")
+		is.NotErr(err)
+		is.Nil(value)
+	}
+	{
+		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+			"name": "",
+		}, nil)
+		value, err := FromBody.GetString(req, "name")
+		is.NotErr(err)
+		is.Nil(value)
+	}
+	{
 		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
 			"name": "John Smith",
 		}, nil)
