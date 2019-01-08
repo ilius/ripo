@@ -14,7 +14,6 @@ type TracebackRecord interface {
 
 type Traceback interface {
 	SetHandlerName(handlerName string) Traceback
-	Callers() []uintptr
 	Records() []TracebackRecord
 	MapRecords() []map[string]interface{}
 }

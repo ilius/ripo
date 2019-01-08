@@ -73,12 +73,12 @@ func TestErrorFull(t *testing.T) {
 	is.Equal("June The Girl", rpcErr.Details()["name"])
 	{
 		tb := rpcErr.Traceback("")
-		is.Equal(6, len(tb.Callers()))
+		is.Equal(6, len(tb.(*tracebackImp).Callers()))
 		is.Equal(6, len(tb.Records()))
 	}
 	{
 		tb := rpcErr.Traceback(handlerNameFull)
-		is.Equal(6, len(tb.Callers()))
+		is.Equal(6, len(tb.(*tracebackImp).Callers()))
 		records := tb.Records()
 		if len(records) != 1 {
 			for _, record := range records {
@@ -107,7 +107,7 @@ func TestErrorFull(t *testing.T) {
 	}
 	{
 		tb := rpcErr.Traceback("")
-		is.Equal(6, len(tb.Callers()))
+		is.Equal(6, len(tb.(*tracebackImp).Callers()))
 		is.Equal(6, len(tb.Records()))
 	}
 }
