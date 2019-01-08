@@ -70,6 +70,7 @@ func TestErrorFull(t *testing.T) {
 	is.Equal("we didn't implement this", rpcErr.Error())
 	is.Equal("we didn't implement this", rpcErr.Message())
 	is.Equal("just an unexposed message", rpcErr.Private().Error())
+	is.Equal("just an unexposed message", rpcErr.Cause().Error())
 	is.Equal("June The Girl", rpcErr.Details()["name"])
 	{
 		tb := rpcErr.Traceback("")

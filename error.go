@@ -25,6 +25,7 @@ func NewError(code Code, publicMsg string, privateErr error) RPCError {
 type RPCError interface {
 	Error() string // shown to user
 	Private() error
+	Cause() error
 	Code() Code
 	GrpcCode() uint32
 	Message() string
@@ -49,6 +50,10 @@ func (e *rpcErrorImp) Error() string {
 }
 
 func (e *rpcErrorImp) Private() error {
+	return e.private
+}
+
+func (e *rpcErrorImp) Cause() error {
 	return e.private
 }
 
