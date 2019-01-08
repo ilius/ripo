@@ -11,8 +11,8 @@ var errorDispatcher = func(request ExtendedRequest, rpcErr RPCError) {
 		fmt.Sprintf("Code=%v", rpcErr.Code()),
 		fmt.Sprintf("Message=%#v", rpcErr.Message()),
 	}
-	if rpcErr.Private() != nil {
-		parts = append(parts, fmt.Sprintf("Original=%#v", rpcErr.Private().Error()))
+	if rpcErr.Cause() != nil {
+		parts = append(parts, fmt.Sprintf("Original=%#v", rpcErr.Cause().Error()))
 	}
 	if len(rpcErr.Details()) > 0 {
 		parts = append(parts, fmt.Sprintf("Details=%#v", rpcErr.Details()))

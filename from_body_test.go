@@ -419,7 +419,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
 		is.NotErr(err)
 		if err != nil {
-			log.Println("Private:", err.(RPCError).Private())
+			log.Println("Private:", err.(RPCError).Cause())
 		}
 		is.Equal(&Person{}, value)
 	}
@@ -430,7 +430,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		value, err := FromBody.GetObject(req, "info", PersonType)
 		is.NotErr(err)
 		if err != nil {
-			log.Println("Private:", err.(RPCError).Private())
+			log.Println("Private:", err.(RPCError).Cause())
 		}
 		is.Equal(Person{}, value)
 	}
@@ -443,7 +443,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
 		is.NotErr(err)
 		if err != nil {
-			log.Println("Private:", err.(RPCError).Private())
+			log.Println("Private:", err.(RPCError).Cause())
 		}
 		is.Equal(&Person{
 			Name: "John Smith",
@@ -459,7 +459,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
 		is.NotErr(err)
 		if err != nil {
-			log.Println("Private:", err.(RPCError).Private())
+			log.Println("Private:", err.(RPCError).Cause())
 		}
 		is.Equal(&Person{
 			Name:      "John Smith",
@@ -477,7 +477,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
 		is.NotErr(err)
 		if err != nil {
-			log.Println("Private:", err.(RPCError).Private())
+			log.Println("Private:", err.(RPCError).Cause())
 		}
 		is.Equal(&Person{
 			Name:      "John Smith",
@@ -496,7 +496,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		value, err := FromBody.GetObject(req, "info", PersonType)
 		is.NotErr(err)
 		if err != nil {
-			log.Println("Private:", err.(RPCError).Private())
+			log.Println("Private:", err.(RPCError).Cause())
 		}
 		is.Equal(Person{
 			Name:      "John Smith",
@@ -522,7 +522,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		value, err := FromBody.GetObject(req, "guestList", reflect.SliceOf(PersonType))
 		is.NotErr(err)
 		if err != nil {
-			log.Println("Private:", err.(RPCError).Private())
+			log.Println("Private:", err.(RPCError).Cause())
 		}
 		is.Equal([]Person{
 			{

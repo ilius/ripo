@@ -4,9 +4,11 @@ import (
 	"runtime"
 )
 
-func NewError(code Code, publicMsg string, privateErr error) RPCError {
-	if privateErr != nil {
-		rpcErr, isRpcErr := privateErr.(RPCError)
+// code and publicMsg are exposed to client by api
+// while causeErr is not exposed to client by api
+func NewError(code Code, publicMsg string, causeErr error) RPCError {
+	if causeErr != nil {
+		rpcErr, isRpcErr := causeErr.(RPCError)
 		if isRpcErr {
 			return rpcErr
 		}
@@ -15,7 +17,7 @@ func NewError(code Code, publicMsg string, privateErr error) RPCError {
 	n := runtime.Callers(2, pc)
 	return &rpcErrorImp{
 		code:      code,
-		private:   privateErr,
+		cause:     causeErr,
 		publicMsg: publicMsg,
 		traceback: &tracebackImp{callers: pc[:n]},
 		details:   map[string]interface{}{},
@@ -36,7 +38,7 @@ type RPCError interface {
 
 type rpcErrorImp struct {
 	publicMsg string // shown to user
-	private   error
+	cause     error
 	code      Code
 	traceback *tracebackImp
 	details   map[string]interface{}
@@ -50,11 +52,11 @@ func (e *rpcErrorImp) Error() string {
 }
 
 func (e *rpcErrorImp) Private() error {
-	return e.private
+	return e.cause
 }
 
 func (e *rpcErrorImp) Cause() error {
-	return e.private
+	return e.cause
 }
 
 func (e *rpcErrorImp) Code() Code {
