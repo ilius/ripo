@@ -25,23 +25,25 @@ func NewError(code Code, publicMsg string, causeErr error) RPCError {
 }
 
 type RPCError interface {
-	Error() string // shown to user
-	Private() error
-	Cause() error
-	Code() Code
-	GrpcCode() uint32
-	Message() string
-	Traceback(handlerName string) Traceback
-	Details() map[string]interface{}
+	Error() string    // shown to user
+	Code() Code       // shown to user
+	GrpcCode() uint32 // shown to user
+	Message() string  // shown to user (if set), can be empty
+
+	Cause() error                           // not shown to user
+	Traceback(handlerName string) Traceback // not shown to user
+	Details() map[string]interface{}        // not shown to user
+
 	Add(key string, value interface{}) RPCError
 }
 
 type rpcErrorImp struct {
 	publicMsg string // shown to user
-	cause     error
-	code      Code
-	traceback *tracebackImp
-	details   map[string]interface{}
+	code      Code   // shown to user
+
+	cause     error                  // not shown to user
+	traceback *tracebackImp          // not shown to user
+	details   map[string]interface{} // not shown to user
 }
 
 func (e *rpcErrorImp) Error() string {
@@ -49,14 +51,6 @@ func (e *rpcErrorImp) Error() string {
 		return e.publicMsg
 	}
 	return e.code.String()
-}
-
-func (e *rpcErrorImp) Private() error {
-	return e.cause
-}
-
-func (e *rpcErrorImp) Cause() error {
-	return e.cause
 }
 
 func (e *rpcErrorImp) Code() Code {
@@ -75,6 +69,10 @@ func (e *rpcErrorImp) GrpcCode() uint32 {
 
 func (e *rpcErrorImp) Message() string {
 	return e.publicMsg
+}
+
+func (e *rpcErrorImp) Cause() error {
+	return e.cause
 }
 
 func (e *rpcErrorImp) Traceback(handlerName string) Traceback {
