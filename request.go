@@ -163,7 +163,7 @@ func (req *requestImp) Header(key string) string {
 func (req *requestImp) HeaderKeys() []string {
 	header := req.r.Header
 	keys := make([]string, 0, len(header))
-	for key, _ := range header {
+	for key := range header {
 		keys = append(keys, key)
 	}
 	return keys
