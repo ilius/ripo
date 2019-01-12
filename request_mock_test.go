@@ -86,6 +86,10 @@ func Test_RequestMock(t *testing.T) {
 		mockReq.GetFloat("test", FromBody)
 	}
 	{
+		mockReq.EXPECT().GetFloatDefault("test", 0.0, FromBody).Return(0.0, nil)
+		mockReq.GetFloatDefault("test", 0.0, FromBody)
+	}
+	{
 		mockReq.EXPECT().GetBool("test", FromForm).Return(nil, nil)
 		mockReq.GetBool("test", FromForm)
 	}

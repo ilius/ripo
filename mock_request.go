@@ -162,6 +162,26 @@ func (mr *MockRequestMockRecorder) GetFloat(arg0 interface{}, arg1 ...interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFloat", reflect.TypeOf((*MockRequest)(nil).GetFloat), varargs...)
 }
 
+// GetFloatDefault mocks base method
+func (m *MockRequest) GetFloatDefault(arg0 string, arg1 float64, arg2 ...FromX) (float64, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetFloatDefault", varargs...)
+	ret0, _ := ret[0].(float64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFloatDefault indicates an expected call of GetFloatDefault
+func (mr *MockRequestMockRecorder) GetFloatDefault(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFloatDefault", reflect.TypeOf((*MockRequest)(nil).GetFloatDefault), varargs...)
+}
+
 // GetInt mocks base method
 func (m *MockRequest) GetInt(arg0 string, arg1 ...FromX) (*int, error) {
 	m.ctrl.T.Helper()
@@ -549,6 +569,26 @@ func (mr *MockExtendedRequestMockRecorder) GetFloat(arg0 interface{}, arg1 ...in
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFloat", reflect.TypeOf((*MockExtendedRequest)(nil).GetFloat), varargs...)
+}
+
+// GetFloatDefault mocks base method
+func (m *MockExtendedRequest) GetFloatDefault(arg0 string, arg1 float64, arg2 ...FromX) (float64, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetFloatDefault", varargs...)
+	ret0, _ := ret[0].(float64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFloatDefault indicates an expected call of GetFloatDefault
+func (mr *MockExtendedRequestMockRecorder) GetFloatDefault(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFloatDefault", reflect.TypeOf((*MockExtendedRequest)(nil).GetFloatDefault), varargs...)
 }
 
 // GetFormValue mocks base method

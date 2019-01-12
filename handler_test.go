@@ -938,3 +938,114 @@ func TestHandler_2(t *testing.T) {
 		is.Equal(resBody, `{"alias":"jsm","firstName":"John","lastName":"Smith","unsubTime":"2017-12-20T17:30:00Z"}`)
 	}
 }
+
+func TestHandler_3(t *testing.T) {
+	is := is.New(t)
+	myUrlStr := "http://127.0.0.1/test/full"
+	handlerFunc := TranslateHandler(func(req Request) (*Response, error) {
+		start, err := req.GetFloatDefault("start", 0)
+		if err != nil {
+			return nil, err
+		}
+		end, err := req.GetFloatDefault("end", 10)
+		if err != nil {
+			return nil, err
+		}
+		step, err := req.GetFloatDefault("step", 1)
+		if err != nil {
+			return nil, err
+		}
+		nums := []float64{}
+		for x := start; x < end; x += step {
+			nums = append(nums, x)
+		}
+		return &Response{
+			Data: nums,
+		}, nil
+	})
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		is.Equal(http.StatusOK, w.Code)
+		resBody := strings.TrimSpace(w.Body.String())
+		is.Equal(`[0,1,2,3,4,5,6,7,8,9]`, resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		is.Equal(http.StatusOK, w.Code)
+		resBody := strings.TrimSpace(w.Body.String())
+		is.Equal(`[0,1,2,3,4,5,6,7,8,9]`, resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"start": 6
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		is.Equal(http.StatusOK, w.Code)
+		resBody := strings.TrimSpace(w.Body.String())
+		is.Equal(`[6,7,8,9]`, resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"start": 15,
+			"end": 19
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		is.Equal(http.StatusOK, w.Code)
+		resBody := strings.TrimSpace(w.Body.String())
+		is.Equal(`[15,16,17,18]`, resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"start": 15,
+			"end": 19,
+			"step": 2
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		is.Equal(http.StatusOK, w.Code)
+		resBody := strings.TrimSpace(w.Body.String())
+		is.Equal(`[15,17]`, resBody)
+	}
+	{
+		r, err := http.NewRequest("POST", myUrlStr, strings.NewReader(`{
+			"start": 15,
+			"end": 19,
+			"step": "2"
+		}`))
+		if err != nil {
+			panic(err)
+		}
+		r.RemoteAddr = "127.0.0.1:1234"
+		w := httptest.NewRecorder()
+		handlerFunc(w, r)
+		is.Equal(http.StatusBadRequest, w.Code)
+		resBody := strings.TrimSpace(w.Body.String())
+		is.Equal(`{"code":"InvalidArgument","error":"invalid 'step', must be float"}`, resBody)
+	}
+}
