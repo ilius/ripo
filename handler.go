@@ -30,6 +30,36 @@ func callHandler(handler Handler, request Request) (res *Response, err error) {
 	return
 }
 
+func handleError(err error, handlerName string, w http.ResponseWriter, request ExtendedRequest) {
+	code := Unknown
+	errorMsg := "Unknown" // FIXME: "unknown"
+	rpcErr, isRpcErr := err.(RPCError)
+	if isRpcErr {
+		code = rpcErr.Code()
+		errorMsg = rpcErr.Error() // FIXME: use a mapping or make it space-separated
+	} else {
+		log.Printf(
+			"myrpc.TranslateHandler: handler '%v' returned non-rpc error: %#v\n",
+			handlerName,
+			err,
+		)
+		rpcErr = NewError(
+			Unknown, "", err,
+		)
+	}
+	status := HTTPStatusFromCode(code)
+	jsonByte, _ := json.Marshal(map[string]string{
+		"code":  code.String(),
+		"error": errorMsg,
+	})
+	http.Error(
+		w,
+		string(jsonByte),
+		status,
+	)
+	errorDispatcher(request, rpcErr)
+}
+
 func TranslateHandler(handler Handler) http.HandlerFunc {
 	handlerFuncObj := runtime.FuncForPC(reflect.ValueOf(handler).Pointer())
 	handlerName := handlerFuncObj.Name()
@@ -53,33 +83,7 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 			err = NewError(Internal, "", fmt.Errorf("handler %v returned nil response with nil error", handlerName))
 		}
 		if err != nil {
-			code := Unknown
-			errorMsg := "Unknown" // FIXME: "unknown"
-			rpcErr, isRpcErr := err.(RPCError)
-			if isRpcErr {
-				code = rpcErr.Code()
-				errorMsg = rpcErr.Error() // FIXME: use a mapping or make it space-separated
-			} else {
-				log.Printf(
-					"myrpc.TranslateHandler: handler '%v' returned non-rpc error: %#v\n",
-					handlerName,
-					err,
-				)
-				rpcErr = NewError(
-					Unknown, "", err,
-				)
-			}
-			status := HTTPStatusFromCode(code)
-			jsonByte, _ := json.Marshal(map[string]string{
-				"code":  code.String(),
-				"error": errorMsg,
-			})
-			http.Error(
-				w,
-				string(jsonByte),
-				status,
-			)
-			errorDispatcher(request, rpcErr)
+			handleError(err, handlerName, w, request)
 			return
 		}
 		wh := w.Header()
