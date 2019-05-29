@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/tylerb/is"
+	"github.com/ilius/is"
 )
 
 func TestBadCodeString(t *testing.T) {

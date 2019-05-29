@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/tylerb/is"
+	"github.com/ilius/is"
 )
 
 func TestAssertError_OK(t *testing.T) {

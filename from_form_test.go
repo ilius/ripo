@@ -6,7 +6,7 @@ import (
 	"time"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/tylerb/is"
+	"github.com/ilius/is"
 )
 
 func TestFromForm_GetString(t *testing.T) {

@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/tylerb/is"
+	"github.com/ilius/is"
 )
 
 func callSetDefaultParamSources(sources ...FromX) (err error) {

@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tylerb/is"
+	"github.com/ilius/is"
 )
 
 func TestFromEmpty(t *testing.T) {

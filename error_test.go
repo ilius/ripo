@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tylerb/is"
+	"github.com/ilius/is"
 )
 
 func Test_NewError_Twice(t *testing.T) {

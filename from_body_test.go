@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tylerb/is"
+	"github.com/ilius/is"
 
 	"github.com/golang/mock/gomock"
 )
