@@ -69,6 +69,7 @@ func TestFromBody_GetString(t *testing.T) {
 		is.Equal("John Smith", *value)
 	}
 }
+
 func TestFromBody_GetStringList(t *testing.T) {
 	is := is.New(t)
 	ctrl := gomock.NewController(t)
@@ -127,7 +128,6 @@ func TestFromBody_GetStringList(t *testing.T) {
 		is.NotErr(err)
 		is.Equal([]string{"John Smith", "John Doe"}, value)
 	}
-
 }
 
 func TestFromBody_GetInt(t *testing.T) {

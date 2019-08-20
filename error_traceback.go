@@ -27,9 +27,11 @@ type tracebackRecordImp struct {
 func (tr *tracebackRecordImp) File() string {
 	return tr.file
 }
+
 func (tr *tracebackRecordImp) Function() string {
 	return tr.function
 }
+
 func (tr *tracebackRecordImp) FunctionLocal() string {
 	full := tr.function
 	if full == "" {
@@ -38,6 +40,7 @@ func (tr *tracebackRecordImp) FunctionLocal() string {
 	parts := strings.Split(full, ".")
 	return parts[len(parts)-1]
 }
+
 func (tr *tracebackRecordImp) Line() int {
 	return tr.line
 }

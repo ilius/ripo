@@ -30,7 +30,6 @@ var errorDispatcher = func(request ExtendedRequest, rpcErr RPCError) {
 	}
 	parts = append(parts, strings.Join(tbLines, "\n"))
 	log.Printf("RPCError: %v, \n", strings.Join(parts, ", "))
-
 }
 
 func SetErrorDispatcher(dispatcher func(request ExtendedRequest, rpcErr RPCError)) {

@@ -19,6 +19,7 @@ func (f *fromForm) GetString(req ExtendedRequest, key string) (*string, error) {
 	}
 	return nil, nil
 }
+
 func (f *fromForm) GetStringList(req ExtendedRequest, key string) ([]string, error) {
 	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
@@ -27,6 +28,7 @@ func (f *fromForm) GetStringList(req ExtendedRequest, key string) ([]string, err
 	}
 	return nil, nil
 }
+
 func (f *fromForm) GetInt(req ExtendedRequest, key string) (*int, error) {
 	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
@@ -43,6 +45,7 @@ func (f *fromForm) GetInt(req ExtendedRequest, key string) (*int, error) {
 	}
 	return nil, nil
 }
+
 func (f *fromForm) GetFloat(req ExtendedRequest, key string) (*float64, error) {
 	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
@@ -59,6 +62,7 @@ func (f *fromForm) GetFloat(req ExtendedRequest, key string) (*float64, error) {
 	}
 	return nil, nil
 }
+
 func (f *fromForm) GetBool(req ExtendedRequest, key string) (*bool, error) {
 	valueStr := req.GetFormValue(key)
 	if valueStr != "" {
@@ -79,6 +83,7 @@ func (f *fromForm) GetBool(req ExtendedRequest, key string) (*bool, error) {
 	}
 	return nil, nil
 }
+
 func (f *fromForm) GetTime(req ExtendedRequest, key string) (*time.Time, error) {
 	valueStr := req.GetFormValue(key)
 	if valueStr != "" {

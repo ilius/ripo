@@ -28,6 +28,7 @@ func TestFromForm_GetString(t *testing.T) {
 		is.Equal("John Smith", *value)
 	}
 }
+
 func TestFromForm_GetStringList(t *testing.T) {
 	is := is.New(t)
 	ctrl := gomock.NewController(t)

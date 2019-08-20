@@ -31,6 +31,7 @@ func (f *fromContext) GetString(req ExtendedRequest, key string) (*string, error
 	}
 	return nil, nil
 }
+
 func (f *fromContext) GetStringList(req ExtendedRequest, key string) ([]string, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)
@@ -49,6 +50,7 @@ func (f *fromContext) GetStringList(req ExtendedRequest, key string) ([]string, 
 	}
 	return nil, nil
 }
+
 func (f *fromContext) GetInt(req ExtendedRequest, key string) (*int, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)
@@ -76,6 +78,7 @@ func (f *fromContext) GetInt(req ExtendedRequest, key string) (*int, error) {
 	}
 	return nil, nil
 }
+
 func (f *fromContext) GetFloat(req ExtendedRequest, key string) (*float64, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)
@@ -106,6 +109,7 @@ func (f *fromContext) GetFloat(req ExtendedRequest, key string) (*float64, error
 	}
 	return nil, nil
 }
+
 func (f *fromContext) GetBool(req ExtendedRequest, key string) (*bool, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)
@@ -124,6 +128,7 @@ func (f *fromContext) GetBool(req ExtendedRequest, key string) (*bool, error) {
 	}
 	return nil, nil
 }
+
 func (f *fromContext) GetTime(req ExtendedRequest, key string) (*time.Time, error) {
 	ctx := req.Context()
 	valueIn := ctx.Value(key)

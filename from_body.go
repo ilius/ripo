@@ -40,6 +40,7 @@ func (f *fromBody) GetString(req ExtendedRequest, key string) (*string, error) {
 	}
 	return nil, nil
 }
+
 func (f *fromBody) GetStringList(req ExtendedRequest, key string) ([]string, error) {
 	data, err := req.BodyMap()
 	if err != nil {
@@ -75,6 +76,7 @@ func (f *fromBody) GetStringList(req ExtendedRequest, key string) ([]string, err
 	}
 	return nil, nil
 }
+
 func (f *fromBody) GetInt(req ExtendedRequest, key string) (*int, error) {
 	data, err := req.BodyMap()
 	if err != nil {
@@ -105,6 +107,7 @@ func (f *fromBody) GetInt(req ExtendedRequest, key string) (*int, error) {
 	}
 	return nil, nil
 }
+
 func (f *fromBody) GetFloat(req ExtendedRequest, key string) (*float64, error) {
 	data, err := req.BodyMap()
 	if err != nil {
@@ -138,6 +141,7 @@ func (f *fromBody) GetFloat(req ExtendedRequest, key string) (*float64, error) {
 	}
 	return nil, nil
 }
+
 func (f *fromBody) GetBool(req ExtendedRequest, key string) (*bool, error) {
 	data, err := req.BodyMap()
 	if err != nil {
@@ -159,6 +163,7 @@ func (f *fromBody) GetBool(req ExtendedRequest, key string) (*bool, error) {
 	}
 	return nil, nil
 }
+
 func (f *fromBody) GetTime(req ExtendedRequest, key string) (*time.Time, error) {
 	data, err := req.BodyMap()
 	if err != nil {

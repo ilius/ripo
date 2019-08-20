@@ -13,21 +13,26 @@ func (f *fromEmpty) GetString(req ExtendedRequest, key string) (*string, error) 
 	v := ""
 	return &v, nil
 }
+
 func (f *fromEmpty) GetStringList(req ExtendedRequest, key string) ([]string, error) {
 	return []string{}, nil
 }
+
 func (f *fromEmpty) GetInt(req ExtendedRequest, key string) (*int, error) {
 	v := 0
 	return &v, nil
 }
+
 func (f *fromEmpty) GetFloat(req ExtendedRequest, key string) (*float64, error) {
 	v := 0.0
 	return &v, nil
 }
+
 func (f *fromEmpty) GetBool(req ExtendedRequest, key string) (*bool, error) {
 	v := false
 	return &v, nil
 }
+
 func (f *fromEmpty) GetTime(req ExtendedRequest, key string) (*time.Time, error) {
 	var v time.Time
 	return &v, nil

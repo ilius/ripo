@@ -444,6 +444,7 @@ func TestHandler_CodeMapping(t *testing.T) {
 		is.Equal(http.StatusBadRequest, w.Code)
 	}
 }
+
 func TestHandler_Full_Happy(t *testing.T) {
 	is := is.New(t)
 	myUrlStr := "http://127.0.0.1/test/full"
