@@ -31,6 +31,7 @@ type RPCError interface {
 	Message() string  // shown to user (if set), can be empty
 
 	Cause() error                           // not shown to user
+	Unwrap() error                          // not shown to user
 	Traceback(handlerName string) Traceback // not shown to user
 	Details() map[string]interface{}        // not shown to user
 
@@ -72,6 +73,10 @@ func (e *rpcErrorImp) Message() string {
 }
 
 func (e *rpcErrorImp) Cause() error {
+	return e.cause
+}
+
+func (e *rpcErrorImp) Unwrap() error {
 	return e.cause
 }
 
