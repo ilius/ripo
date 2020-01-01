@@ -32,8 +32,8 @@ func unimplementedHandler(req Request) (*Response, error) {
 
 func TestError_GrpcCodeExtra(t *testing.T) {
 	is := is.New(t)
-	rpcErr := NewError(MissingArgument, "", nil)
-	is.Equal(rpcErr.GrpcCode(), uint32(InvalidArgument))
+	is.Equal(NewError(MissingArgument, "", nil).GrpcCode(), uint32(InvalidArgument))
+	is.Equal(NewError(ResourceLocked, "", nil).GrpcCode(), uint32(Aborted))
 }
 
 func TestErrorFull(t *testing.T) {

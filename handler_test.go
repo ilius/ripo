@@ -443,6 +443,15 @@ func TestHandler_CodeMapping(t *testing.T) {
 		handlerFunc(w, r)
 		is.Equal(http.StatusBadRequest, w.Code)
 	}
+	{
+		handlerFunc := TranslateHandler(func(req Request) (res *Response, err error) {
+			return nil, NewError(ResourceLocked, "", nil) // added by Saeed Rasooli
+		})
+		w := httptest.NewRecorder()
+		r, _ := http.NewRequest("GET", "", nil)
+		handlerFunc(w, r)
+		is.Equal(http.StatusConflict, w.Code)
+	}
 }
 
 func TestHandler_Full_Happy(t *testing.T) {

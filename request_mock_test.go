@@ -168,6 +168,10 @@ func Test_ExtendedRequestMock(t *testing.T) {
 		mockReq.GetString("test", FromForm)
 	}
 	{
+		mockReq.EXPECT().GetStringDefault("test", "foo", FromForm).Return("", nil)
+		mockReq.GetStringDefault("test", "foo", FromForm)
+	}
+	{
 		mockReq.EXPECT().GetStringList("test", FromBody).Return(nil, nil)
 		mockReq.GetStringList("test", FromBody)
 	}
@@ -182,6 +186,10 @@ func Test_ExtendedRequestMock(t *testing.T) {
 	{
 		mockReq.EXPECT().GetFloat("test", FromBody).Return(nil, nil)
 		mockReq.GetFloat("test", FromBody)
+	}
+	{
+		mockReq.EXPECT().GetFloatDefault("test", 1.0, FromBody).Return(1.0, nil)
+		mockReq.GetFloatDefault("test", 1.0, FromBody)
 	}
 	{
 		mockReq.EXPECT().GetBool("test", FromForm).Return(nil, nil)
