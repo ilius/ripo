@@ -10,6 +10,7 @@ RIPO=github.com/ilius/ripo
 
 function fix_mock_file() {
 	sed -i 's|package mock_ripo|package ripo|g' "$1"
+	sed -i '/generated GoMock package/d' "$1"
 }
 
 function gen_internal_mock() {
