@@ -10,13 +10,12 @@ RIPO=github.com/ilius/ripo
 
 function fix_mock_file() {
 	sed -i 's|package mock_ripo|package ripo|g' "$1"
-	sed -i '/generated GoMock package/d' "$1"
 }
 
 function gen_internal_mock() {
 	local interface_names="$1"
 	local output_path="$2"
-	src="$($GOPATH/bin/mockgen -self_package $RIPO $RIPO $interface_names)" || return $?
+	src="$($GOPATH/bin/mockgen -write_package_comment=false -self_package $RIPO $RIPO $interface_names)" || return $?
 	if [ -n "$src" ] ; then
 		echo "$src" > "$output_path"
 		fix_mock_file "$output_path"

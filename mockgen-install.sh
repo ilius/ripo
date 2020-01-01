@@ -1,18 +1,19 @@
 #!/bin/sh
 set -e
 
-MOCKGEN_REV=v1.2.0
+MOCKGEN=github.com/ilius/mock
+MOCKGEN_REV=
 
-dir="$GOPATH/src/github.com/golang/mock/"
+dir="$GOPATH/src/$MOCKGEN/"
 
 if [ -d "$dir" ] ; then
 	cd "$dir"
-	if ! git checkout "$MOCKGEN_REV" ; then
+	if [ -n "$MOCKGEN_REV" ] && ! git checkout "$MOCKGEN_REV" ; then
 		git fetch
 		git checkout "$MOCKGEN_REV"
 	fi
 else
-	git clone https://github.com/golang/mock/ "$dir"
+	git clone https://$MOCKGEN/ "$dir"
 	cd "$dir"
 	git checkout "$MOCKGEN_REV"
 fi
