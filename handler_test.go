@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/ilius/is"
+	"github.com/ilius/is/v2"
 )
 
 func panicerHandler(req Request) (res *Response, err error) {

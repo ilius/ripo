@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ilius/is"
+	"github.com/ilius/is/v2"
 )
 
 func Test_NewError_Twice(t *testing.T) {

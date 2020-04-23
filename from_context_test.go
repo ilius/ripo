@@ -7,7 +7,7 @@ import (
 	"time"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/ilius/is"
+	"github.com/ilius/is/v2"
 )
 
 func TestFromContext_GetString(t *testing.T) {

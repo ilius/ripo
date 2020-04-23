@@ -202,6 +202,7 @@ func (f *fromBody) GetObject(req ExtendedRequest, key string, _type reflect.Type
 	if mValueIn != nil {
 		mValueType := reflect.TypeOf(mValueIn)
 		if mValueType == _type {
+			// FIXME: not covered
 			return &mValueIn, nil
 		}
 		switch mValueType.Kind() {
@@ -210,6 +211,7 @@ func (f *fromBody) GetObject(req ExtendedRequest, key string, _type reflect.Type
 			valuePtrIn := valuePtrValue.Interface()
 			err := mapstructure.Decode(mValueIn, valuePtrIn)
 			if err != nil {
+				// FIXME: not covered
 				return nil, NewError(
 					InvalidArgument,
 					fmt.Sprintf("invalid '%v', must be a compatible object", key),
