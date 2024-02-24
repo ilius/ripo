@@ -31,7 +31,7 @@ func TestFromBody_GetString(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"name": 123,
 		}, nil)
 		value, err := FromBody.GetString(req, "name")
@@ -39,13 +39,13 @@ func TestFromBody_GetString(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{}, nil)
+		mockReq.EXPECT().BodyMap().Return(map[string]any{}, nil)
 		value, err := FromBody.GetString(req, "name")
 		is.NotErr(err)
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"name": "",
 		}, nil)
 		value, err := FromBody.GetString(req, "name")
@@ -53,7 +53,7 @@ func TestFromBody_GetString(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"name": "John Smith",
 		}, nil)
 		value, err := FromBody.GetString(req, "name")
@@ -61,7 +61,7 @@ func TestFromBody_GetString(t *testing.T) {
 		is.Equal("John Smith", *value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"name": []byte("John Smith"),
 		}, nil)
 		value, err := FromBody.GetString(req, "name")
@@ -89,7 +89,7 @@ func TestFromBody_GetStringList(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"names": 123,
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
@@ -97,7 +97,7 @@ func TestFromBody_GetStringList(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"names": "John Smith",
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
@@ -105,15 +105,15 @@ func TestFromBody_GetStringList(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
-			"names": []interface{}{"John Smith", 1234},
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
+			"names": []any{"John Smith", 1234},
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
 		AssertError(t, err, InvalidArgument, "invalid 'names', must be array of strings")
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"names": []string{"John Smith", "John Doe"},
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
@@ -121,8 +121,8 @@ func TestFromBody_GetStringList(t *testing.T) {
 		is.Equal([]string{"John Smith", "John Doe"}, value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
-			"names": []interface{}{"John Smith", "John Doe"},
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
+			"names": []any{"John Smith", "John Doe"},
 		}, nil)
 		value, err := FromBody.GetStringList(req, "names")
 		is.NotErr(err)
@@ -149,7 +149,7 @@ func TestFromBody_GetInt(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"count": "abc",
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
@@ -157,7 +157,7 @@ func TestFromBody_GetInt(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"count": "345",
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
@@ -165,7 +165,7 @@ func TestFromBody_GetInt(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"count": 5001,
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
@@ -173,7 +173,7 @@ func TestFromBody_GetInt(t *testing.T) {
 		is.Equal(5001, *value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"count": int32(5003),
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
@@ -181,7 +181,7 @@ func TestFromBody_GetInt(t *testing.T) {
 		is.Equal(5003, *value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"count": int64(6123),
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
@@ -189,7 +189,7 @@ func TestFromBody_GetInt(t *testing.T) {
 		is.Equal(6123, *value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"count": 14.15,
 		}, nil)
 		value, err := FromBody.GetInt(req, "count")
@@ -217,7 +217,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		is.NotErr(err)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"weight": "abc",
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
@@ -225,7 +225,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		AssertError(t, err, InvalidArgument, "invalid 'weight', must be float")
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"weight": "345",
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
@@ -233,7 +233,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		AssertError(t, err, InvalidArgument, "invalid 'weight', must be float")
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"weight": 1231,
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
@@ -241,7 +241,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		is.NotErr(err)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"weight": int32(2345),
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
@@ -249,7 +249,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		is.NotErr(err)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"weight": int64(7123),
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
@@ -257,7 +257,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 		is.NotErr(err)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"weight": 104.15,
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
@@ -266,7 +266,7 @@ func TestFromBody_GetFloat(t *testing.T) {
 	}
 	{
 		weight := float32(104.15)
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"weight": weight,
 		}, nil)
 		value, err := FromBody.GetFloat(req, "weight")
@@ -294,7 +294,7 @@ func TestFromBody_GetBool(t *testing.T) {
 		is.NotErr(err)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"agree": "abcd",
 		}, nil)
 		value, err := FromBody.GetBool(req, "agree")
@@ -302,7 +302,7 @@ func TestFromBody_GetBool(t *testing.T) {
 		AssertError(t, err, InvalidArgument, "invalid 'agree', must be true or false")
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"agree": "3465",
 		}, nil)
 		value, err := FromBody.GetBool(req, "agree")
@@ -310,7 +310,7 @@ func TestFromBody_GetBool(t *testing.T) {
 		AssertError(t, err, InvalidArgument, "invalid 'agree', must be true or false")
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"agree": 1231,
 		}, nil)
 		value, err := FromBody.GetBool(req, "agree")
@@ -318,7 +318,7 @@ func TestFromBody_GetBool(t *testing.T) {
 		AssertError(t, err, InvalidArgument, "invalid 'agree', must be true or false")
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"agree": true,
 		}, nil)
 		value, err := FromBody.GetBool(req, "agree")
@@ -326,7 +326,7 @@ func TestFromBody_GetBool(t *testing.T) {
 		is.NotErr(err)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"agree": false,
 		}, nil)
 		value, err := FromBody.GetBool(req, "agree")
@@ -354,7 +354,7 @@ func TestFromBody_GetTime(t *testing.T) {
 		is.NotErr(err)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"since": "abcd",
 		}, nil)
 		value, err := FromBody.GetTime(req, "since")
@@ -362,7 +362,7 @@ func TestFromBody_GetTime(t *testing.T) {
 		AssertError(t, err, InvalidArgument, "invalid 'since', must be RFC3339 time string")
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"since": 3465,
 		}, nil)
 		value, err := FromBody.GetTime(req, "since")
@@ -370,7 +370,7 @@ func TestFromBody_GetTime(t *testing.T) {
 		AssertError(t, err, InvalidArgument, "invalid 'since', must be RFC3339 time string")
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"since": "2017-12-20T17:30:00Z",
 		}, nil)
 		value, err := FromBody.GetTime(req, "since")
@@ -405,7 +405,7 @@ func TestFromBody_GetObject(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
 			"info": 123,
 		}, nil)
 		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
@@ -413,8 +413,8 @@ func TestFromBody_GetObject(t *testing.T) {
 		is.Nil(value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
-			"info": map[string]interface{}{},
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
+			"info": map[string]any{},
 		}, nil)
 		value, err := FromBody.GetObject(req, "info", PersonTypePtr)
 		is.NotErr(err)
@@ -424,8 +424,8 @@ func TestFromBody_GetObject(t *testing.T) {
 		is.Equal(&Person{}, value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
-			"info": map[string]interface{}{},
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
+			"info": map[string]any{},
 		}, nil)
 		value, err := FromBody.GetObject(req, "info", PersonType)
 		is.NotErr(err)
@@ -435,8 +435,8 @@ func TestFromBody_GetObject(t *testing.T) {
 		is.Equal(Person{}, value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
-			"info": map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
+			"info": map[string]any{
 				"name": "John Smith",
 			},
 		}, nil)
@@ -450,8 +450,8 @@ func TestFromBody_GetObject(t *testing.T) {
 		}, value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
-			"info": map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
+			"info": map[string]any{
 				"name":      "John Smith",
 				"birthDate": []int{1987, 12, 30},
 			},
@@ -467,8 +467,8 @@ func TestFromBody_GetObject(t *testing.T) {
 		}, value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
-			"info": map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
+			"info": map[string]any{
 				"name":      "John Smith",
 				"birthDate": []int{1987, 12, 30},
 				"age":       30.8,
@@ -486,8 +486,8 @@ func TestFromBody_GetObject(t *testing.T) {
 		}, value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
-			"info": map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
+			"info": map[string]any{
 				"name":      "John Smith",
 				"birthDate": []int{1987, 12, 30},
 				"age":       30.8,
@@ -505,14 +505,14 @@ func TestFromBody_GetObject(t *testing.T) {
 		}, value)
 	}
 	{
-		mockReq.EXPECT().BodyMap().Return(map[string]interface{}{
-			"guestList": []interface{}{
-				map[string]interface{}{
+		mockReq.EXPECT().BodyMap().Return(map[string]any{
+			"guestList": []any{
+				map[string]any{
 					"name":      "John Smith",
 					"birthDate": []int{1987, 12, 30},
 					"age":       30.8,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"name":      "Jane Smith",
 					"birthDate": []int{1991, 6, 30},
 					"age":       27.3,

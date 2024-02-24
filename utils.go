@@ -5,6 +5,6 @@ import (
 	"runtime"
 )
 
-func getFunctionName(i interface{}) string {
+func getFunctionName(i any) string {
 	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
 }

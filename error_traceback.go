@@ -15,7 +15,7 @@ type TracebackRecord interface {
 type Traceback interface {
 	SetHandlerName(handlerName string) Traceback
 	Records() []TracebackRecord
-	MapRecords() []map[string]interface{}
+	MapRecords() []map[string]any
 }
 
 type tracebackRecordImp struct {
@@ -94,11 +94,11 @@ func (t *tracebackImp) Records() []TracebackRecord {
 	return records
 }
 
-func (t *tracebackImp) MapRecords() []map[string]interface{} {
+func (t *tracebackImp) MapRecords() []map[string]any {
 	records := t.Records()
-	mapRecords := make([]map[string]interface{}, len(records))
+	mapRecords := make([]map[string]any, len(records))
 	for index, record := range records {
-		mapRecords[index] = map[string]interface{}{
+		mapRecords[index] = map[string]any{
 			"file":          record.File(),
 			"function":      record.Function(),
 			"functionLocal": record.FunctionLocal(),

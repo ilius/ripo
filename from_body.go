@@ -49,7 +49,7 @@ func (f *fromBody) GetStringList(req ExtendedRequest, key string) ([]string, err
 	valueIn := data[key]
 	if valueIn != nil {
 		switch value := valueIn.(type) {
-		case []interface{}:
+		case []any:
 			valueSlice := make([]string, len(value))
 			for index, item := range value {
 				itemStr, ok := item.(string)
@@ -193,7 +193,7 @@ func (f *fromBody) GetTime(req ExtendedRequest, key string) (*time.Time, error) 
 	return nil, nil
 }
 
-func (f *fromBody) GetObject(req ExtendedRequest, key string, _type reflect.Type) (interface{}, error) {
+func (f *fromBody) GetObject(req ExtendedRequest, key string, _type reflect.Type) (any, error) {
 	data, err := req.BodyMap()
 	if err != nil {
 		return nil, err

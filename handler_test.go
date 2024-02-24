@@ -513,7 +513,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 		}
 		birthDate := birthDateIn.([]int)
 		return &Response{
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"firstName":  *firstName,
 				"lastName":   *lastName,
 				"medianName": *medianName,
@@ -547,7 +547,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 		handlerFunc(w, r)
 		is.Equal(http.StatusOK, w.Code)
 		resBody := strings.TrimSpace(w.Body.String())
-		resMap := map[string]interface{}{}
+		resMap := map[string]any{}
 		err = json.Unmarshal([]byte(resBody), &resMap)
 		if err != nil {
 			panic(err)
@@ -557,7 +557,7 @@ func TestHandler_Full_Happy(t *testing.T) {
 		is.Equal("", resMap["medianName"])
 		is.Equal(30, resMap["age"])
 		is.Equal(true, resMap["subscribed"])
-		is.Equal([]interface{}{"Tech", "Sports"}, resMap["interests"])
+		is.Equal([]any{"Tech", "Sports"}, resMap["interests"])
 		is.Equal(10, resMap["count"])
 		is.Equal(20, resMap["maxCount"])
 	}
@@ -845,7 +845,7 @@ func TestHandler_2(t *testing.T) {
 			return nil, err
 		}
 		return &Response{
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"firstName": *firstName,
 				"lastName":  *lastName,
 				"alias":     alias,

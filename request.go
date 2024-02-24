@@ -19,7 +19,7 @@ type Request interface {
 	HandlerName() string
 
 	Body() ([]byte, error)
-	BodyTo(model interface{}) error
+	BodyTo(model any) error
 
 	Header(string) string
 	HeaderKeys() []string
@@ -36,14 +36,14 @@ type Request interface {
 	GetFloatDefault(key string, defaultValue float64, sources ...FromX) (float64, error)
 	GetBool(key string, sources ...FromX) (*bool, error)
 	GetTime(key string, sources ...FromX) (*time.Time, error)
-	GetObject(key string, _type reflect.Type, sources ...FromX) (interface{}, error)
+	GetObject(key string, _type reflect.Type, sources ...FromX) (any, error)
 
-	FullMap() map[string]interface{}
+	FullMap() map[string]any
 }
 
 type ExtendedRequest interface {
 	Request
-	BodyMap() (map[string]interface{}, error)
+	BodyMap() (map[string]any, error)
 	GetFormValue(key string) string
 }
 
@@ -71,7 +71,7 @@ type requestImp struct {
 	handlerName string        // must be set initially
 	body        []byte
 	bodyErr     error
-	bodyMap     map[string]interface{}
+	bodyMap     map[string]any
 	bodyMapErr  error
 }
 
@@ -119,14 +119,14 @@ func (req *requestImp) Body() ([]byte, error) {
 	return body, nil
 }
 
-func (req *requestImp) BodyMap() (map[string]interface{}, error) {
+func (req *requestImp) BodyMap() (map[string]any, error) {
 	if req.bodyMap != nil {
 		return req.bodyMap, nil
 	}
 	if req.bodyMapErr != nil {
 		return nil, req.bodyMapErr
 	}
-	data := map[string]interface{}{}
+	data := map[string]any{}
 	body, err := req.Body()
 	if err != nil {
 		req.bodyMapErr = err
@@ -144,7 +144,7 @@ func (req *requestImp) BodyMap() (map[string]interface{}, error) {
 	return data, nil
 }
 
-func (req *requestImp) BodyTo(model interface{}) error {
+func (req *requestImp) BodyTo(model any) error {
 	body, err := req.Body()
 	if err != nil {
 		return err
@@ -363,7 +363,7 @@ func (req *requestImp) GetTime(key string, sources ...FromX) (*time.Time, error)
 	)
 }
 
-func (req *requestImp) GetObject(key string, _type reflect.Type, sources ...FromX) (interface{}, error) {
+func (req *requestImp) GetObject(key string, _type reflect.Type, sources ...FromX) (any, error) {
 	if len(sources) == 0 {
 		sources = defaultParamSources
 	}
@@ -404,12 +404,12 @@ func (req *requestImp) HeaderStrippedAuth() http.Header {
 	return header
 }
 
-func (req *requestImp) FullMap() map[string]interface{} {
+func (req *requestImp) FullMap() map[string]any {
 	req.r.ParseForm()
 	bodyMap, _ := req.BodyMap()
 	urlStr := req.URL().String()
 	remoteIP, _ := req.RemoteIP()
-	return map[string]interface{}{
+	return map[string]any{
 		"bodyMap":  bodyMap,
 		"url":      urlStr,
 		"form":     req.r.Form,

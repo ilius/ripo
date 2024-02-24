@@ -100,6 +100,6 @@ func (f *fromForm) GetTime(req ExtendedRequest, key string) (*time.Time, error) 
 	return nil, nil
 }
 
-func (f *fromForm) GetObject(req ExtendedRequest, key string, _type reflect.Type) (interface{}, error) {
+func (f *fromForm) GetObject(req ExtendedRequest, key string, _type reflect.Type) (any, error) {
 	return nil, nil
 }

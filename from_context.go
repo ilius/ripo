@@ -158,7 +158,7 @@ func (f *fromContext) GetTime(req ExtendedRequest, key string) (*time.Time, erro
 	return nil, nil
 }
 
-func (f *fromContext) GetObject(req ExtendedRequest, key string, _type reflect.Type) (interface{}, error) {
+func (f *fromContext) GetObject(req ExtendedRequest, key string, _type reflect.Type) (any, error) {
 	// TODO
 	return nil, nil
 }

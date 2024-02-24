@@ -32,9 +32,9 @@ func (m *MockSmallT) EXPECT() *MockSmallTMockRecorder {
 }
 
 // Fatalf mocks base method
-func (m *MockSmallT) Fatalf(arg0 string, arg1 ...interface{}) {
+func (m *MockSmallT) Fatalf(arg0 string, arg1 ...any) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -42,9 +42,9 @@ func (m *MockSmallT) Fatalf(arg0 string, arg1 ...interface{}) {
 }
 
 // Fatalf indicates an expected call of Fatalf
-func (mr *MockSmallTMockRecorder) Fatalf(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockSmallTMockRecorder) Fatalf(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fatalf", reflect.TypeOf((*MockSmallT)(nil).Fatalf), varargs...)
 }
 

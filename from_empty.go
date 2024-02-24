@@ -38,7 +38,7 @@ func (f *fromEmpty) GetTime(req ExtendedRequest, key string) (*time.Time, error)
 	return &v, nil
 }
 
-func (f *fromEmpty) GetObject(req ExtendedRequest, key string, _type reflect.Type) (interface{}, error) {
+func (f *fromEmpty) GetObject(req ExtendedRequest, key string, _type reflect.Type) (any, error) {
 	givePointer := false
 	if _type.Kind() == reflect.Ptr {
 		_type = _type.Elem()

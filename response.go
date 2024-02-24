@@ -4,7 +4,7 @@ import "net/http"
 
 type Response struct {
 	// Data: map or struct with json tags
-	Data interface{}
+	Data any
 
 	Header http.Header
 

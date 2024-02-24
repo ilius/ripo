@@ -3,9 +3,9 @@ package ripo
 // SmallT is a minimal subset of testing.TB (implemented by testing.T) that we use
 type SmallT interface {
 	Helper()
-	Fatalf(format string, args ...interface{})
-	// Errorf(format string, args ...interface{})
-	// Logf(format string, args ...interface{})
+	Fatalf(format string, args ...any)
+	// Errorf(format string, args ...any)
+	// Logf(format string, args ...any)
 }
 
 // for non-rpc errors, pass code=Unknown

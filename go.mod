@@ -1,6 +1,6 @@
 module github.com/ilius/ripo
 
-go 1.13
+go 1.18
 
 require (
 	github.com/golang/mock v1.4.3

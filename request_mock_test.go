@@ -38,7 +38,7 @@ func Test_RequestMock(t *testing.T) {
 	}
 	{
 		mockReq.EXPECT().BodyTo(gomock.Any()).Return(nil)
-		m := map[string]interface{}{}
+		m := map[string]any{}
 		mockReq.BodyTo(&m)
 	}
 	{
@@ -140,7 +140,7 @@ func Test_ExtendedRequestMock(t *testing.T) {
 	}
 	{
 		mockReq.EXPECT().BodyTo(gomock.Any()).Return(nil)
-		m := map[string]interface{}{}
+		m := map[string]any{}
 		mockReq.BodyTo(&m)
 	}
 	{

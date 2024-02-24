@@ -111,7 +111,7 @@ func TranslateHandler(handler Handler) http.HandlerFunc {
 			resBodyBytes = []byte(dataTyped)
 		default:
 			if data == nil {
-				data = map[string]interface{}{}
+				data = map[string]any{}
 			}
 			jsonBytes, err := json.Marshal(data)
 			if err != nil {

@@ -56,7 +56,7 @@ func (m *MockReadCloser) Read(arg0 []byte) (int, error) {
 }
 
 // Read indicates an expected call of Read
-func (mr *MockReadCloserMockRecorder) Read(arg0 interface{}) *gomock.Call {
+func (mr *MockReadCloserMockRecorder) Read(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockReadCloser)(nil).Read), arg0)
 }

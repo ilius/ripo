@@ -71,9 +71,9 @@ func Test_requestImp_FullMap(t *testing.T) {
 		handlerName: "Test",
 	}
 	fullMap := req.FullMap()
-	expectedFullMap := map[string]interface{}{
+	expectedFullMap := map[string]any{
 		"url":     "http://127.0.0.1/test1?name=John",
-		"bodyMap": map[string]interface{}{},
+		"bodyMap": map[string]any{},
 		"header": http.Header{
 			"Authorization": []string{"[REMOVED]"},
 		},
@@ -101,7 +101,7 @@ func Test_requestImp_Body_Json(t *testing.T) {
 	{
 		bodyMap, err := req.BodyMap()
 		is.NotErr(err)
-		is.Equal(map[string]interface{}{
+		is.Equal(map[string]any{
 			"firstName": "John",
 			"lastName":  "Smith",
 		}, bodyMap)

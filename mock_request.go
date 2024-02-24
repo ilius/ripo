@@ -51,7 +51,7 @@ func (mr *MockRequestMockRecorder) Body() *gomock.Call {
 }
 
 // BodyTo mocks base method
-func (m *MockRequest) BodyTo(arg0 interface{}) error {
+func (m *MockRequest) BodyTo(arg0 any) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BodyTo", arg0)
 	ret0, _ := ret[0].(error)
@@ -59,7 +59,7 @@ func (m *MockRequest) BodyTo(arg0 interface{}) error {
 }
 
 // BodyTo indicates an expected call of BodyTo
-func (mr *MockRequestMockRecorder) BodyTo(arg0 interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) BodyTo(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BodyTo", reflect.TypeOf((*MockRequest)(nil).BodyTo), arg0)
 }
@@ -88,7 +88,7 @@ func (m *MockRequest) Cookie(arg0 string) (*http.Cookie, error) {
 }
 
 // Cookie indicates an expected call of Cookie
-func (mr *MockRequestMockRecorder) Cookie(arg0 interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) Cookie(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cookie", reflect.TypeOf((*MockRequest)(nil).Cookie), arg0)
 }
@@ -108,10 +108,10 @@ func (mr *MockRequestMockRecorder) CookieNames() *gomock.Call {
 }
 
 // FullMap mocks base method
-func (m *MockRequest) FullMap() map[string]interface{} {
+func (m *MockRequest) FullMap() map[string]any {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FullMap")
-	ret0, _ := ret[0].(map[string]interface{})
+	ret0, _ := ret[0].(map[string]any)
 	return ret0
 }
 
@@ -124,7 +124,7 @@ func (mr *MockRequestMockRecorder) FullMap() *gomock.Call {
 // GetBool mocks base method
 func (m *MockRequest) GetBool(arg0 string, arg1 ...FromX) (*bool, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -135,16 +135,16 @@ func (m *MockRequest) GetBool(arg0 string, arg1 ...FromX) (*bool, error) {
 }
 
 // GetBool indicates an expected call of GetBool
-func (mr *MockRequestMockRecorder) GetBool(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) GetBool(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBool", reflect.TypeOf((*MockRequest)(nil).GetBool), varargs...)
 }
 
 // GetFloat mocks base method
 func (m *MockRequest) GetFloat(arg0 string, arg1 ...FromX) (*float64, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -155,16 +155,16 @@ func (m *MockRequest) GetFloat(arg0 string, arg1 ...FromX) (*float64, error) {
 }
 
 // GetFloat indicates an expected call of GetFloat
-func (mr *MockRequestMockRecorder) GetFloat(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) GetFloat(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFloat", reflect.TypeOf((*MockRequest)(nil).GetFloat), varargs...)
 }
 
 // GetFloatDefault mocks base method
 func (m *MockRequest) GetFloatDefault(arg0 string, arg1 float64, arg2 ...FromX) (float64, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1}
+	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
@@ -175,16 +175,16 @@ func (m *MockRequest) GetFloatDefault(arg0 string, arg1 float64, arg2 ...FromX) 
 }
 
 // GetFloatDefault indicates an expected call of GetFloatDefault
-func (mr *MockRequestMockRecorder) GetFloatDefault(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) GetFloatDefault(arg0, arg1 any, arg2 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	varargs := append([]any{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFloatDefault", reflect.TypeOf((*MockRequest)(nil).GetFloatDefault), varargs...)
 }
 
 // GetInt mocks base method
 func (m *MockRequest) GetInt(arg0 string, arg1 ...FromX) (*int, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -195,16 +195,16 @@ func (m *MockRequest) GetInt(arg0 string, arg1 ...FromX) (*int, error) {
 }
 
 // GetInt indicates an expected call of GetInt
-func (mr *MockRequestMockRecorder) GetInt(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) GetInt(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInt", reflect.TypeOf((*MockRequest)(nil).GetInt), varargs...)
 }
 
 // GetIntDefault mocks base method
 func (m *MockRequest) GetIntDefault(arg0 string, arg1 int, arg2 ...FromX) (int, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1}
+	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
@@ -215,36 +215,36 @@ func (m *MockRequest) GetIntDefault(arg0 string, arg1 int, arg2 ...FromX) (int, 
 }
 
 // GetIntDefault indicates an expected call of GetIntDefault
-func (mr *MockRequestMockRecorder) GetIntDefault(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) GetIntDefault(arg0, arg1 any, arg2 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	varargs := append([]any{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIntDefault", reflect.TypeOf((*MockRequest)(nil).GetIntDefault), varargs...)
 }
 
 // GetObject mocks base method
-func (m *MockRequest) GetObject(arg0 string, arg1 reflect.Type, arg2 ...FromX) (interface{}, error) {
+func (m *MockRequest) GetObject(arg0 string, arg1 reflect.Type, arg2 ...FromX) (any, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1}
+	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetObject", varargs...)
-	ret0, _ := ret[0].(interface{})
+	ret0, _ := ret[0].(any)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetObject indicates an expected call of GetObject
-func (mr *MockRequestMockRecorder) GetObject(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) GetObject(arg0, arg1 any, arg2 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	varargs := append([]any{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObject", reflect.TypeOf((*MockRequest)(nil).GetObject), varargs...)
 }
 
 // GetString mocks base method
 func (m *MockRequest) GetString(arg0 string, arg1 ...FromX) (*string, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -255,16 +255,16 @@ func (m *MockRequest) GetString(arg0 string, arg1 ...FromX) (*string, error) {
 }
 
 // GetString indicates an expected call of GetString
-func (mr *MockRequestMockRecorder) GetString(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) GetString(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetString", reflect.TypeOf((*MockRequest)(nil).GetString), varargs...)
 }
 
 // GetStringDefault mocks base method
 func (m *MockRequest) GetStringDefault(arg0, arg1 string, arg2 ...FromX) (string, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1}
+	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
@@ -275,16 +275,16 @@ func (m *MockRequest) GetStringDefault(arg0, arg1 string, arg2 ...FromX) (string
 }
 
 // GetStringDefault indicates an expected call of GetStringDefault
-func (mr *MockRequestMockRecorder) GetStringDefault(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) GetStringDefault(arg0, arg1 any, arg2 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	varargs := append([]any{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStringDefault", reflect.TypeOf((*MockRequest)(nil).GetStringDefault), varargs...)
 }
 
 // GetStringList mocks base method
 func (m *MockRequest) GetStringList(arg0 string, arg1 ...FromX) ([]string, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -295,16 +295,16 @@ func (m *MockRequest) GetStringList(arg0 string, arg1 ...FromX) ([]string, error
 }
 
 // GetStringList indicates an expected call of GetStringList
-func (mr *MockRequestMockRecorder) GetStringList(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) GetStringList(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStringList", reflect.TypeOf((*MockRequest)(nil).GetStringList), varargs...)
 }
 
 // GetTime mocks base method
 func (m *MockRequest) GetTime(arg0 string, arg1 ...FromX) (*time.Time, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -315,9 +315,9 @@ func (m *MockRequest) GetTime(arg0 string, arg1 ...FromX) (*time.Time, error) {
 }
 
 // GetTime indicates an expected call of GetTime
-func (mr *MockRequestMockRecorder) GetTime(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) GetTime(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTime", reflect.TypeOf((*MockRequest)(nil).GetTime), varargs...)
 }
 
@@ -344,7 +344,7 @@ func (m *MockRequest) Header(arg0 string) string {
 }
 
 // Header indicates an expected call of Header
-func (mr *MockRequestMockRecorder) Header(arg0 interface{}) *gomock.Call {
+func (mr *MockRequestMockRecorder) Header(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Header", reflect.TypeOf((*MockRequest)(nil).Header), arg0)
 }
@@ -445,10 +445,10 @@ func (mr *MockExtendedRequestMockRecorder) Body() *gomock.Call {
 }
 
 // BodyMap mocks base method
-func (m *MockExtendedRequest) BodyMap() (map[string]interface{}, error) {
+func (m *MockExtendedRequest) BodyMap() (map[string]any, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BodyMap")
-	ret0, _ := ret[0].(map[string]interface{})
+	ret0, _ := ret[0].(map[string]any)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -460,7 +460,7 @@ func (mr *MockExtendedRequestMockRecorder) BodyMap() *gomock.Call {
 }
 
 // BodyTo mocks base method
-func (m *MockExtendedRequest) BodyTo(arg0 interface{}) error {
+func (m *MockExtendedRequest) BodyTo(arg0 any) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BodyTo", arg0)
 	ret0, _ := ret[0].(error)
@@ -468,7 +468,7 @@ func (m *MockExtendedRequest) BodyTo(arg0 interface{}) error {
 }
 
 // BodyTo indicates an expected call of BodyTo
-func (mr *MockExtendedRequestMockRecorder) BodyTo(arg0 interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) BodyTo(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BodyTo", reflect.TypeOf((*MockExtendedRequest)(nil).BodyTo), arg0)
 }
@@ -497,7 +497,7 @@ func (m *MockExtendedRequest) Cookie(arg0 string) (*http.Cookie, error) {
 }
 
 // Cookie indicates an expected call of Cookie
-func (mr *MockExtendedRequestMockRecorder) Cookie(arg0 interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) Cookie(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cookie", reflect.TypeOf((*MockExtendedRequest)(nil).Cookie), arg0)
 }
@@ -517,10 +517,10 @@ func (mr *MockExtendedRequestMockRecorder) CookieNames() *gomock.Call {
 }
 
 // FullMap mocks base method
-func (m *MockExtendedRequest) FullMap() map[string]interface{} {
+func (m *MockExtendedRequest) FullMap() map[string]any {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FullMap")
-	ret0, _ := ret[0].(map[string]interface{})
+	ret0, _ := ret[0].(map[string]any)
 	return ret0
 }
 
@@ -533,7 +533,7 @@ func (mr *MockExtendedRequestMockRecorder) FullMap() *gomock.Call {
 // GetBool mocks base method
 func (m *MockExtendedRequest) GetBool(arg0 string, arg1 ...FromX) (*bool, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -544,16 +544,16 @@ func (m *MockExtendedRequest) GetBool(arg0 string, arg1 ...FromX) (*bool, error)
 }
 
 // GetBool indicates an expected call of GetBool
-func (mr *MockExtendedRequestMockRecorder) GetBool(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetBool(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBool", reflect.TypeOf((*MockExtendedRequest)(nil).GetBool), varargs...)
 }
 
 // GetFloat mocks base method
 func (m *MockExtendedRequest) GetFloat(arg0 string, arg1 ...FromX) (*float64, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -564,16 +564,16 @@ func (m *MockExtendedRequest) GetFloat(arg0 string, arg1 ...FromX) (*float64, er
 }
 
 // GetFloat indicates an expected call of GetFloat
-func (mr *MockExtendedRequestMockRecorder) GetFloat(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetFloat(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFloat", reflect.TypeOf((*MockExtendedRequest)(nil).GetFloat), varargs...)
 }
 
 // GetFloatDefault mocks base method
 func (m *MockExtendedRequest) GetFloatDefault(arg0 string, arg1 float64, arg2 ...FromX) (float64, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1}
+	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
@@ -584,9 +584,9 @@ func (m *MockExtendedRequest) GetFloatDefault(arg0 string, arg1 float64, arg2 ..
 }
 
 // GetFloatDefault indicates an expected call of GetFloatDefault
-func (mr *MockExtendedRequestMockRecorder) GetFloatDefault(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetFloatDefault(arg0, arg1 any, arg2 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	varargs := append([]any{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFloatDefault", reflect.TypeOf((*MockExtendedRequest)(nil).GetFloatDefault), varargs...)
 }
 
@@ -599,7 +599,7 @@ func (m *MockExtendedRequest) GetFormValue(arg0 string) string {
 }
 
 // GetFormValue indicates an expected call of GetFormValue
-func (mr *MockExtendedRequestMockRecorder) GetFormValue(arg0 interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetFormValue(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFormValue", reflect.TypeOf((*MockExtendedRequest)(nil).GetFormValue), arg0)
 }
@@ -607,7 +607,7 @@ func (mr *MockExtendedRequestMockRecorder) GetFormValue(arg0 interface{}) *gomoc
 // GetInt mocks base method
 func (m *MockExtendedRequest) GetInt(arg0 string, arg1 ...FromX) (*int, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -618,16 +618,16 @@ func (m *MockExtendedRequest) GetInt(arg0 string, arg1 ...FromX) (*int, error) {
 }
 
 // GetInt indicates an expected call of GetInt
-func (mr *MockExtendedRequestMockRecorder) GetInt(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetInt(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInt", reflect.TypeOf((*MockExtendedRequest)(nil).GetInt), varargs...)
 }
 
 // GetIntDefault mocks base method
 func (m *MockExtendedRequest) GetIntDefault(arg0 string, arg1 int, arg2 ...FromX) (int, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1}
+	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
@@ -638,36 +638,36 @@ func (m *MockExtendedRequest) GetIntDefault(arg0 string, arg1 int, arg2 ...FromX
 }
 
 // GetIntDefault indicates an expected call of GetIntDefault
-func (mr *MockExtendedRequestMockRecorder) GetIntDefault(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetIntDefault(arg0, arg1 any, arg2 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	varargs := append([]any{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIntDefault", reflect.TypeOf((*MockExtendedRequest)(nil).GetIntDefault), varargs...)
 }
 
 // GetObject mocks base method
-func (m *MockExtendedRequest) GetObject(arg0 string, arg1 reflect.Type, arg2 ...FromX) (interface{}, error) {
+func (m *MockExtendedRequest) GetObject(arg0 string, arg1 reflect.Type, arg2 ...FromX) (any, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1}
+	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetObject", varargs...)
-	ret0, _ := ret[0].(interface{})
+	ret0, _ := ret[0].(any)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetObject indicates an expected call of GetObject
-func (mr *MockExtendedRequestMockRecorder) GetObject(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetObject(arg0, arg1 any, arg2 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	varargs := append([]any{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObject", reflect.TypeOf((*MockExtendedRequest)(nil).GetObject), varargs...)
 }
 
 // GetString mocks base method
 func (m *MockExtendedRequest) GetString(arg0 string, arg1 ...FromX) (*string, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -678,16 +678,16 @@ func (m *MockExtendedRequest) GetString(arg0 string, arg1 ...FromX) (*string, er
 }
 
 // GetString indicates an expected call of GetString
-func (mr *MockExtendedRequestMockRecorder) GetString(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetString(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetString", reflect.TypeOf((*MockExtendedRequest)(nil).GetString), varargs...)
 }
 
 // GetStringDefault mocks base method
 func (m *MockExtendedRequest) GetStringDefault(arg0, arg1 string, arg2 ...FromX) (string, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1}
+	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
@@ -698,16 +698,16 @@ func (m *MockExtendedRequest) GetStringDefault(arg0, arg1 string, arg2 ...FromX)
 }
 
 // GetStringDefault indicates an expected call of GetStringDefault
-func (mr *MockExtendedRequestMockRecorder) GetStringDefault(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetStringDefault(arg0, arg1 any, arg2 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	varargs := append([]any{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStringDefault", reflect.TypeOf((*MockExtendedRequest)(nil).GetStringDefault), varargs...)
 }
 
 // GetStringList mocks base method
 func (m *MockExtendedRequest) GetStringList(arg0 string, arg1 ...FromX) ([]string, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -718,16 +718,16 @@ func (m *MockExtendedRequest) GetStringList(arg0 string, arg1 ...FromX) ([]strin
 }
 
 // GetStringList indicates an expected call of GetStringList
-func (mr *MockExtendedRequestMockRecorder) GetStringList(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetStringList(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStringList", reflect.TypeOf((*MockExtendedRequest)(nil).GetStringList), varargs...)
 }
 
 // GetTime mocks base method
 func (m *MockExtendedRequest) GetTime(arg0 string, arg1 ...FromX) (*time.Time, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
+	varargs := []any{arg0}
 	for _, a := range arg1 {
 		varargs = append(varargs, a)
 	}
@@ -738,9 +738,9 @@ func (m *MockExtendedRequest) GetTime(arg0 string, arg1 ...FromX) (*time.Time, e
 }
 
 // GetTime indicates an expected call of GetTime
-func (mr *MockExtendedRequestMockRecorder) GetTime(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) GetTime(arg0 any, arg1 ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
+	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTime", reflect.TypeOf((*MockExtendedRequest)(nil).GetTime), varargs...)
 }
 
@@ -767,7 +767,7 @@ func (m *MockExtendedRequest) Header(arg0 string) string {
 }
 
 // Header indicates an expected call of Header
-func (mr *MockExtendedRequestMockRecorder) Header(arg0 interface{}) *gomock.Call {
+func (mr *MockExtendedRequestMockRecorder) Header(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Header", reflect.TypeOf((*MockExtendedRequest)(nil).Header), arg0)
 }
